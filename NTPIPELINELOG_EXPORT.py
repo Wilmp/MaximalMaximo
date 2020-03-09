@@ -25,20 +25,20 @@ from psdi.server import MXServer
 #certain maximo fields shouldnt be in the json as they could lead to errors and/or are unnecessary
 def recursiveJSON(jsObject):
     jsObjectTemp = JSONObject()
+    jsObjectTemp.put("timestamp", mbo.getString("TIMESTAMP"))
     for strName in jsObject.keySet():
         
         if strName is not None:
             jsElement = jsObject.get(strName)
-            #System.out.println(type(jsElement).__name__)
             if type(jsElement).__name__== "JSONArray":
-                System.out.println(strName)
-                System.out.println(jsElement.size())
+                #System.out.println(strName)
+                #System.out.println(jsElement.size())
                 jsArrayTemp=JSONArray()
                 for i in range(jsElement.size()):
                     
                     if type(jsElement[i]).__name__== "JSONObject":
                         jsElementTemp=jsElement[i]
-                        System.out.println(type(jsElement[i]).__name__)
+
                         jsElementTemp=recursiveJSON(jsElementTemp)
                         jsArrayTemp.add(i, jsElementTemp)
                         
@@ -61,20 +61,19 @@ client = None
 
 # get connection properties from System Properties
 properties = MXServer.getMXServer().getConfig()
-host = "http://localhost"
+host = properties.getProperty("mxe.oslc.restwebappurl")
 
 # get Pipeline data for the address (href)
 ntpipelineapiSet=mbo.getMboSet("NTPIPELINEAPI")
 if ntpipelineapiSet.isEmpty():
-    service.error('workorder','qcwoalreadygenerated', None) #placeholder error message
+    service.error('ntpipeline','pipelineMap', None) #Break
 pipelineapi=ntpipelineapiSet.moveFirst()
-uri = host + '/maxrest/oslc/os/'                   #MXAPIDOMAIN'
+uri = host + '/os/'
 uri = uri + pipelineapi.getString("INTOBJECTNAME")
 uri = uri + '?lean=1&oslc.where='                   #MAXDOMAINID='
 uri = uri + pipelineapi.getString("UNIQUECOLUMN") +'='
 uri=uri+str(mbo.getInt("FOREIGNKEY"))
 uri=uri+'&oslc.select=*'
-System.out.println(uri)
 clientid = "maxadmin"
 clientsecurity = "maxadmin"
 
@@ -103,69 +102,93 @@ request.setParams(params)
 request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json")
 request.addHeader(HttpHeaders.ACCEPT, "application/x-www-form-urlencoded")
 request.addHeader("MAXAUTH", authHeader)
-#request.setEntity(entity)
 
 # get client response
 response = client.execute(request)
-
-# return JSON response and access token
-mbo.setValue("STATUS", str(response.getStatusLine().getStatusCode()))
+if response.getStatusLine().getStatusCode()>300:
+    service.error('ntpipeline','apiErrror', None) #Break
 
 obj = JSONObject()
 obj = JSONObject.parse(response.getEntity().getContent())
-#System.out.println( str(obj))
 
 objToSend = obj.get("member")
 
-obj = objToSend.get(0)
+if objToSend:
+    obj = objToSend.get(0)
 
-strHREF=str(obj.get("href"))   
-#responseString = obj.toString()
-#########################
-obj=recursiveJSON(obj)
-#System.out.println( str(obj))
-#########################
-responseString = obj.serialize(True)
+    strHREF=str(obj.get("href"))   
 
-intPos = strHREF.find("/_",1)+2
-strKeyAttrB64=strHREF[intPos:]
-strKeyAttr=""
-## Loopen door maxattribute
-KeySet=mbo.getMboSet("NTUNIQUECOLUMNS")
-KeySet.setOrderBy("PRIMARYKEYCOLSEQ asc")
-Key=KeySet.moveFirst()
-while (Key):
-    strKey=Key.getString("ATTRIBUTENAME").lower()
-    System.out.println(strKey)
-    strKeyAttr += str(obj.get(strKey))
-    strKeyAttr += "_"
-    Key=KeySet.moveNext()
+    obj=recursiveJSON(obj)
+    responseString = obj.serialize(True)
 
-strKeyAttr=strKeyAttr.rstrip("_")
+    intPos = strHREF.find("/_",1)+2
+    strKeyAttrB64=strHREF[intPos:]
 
-#Otherwise it is not possible to save to a directory.
+    mbo.setValue("KEYATTRIBUTEVALUEBASE64", strKeyAttrB64)
 
-System.out.println(strKeyAttr)
+    mbo.setValue("JSON", responseString)
 
-mbo.setValue("KEYATTRIBUTEVALUEBASE64", strKeyAttrB64)
-mbo.setValue("KEYATTRIBUTEVALUE", strKeyAttr)
-System.out.println(mbo.getString("DESCRIPTION"))
-System.out.println(mbo.getString("KEYATTRIBUTEVALUE"))
-mbo.setValue("JSON", responseString)
+    strFile = properties.getProperty("ntpipeline.folder")
 
-System.out.println(strKeyAttrB64)
-strFile = properties.getProperty("ntpipeline.folder")
+    strFile += mbo.getString("OBJECTNAME") + "\\"
+    strFile += mbo.getString("KEYATTRIBUTEVALUE") + ".json"
 
-#strFile = "\\\\toolingserver\\tools\\BitBucket\\WMU\\maximo-configuratie\\"
-strFile += mbo.getString("OBJECTNAME") + "\\"
-strFile += strKeyAttr + ".json"
-#mbo.setValue("DESCRIPTION_LONGDESCRIPTION", strFile)
+    filExport=File(None, strFile)
 
-filExport=File(None, strFile)
-System.out.println( filExport.getAbsolutePath())
+    if filExport.createNewFile():
+        System.out.println( "Created File: " + strFile)
+    writerExport=FileWriter(filExport)
+    writerExport.write(responseString)
+    writerExport.close()
 
-if filExport.createNewFile():
-    System.out.println( "Created File: " + strFile)
-writerExport=FileWriter(filExport)
-writerExport.write(responseString)
-writerExport.close()
+    mbo.setValue("LINK", filExport.getAbsolutePath())
+    
+    #Export the ntpipelinelog record
+    uri = host + '/os/'
+    uri = uri + "PA_NTPIPELINE_NTPIPE"
+    uri = uri + '?lean=1&oslc.where=NTPIPELINELOGID='
+    uri=uri+str(mbo.getInt("NTPIPELINELOGID"))
+    uri=uri+'&oslc.select=*'
+    client = DefaultHttpClient()
+    request2 = HttpGet(uri)
+    request2.setParams(params)
+    request2.addHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+    request2.addHeader(HttpHeaders.ACCEPT, "application/x-www-form-urlencoded")
+    request2.addHeader("MAXAUTH", authHeader)
+    #request.setEntity(entity)
+    
+    # get client response
+    response2 = client.execute(request2)
+    if response2.getStatusLine().getStatusCode()>300:
+        service.error('ntpipeline','apiErrror', None) #Break
+
+    obj = JSONObject()
+    obj = JSONObject.parse(response2.getEntity().getContent())
+
+    objToSend = obj.get("member")
+
+    if objToSend:
+        obj = objToSend.get(0)
+        obj=recursiveJSON(obj)
+
+        responseString = obj.serialize(True)
+        strFile = properties.getProperty("ntpipeline.folder")
+
+        strFile += "NTPIPELINELOG\\"
+        
+        strFile += mbo.getString("OBJECTNAME") + "_"
+        strFile += mbo.getString("KEYATTRIBUTEVALUE")
+        
+        strFile += ".json"
+
+        filExport=File(None, strFile)
+
+        if filExport.createNewFile():
+            System.out.println( "Created File: " + strFile)
+        writerExport=FileWriter(filExport)
+        writerExport.write(responseString)
+        writerExport.close()
+
+else:
+    mbo.setValue("INTERNAL",True)
+    mbo.setValue("DESCRIPTION", "Couldnt get JSON Object. " + mbo.getString("DESCRIPTION"))
