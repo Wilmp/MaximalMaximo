@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <simple-property-list name="includeResource">
+        <value>inventory</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("./temp/inventory_balance.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Maximo List Report Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="storeroom" id="306">
+            <text-property name="promptText">Storeroom:</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="site" id="308">
+            <text-property name="promptText">Site id:</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="item" id="354">
+            <text-property name="promptText">items</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="Qty Res" id="229">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">orgid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">itemnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">itemDesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">iUnit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">cBal</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">rQty</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">Cost</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">useTransDate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">recTransDate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">costType</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">extdCost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">orgid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sCost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">iUnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">rQty</property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemDesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cBal</property>
+                </structure>
+                <structure>
+                    <property name="columnName">rQty</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Cost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">costType</property>
+                </structure>
+                <structure>
+                    <property name="columnName">recTransDate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">costtype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">extdCost</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">orgid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">itemnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">itemDesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">iUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">cBal</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">rQty</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">Cost</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">useTransDate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">recTransDate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">costType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">extdCost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+// ********************
+// *	2008/10/07 15:51
+// *	08-22130 - No data displays in inventory balance report when data exists. (inventory_balance_tbl.rptdesign)
+// *	Changed the if and where creation
+// ********************
+// * 2009/04/07 
+// * 09-11616 - INVENTORY BALANCE REPORT DOES NOT DISPLAY THE LAST ISSUE DATE
+// * Changed the join between inventory and matusetrans and matrectrans to the proper MAXRELATIONSHIP
+// ********************
+// 2009/09/10
+// 09-14145 - BIRT INVENTORY BALANCES REPORT SHOWS INCORRECT VALUES FOR SOME  ITEMS [P1]
+//  Fixed query, moved all outer joins to subselects to prevent duplicates and removed recursive subquery on fetch()
+// ********************
+
+if(params["storeroom"].value) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.location", params["storeroom"].toUpperCase());
+}
+
+if(params["site"].value) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.siteid", params["site"].toUpperCase());
+}
+
+if(params["item"].value) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.itemnum", params["item"].toUpperCase());
+}
+
+sqlText = "select distinct inventory.costtype, inventory.orgid, inventory.siteid, inventory.location, inventory.itemsetid, inventory.itemnum, "
++ " item.description as itemDesc, "
++ " inventory.issueunit as iUnit, "
++ " ( "
++ " select " + maximoDataSet.getNullValueFunction("sum(invbalances.curbal)","0") + " from invbalances "
++ " where siteid=inventory.siteid and location=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " and ((conditioncode=invcost.conditioncode) or (conditioncode is null and invcost.conditioncode is null))"
++ " ) as cBal, "
++ " ( "
++ " select " + maximoDataSet.getNullValueFunction("sum(invreserve.reservedqty)","0") + " from invreserve "
++ " where storelocsiteid=inventory.siteid and location=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " and ((conditioncode=invcost.conditioncode) or (conditioncode is null and invcost.conditioncode is null))"
++ " ) as rQty, "
++ " invcost.stdcost as sCost, "
++ " invcost.lastcost as lCost, "
++ " invcost.avgcost as aCost, "
++ " ( "
++ " select max(actualdate) from matusetrans "
++ " where issuetype in (select value from synonymdomain where domainid = 'ISSUETYP' and maxvalue = 'ISSUE') "
++ " and siteid=inventory.siteid and storeloc=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " ) as useTransDate, "
++ " ( "
++ " select max(actualdate) from matrectrans "
++ " where issuetype in (select value from synonymdomain where domainid = 'ISSUETYP' and maxvalue = 'RECEIPT') "
++ " and siteid=inventory.siteid and tostoreloc=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " ) as recTransDate, "
++ " ( "
++ " select varvalue from maxvars where varname='DEFISSUECOST' and siteid=inventory.siteid "
++ " ) as maxvarvalue "
++ " from inventory inner join "
++ " item on "
++ " inventory.itemsetid = item.itemsetid "
++ " and inventory.itemnum = item.itemnum inner join "
++ " invcost on "
++ " inventory.siteid = invcost.siteid "
++ " and inventory.location = invcost.location "
++ " and inventory.itemsetid = invcost.itemsetid "
++ " and inventory.itemnum = invcost.itemnum "
++ " where " + params["where"]
++ " and item.itemtype in ( select value from synonymdomain where domainid = 'ITEMTYPE' and maxvalue in ('ITEM') ) "
++ " and inventory.status not in ( select value from synonymdomain where domainid='ITEMSTATUS' and maxvalue in ('OBSOLETE') ) "
+
++ " union all "
++ " select distinct inventory.costtype, inventory.orgid, inventory.siteid, inventory.location, inventory.itemsetid, inventory.itemnum, "
++ " item.description as itemDesc, "
++ " inventory.issueunit as iUnit, "
++ " (select " + maximoDataSet.getNullValueFunction("sum(invbalances.curbal)","0") + " from invbalances "
++ " where siteid=inventory.siteid and location=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " and ((conditioncode=invlifofifocost.conditioncode) or (conditioncode is null and invlifofifocost.conditioncode is null)) ) as cBal, "
++ " (select " + maximoDataSet.getNullValueFunction("sum(invreserve.reservedqty)","0") + " from invreserve "
++ " where storelocsiteid=inventory.siteid and location=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " and ((conditioncode=invlifofifocost.conditioncode) or (conditioncode is null and invlifofifocost.conditioncode is null)) ) as rQty, "
++ " (select " + maximoDataSet.getNullValueFunction("sum(invlifofifocost.unitcost)","0") + " from invlifofifocost "
++ " where inventory.itemnum = itemnum and inventory.siteid = siteid and inventory.location = location) as sCost, "
++ " 0 as lCost, "
++ " (select (" + maximoDataSet.getNullValueFunction("sum(invlifofifocost.unitcost*invlifofifocost.quantity)","0") + " / " + maximoDataSet.getNullValueFunction("sum(invlifofifocost.quantity)","0") + ") from invlifofifocost "
++ " where inventory.itemnum = itemnum and inventory.siteid = siteid and inventory.location = location) as aCost, "
++ " (select max(actualdate) from matusetrans "
++ " where issuetype in (select value from synonymdomain where domainid = 'ISSUETYP' and maxvalue = 'ISSUE') "
++ " and siteid=inventory.siteid and storeloc=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " ) as useTransDate, "
++ " (select max(actualdate) from matrectrans "
++ " where issuetype in (select value from synonymdomain where domainid = 'ISSUETYP' and maxvalue = 'RECEIPT') "
++ " and siteid=inventory.siteid and tostoreloc=inventory.location and itemsetid=inventory.itemsetid and itemnum=inventory.itemnum "
++ " ) as recTransDate, "
++ " (select varvalue from maxvars where varname='DEFISSUECOST' and siteid=inventory.siteid "
++ " ) as maxvarvalue "
++ " from inventory "
++ " inner join item "
++ " on inventory.itemsetid = item.itemsetid "
++ " and inventory.itemnum = item.itemnum "
++ " inner join invlifofifocost "
++ " on inventory.itemnum = invlifofifocost.itemnum "
++ " and inventory.itemsetid = invlifofifocost.itemsetid "
++ " and inventory.location = invlifofifocost.location "
++ " and inventory.siteid = invlifofifocost.siteid "
++ " where " + params["where"]
++ " and invlifofifocost.costdate = (select max(costdate) from invlifofifocost "
++ " where inventory.itemnum = itemnum "
++ " and inventory.itemsetid = itemsetid "
++ " and inventory.location = location "
++ " and inventory.siteid = siteid) "
++ " order by orgid, siteid, location, itemnum "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["orgid"] = maximoDataSet.getString("orgid");
+row["siteid"] = maximoDataSet.getString("siteid");
+row["location"] = maximoDataSet.getString("location");
+row["itemnum"] = maximoDataSet.getString("itemnum");
+row["itemDesc"] = maximoDataSet.getString("itemDesc");
+row["iUnit"] = maximoDataSet.getString("iUnit");
+row["cBal"] = maximoDataSet.getDouble("cBal");
+row["rQty"] = maximoDataSet.getDouble("rQty");
+
+row["useTransDate"] = maximoDataSet.getTimestamp("useTransDate");
+row["recTransDate"] = maximoDataSet.getTimestamp("recTransDate");
+
+row["costType"] = maximoDataSet.getString("costType");
+var maxvarvalue = maximoDataSet.getString("maxvarvalue");
+
+if(BirtComp.equalTo("AVGCOST",maxvarvalue)) {
+	row["Cost"] = maximoDataSet.getString("aCost");
+} else if(BirtComp.equalTo("STDCOST",maxvarvalue)) {
+	row["Cost"] = maximoDataSet.getString("sCost");
+} else if(BirtComp.equalTo("LASTCOST",maxvarvalue)) {
+	row["Cost"] = maximoDataSet.getString("lCost");
+}
+if (row["costType"] == 'LIFO' || row["costType"] == 'FIFO'){
+	row["Cost"] = maximoDataSet.getString("aCost");
+	row["extdCost"] = maximoDataSet.getDouble("sCost");
+}else{
+	row["extdCost"] = row["cBal"]*row["Cost"];
+}
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="406"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="407"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="408"/>
+                <ref-entry baseId="322" name="NewGrid" id="409"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="410"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="411"/>
+                <ref-entry baseId="332" id="412"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="413"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">Qty Res</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">orgid</property>
+                    <expression name="expression">dataSetRow["orgid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">siteid</property>
+                    <expression name="expression">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">location</property>
+                    <expression name="expression">dataSetRow["location"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemnum</property>
+                    <expression name="expression">dataSetRow["itemnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">iUnit</property>
+                    <expression name="expression">dataSetRow["iUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">rQty</property>
+                    <expression name="expression">dataSetRow["rQty"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">itemDesc</property>
+                    <expression name="expression">dataSetRow["itemDesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">cBal</property>
+                    <expression name="expression">dataSetRow["cBal"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">aQty</property>
+                    <expression name="expression">row["cBal"]-row["rQty"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">extdCost</property>
+                    <expression name="expression">row["cBal"]*row["Cost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">useTransDate</property>
+                    <expression name="expression">dataSetRow["useTransDate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">recTransDate</property>
+                    <expression name="expression">dataSetRow["recTransDate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">Cost</property>
+                    <expression name="expression">dataSetRow["Cost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalExtdCost</property>
+                    <expression name="expression">Total.sum(row["extdCost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">storeroom</property>
+                    <expression name="expression">params["storeroom"].replace(/[=!,]/,"")</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">site</property>
+                    <expression name="expression">params["site"].replace(/[=!,]/,"")</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">costType</property>
+                    <text-property name="displayName">costType</text-property>
+                    <expression name="expression">dataSetRow["costType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="379">
+                <property name="width">0.9791666667in</property>
+            </column>
+            <column id="297">
+                <property name="width">1.6770833333in</property>
+            </column>
+            <column id="79">
+                <property name="width">0.7395833333in</property>
+            </column>
+            <column id="87">
+                <property name="width">1.0625in</property>
+            </column>
+            <column id="17">
+                <property name="width">0.7291666667in</property>
+            </column>
+            <column id="265">
+                <property name="width">0.7916666667in</property>
+            </column>
+            <column id="326">
+                <property name="width">0.8854166667in</property>
+            </column>
+            <column id="336">
+                <property name="width">1.0104166667in</property>
+            </column>
+            <column id="346">
+                <property name="width">1.0416666667in</property>
+            </column>
+            <column id="275">
+                <property name="width">1in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="300">
+                            <property name="marginTop">0pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="inventory_balance_tbl.reportname">Report Title</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="109">
+                            <property name="marginTop">2pt</property>
+                            <property name="marginBottom">2pt</property>
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1.2604166667in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.65625in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="storeroom_colon">Storeroom:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="404">
+                                        <property name="resultSetColumn">storeroom</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="site_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="405">
+                                        <property name="resultSetColumn">site</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="374">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="310">
+                            <text-property name="text" key="item">Item</text-property>
+                        </label>
+                    </cell>
+                    <cell id="292">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="311">
+                            <text-property name="text" key="description">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="312">
+                            <text-property name="text" key="issueunit">Issue Unit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="314">
+                            <text-property name="text" key="currentbalance">Current Balance</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="315">
+                            <text-property name="text" key="qtyavbl">Qty Avbl</text-property>
+                        </label>
+                    </cell>
+                    <cell id="260">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="316">
+                            <text-property name="text" key="qtyresvd">Qty Res'vd</text-property>
+                        </label>
+                    </cell>
+                    <cell id="321">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="347">
+                            <text-property name="text" key="cost">Cost</text-property>
+                        </label>
+                    </cell>
+                    <cell id="331">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="348">
+                            <text-property name="text" key="extdcost">Ext'd	Cost</text-property>
+                        </label>
+                    </cell>
+                    <cell id="341">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="349">
+                            <text-property name="text" key="lastissuedate">Last Issue Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="270">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="350">
+                            <text-property name="text" key="lastreceiptdate">Last Receipt Date</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="375">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="355">
+                            <property name="resultSetColumn">itemnum</property>
+                        </data>
+                    </cell>
+                    <cell id="293">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="356">
+                            <property name="resultSetColumn">itemDesc</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="357">
+                            <property name="resultSetColumn">iUnit</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="384">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">cBal</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="385">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">aQty</property>
+                        </data>
+                    </cell>
+                    <cell id="261">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="386">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">rQty</property>
+                        </data>
+                    </cell>
+                    <cell id="322">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="390">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">Cost</property>
+                        </data>
+                    </cell>
+                    <cell id="332">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="387">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">extdCost</property>
+                        </data>
+                    </cell>
+                    <cell id="342">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="388">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Date</property>
+                                <property name="pattern">Short Date</property>
+                            </structure>
+                            <property name="resultSetColumn">useTransDate</property>
+                        </data>
+                    </cell>
+                    <cell id="271">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="389">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Date</property>
+                                <property name="pattern">Short Date</property>
+                            </structure>
+                            <property name="resultSetColumn">recTransDate</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="414">
+                    <property name="height">0.08in</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="415">
+                        <property name="colSpan">9</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="424"/>
+                </row>
+                <row id="14">
+                    <cell id="82">
+                        <property name="colSpan">5</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="395">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">summarylabel</property>
+                        <label id="401">
+                            <property name="style">summarylabel</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text" key="inventory_balance_tbl.footer">Total Ext'd Cost:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="397">
+                        <property name="style">summarydata</property>
+                        <data id="400">
+                            <property name="style">summarydata</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">totalExtdCost</property>
+                        </data>
+                    </cell>
+                    <cell id="398">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="224">
+                    <property name="height">0.06in</property>
+                    <cell id="225">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

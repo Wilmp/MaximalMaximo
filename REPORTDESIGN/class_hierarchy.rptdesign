@@ -1,0 +1,1298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090304-1357></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>assetcat</value>
+    </simple-property-list>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogFile("C:/temp/class_hierarchy2.log");
+
+//scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Subreport Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="mainDataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">classstructureid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">level</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">classstructureid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">level</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">classstructureid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">level</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "select classstructure.classstructureid, classstructure.description "
++ " from classstructure "
+// Include the Maximo where clause
++ " where " + params["where"]
++ " order by classstructure.classstructureid "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["classstructureid"] = maximoDataSet.getString("classstructureid");
+row["description"] = maximoDataSet.getString("description");
+row["level"] = 1;
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="subDataSet" id="239">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">classstructureid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">level</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">classstructureid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">level</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">classstructureid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">level</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">classstructureid</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">true</property>
+                </structure>
+                <structure>
+                    <property name="name">level</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">0</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">true</property>
+                </structure>
+            </list-property>
+            <method name="open"><![CDATA[subDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+subDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "select classstructure.classstructureid, classstructure.description "
++ " from classstructure "
+// Include the Maximo where clause
++ " where classstructure.parent = ?"
++ " order by classstructure.classstructureid "
+;
+
+subDataSet.setQuery(sqlText);
+subDataSet.setQueryParameterValue(1, inputParams["classstructureid"]);]]></method>
+            <method name="fetch"><![CDATA[if (!subDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["classstructureid"] = subDataSet.getString("classstructureid");
+row["description"] = subDataSet.getString("description");
+row["level"] = inputParams["level"];
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">mainDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">classstructureid</property>
+                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">level</property>
+                    <expression name="expression">dataSetRow["level"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">3.5in</property>
+            </column>
+            <column id="2321">
+                <property name="width">2in</property>
+            </column>
+            <column id="79">
+                <property name="width">4.5in</property>
+            </column>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <label id="2110">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="class_hierarchy.reportname">Classification Hierachy</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="212">
+                    <property name="height">0.06in</property>
+                    <cell id="213">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="2220">
+                <property name="groupName">grpClass</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["classstructureid"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["classstructureid"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always-excluding-last</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="2221">
+                        <property name="height">0.06in</property>
+                        <cell id="2222"/>
+                        <cell id="2317"/>
+                        <cell id="2223"/>
+                    </row>
+                </header>
+                <footer>
+                    <row id="2589">
+                        <property name="height">0.08in</property>
+                        <cell id="2590">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="615">
+                    <property name="style">tableheaderrow</property>
+                    <cell id="616">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="2117">
+                            <property name="width">100%</property>
+                            <column id="2118">
+                                <property name="width">1in</property>
+                                <property name="style">tableheaderlabel</property>
+                            </column>
+                            <column id="2119">
+                                <property name="width">3.5in</property>
+                                <property name="style">tableheaderdata</property>
+                            </column>
+                            <column id="2323">
+                                <property name="width">2in</property>
+                                <property name="style">tableheaderdata</property>
+                            </column>
+                            <column id="2120">
+                                <property name="width">3.5in</property>
+                                <property name="style">tableheaderdata</property>
+                            </column>
+                            <row id="2122">
+                                <cell id="2123">
+                                    <label id="2127">
+                                        <property name="style">tableheaderlabel</property>
+                                        <text-property name="text" key="classstructure">Class Structure:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2124">
+                                    <data id="2129">
+                                        <property name="style">tableheaderdata</property>
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                                <cell id="2322">
+                                    <data id="2128">
+                                        <property name="style">tableheaderdata</property>
+                                        <property name="resultSetColumn">classstructureid</property>
+                                    </data>
+                                </cell>
+                                <cell id="2125"/>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="1093">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="1094">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1104">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="2319">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1103">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">classstructureid</property>
+                            <structure name="action">
+                                <property name="formatType">html</property>
+                                <property name="linkType">drill-through</property>
+                                <property name="reportName">class_struct.rptdesign</property>
+                                <property name="targetWindow">_self</property>
+                                <property name="targetFileType">report-design</property>
+                                <list-property name="paramBindings">
+                                    <structure>
+                                        <property name="paramName">where</property>
+                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">appname</property>
+                                        <expression name="expression">params["appname"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">paramdelimiter</property>
+                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">paramstring</property>
+                                        <expression name="expression">params["paramstring"]</expression>
+                                    </structure>
+                                </list-property>
+                            </structure>
+                        </data>
+                    </cell>
+                    <cell id="1095">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+                <row id="539">
+                    <cell id="540">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <property name="paddingLeft">0pt</property>
+                        <table id="846">
+                            <property name="width">100%</property>
+                            <property name="dataSet">subDataSet</property>
+                            <list-property name="paramBindings">
+                                <structure>
+                                    <property name="paramName">classstructureid</property>
+                                    <expression name="expression">row["classstructureid"]</expression>
+                                </structure>
+                                <structure>
+                                    <property name="paramName">level</property>
+                                    <expression name="expression">row["level"]+1</expression>
+                                </structure>
+                            </list-property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">classstructureid</property>
+                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <expression name="expression">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">level</property>
+                                    <expression name="expression">dataSetRow["level"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                            </list-property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="2427">
+                                <property name="width">0.5in</property>
+                            </column>
+                            <column id="870">
+                                <property name="width">3.5in</property>
+                            </column>
+                            <column id="2326">
+                                <property name="width">2in</property>
+                            </column>
+                            <column id="871">
+                                <property name="width">4in</property>
+                            </column>
+                            <detail>
+                                <row id="856">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="2425">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="paddingLeft">0px</property>
+                                    </cell>
+                                    <cell id="857">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <data id="860">
+                                            <property name="textAlign">left</property>
+                                            <property name="resultSetColumn">description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2324">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="858">
+                                            <property name="textAlign">left</property>
+                                            <property name="resultSetColumn">classstructureid</property>
+                                            <structure name="action">
+                                                <property name="formatType">html</property>
+                                                <property name="linkType">drill-through</property>
+                                                <property name="reportName">class_struct.rptdesign</property>
+                                                <property name="targetWindow">_self</property>
+                                                <property name="targetFileType">report-design</property>
+                                                <list-property name="paramBindings">
+                                                    <structure>
+                                                        <property name="paramName">where</property>
+                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="paramName">appname</property>
+                                                        <expression name="expression">params["appname"]</expression>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="paramName">paramdelimiter</property>
+                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="paramName">paramstring</property>
+                                                        <expression name="expression">params["paramstring"]</expression>
+                                                    </structure>
+                                                </list-property>
+                                            </structure>
+                                        </data>
+                                    </cell>
+                                    <cell id="859">
+                                        <property name="style">tabledetailsdatacell</property>
+                                    </cell>
+                                </row>
+                                <row id="874">
+                                    <cell id="2426">
+                                        <property name="colSpan">4</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="paddingLeft">0pt</property>
+                                        <table id="2327">
+                                            <property name="width">100%</property>
+                                            <property name="dataSet">subDataSet</property>
+                                            <list-property name="paramBindings">
+                                                <structure>
+                                                    <property name="paramName">classstructureid</property>
+                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                </structure>
+                                                <structure>
+                                                    <property name="paramName">level</property>
+                                                    <expression name="expression">row["level"]+1</expression>
+                                                </structure>
+                                            </list-property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">classstructureid</property>
+                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">description</property>
+                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">level</property>
+                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                    <property name="dataType">integer</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="pageBreakInterval">50</property>
+                                            <column id="2430">
+                                                <property name="width">1in</property>
+                                            </column>
+                                            <column id="2336">
+                                                <property name="width">3.5in</property>
+                                            </column>
+                                            <column id="2337">
+                                                <property name="width">2in</property>
+                                            </column>
+                                            <column id="2338">
+                                                <property name="width">3.5in</property>
+                                            </column>
+                                            <detail>
+                                                <row id="2328">
+                                                    <property name="style">tabledetailsdatarow</property>
+                                                    <cell id="2428">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="paddingLeft">0px</property>
+                                                    </cell>
+                                                    <cell id="2329">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="paddingLeft">0px</property>
+                                                        <data id="2330">
+                                                            <property name="textAlign">left</property>
+                                                            <property name="resultSetColumn">description</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="2331">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <data id="2414">
+                                                            <property name="textAlign">left</property>
+                                                            <property name="resultSetColumn">classstructureid</property>
+                                                            <structure name="action">
+                                                                <property name="formatType">html</property>
+                                                                <property name="linkType">drill-through</property>
+                                                                <property name="reportName">class_struct.rptdesign</property>
+                                                                <property name="targetWindow">_self</property>
+                                                                <property name="targetFileType">report-design</property>
+                                                                <list-property name="paramBindings">
+                                                                    <structure>
+                                                                        <property name="paramName">where</property>
+                                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                                    </structure>
+                                                                    <structure>
+                                                                        <property name="paramName">appname</property>
+                                                                        <expression name="expression">params["appname"]</expression>
+                                                                    </structure>
+                                                                    <structure>
+                                                                        <property name="paramName">paramdelimiter</property>
+                                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                                    </structure>
+                                                                    <structure>
+                                                                        <property name="paramName">paramstring</property>
+                                                                        <expression name="expression">params["paramstring"]</expression>
+                                                                    </structure>
+                                                                </list-property>
+                                                            </structure>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="2333">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                    </cell>
+                                                </row>
+                                                <row id="2334">
+                                                    <cell id="2429">
+                                                        <property name="colSpan">4</property>
+                                                        <property name="rowSpan">1</property>
+                                                        <property name="paddingLeft">0pt</property>
+                                                        <table id="2473">
+                                                            <property name="width">100%</property>
+                                                            <property name="dataSet">subDataSet</property>
+                                                            <list-property name="paramBindings">
+                                                                <structure>
+                                                                    <property name="paramName">classstructureid</property>
+                                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                                </structure>
+                                                                <structure>
+                                                                    <property name="paramName">level</property>
+                                                                    <expression name="expression">row["level"]+1</expression>
+                                                                </structure>
+                                                            </list-property>
+                                                            <list-property name="boundDataColumns">
+                                                                <structure>
+                                                                    <property name="name">classstructureid</property>
+                                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                                    <property name="dataType">string</property>
+                                                                </structure>
+                                                                <structure>
+                                                                    <property name="name">description</property>
+                                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                                    <property name="dataType">string</property>
+                                                                </structure>
+                                                                <structure>
+                                                                    <property name="name">level</property>
+                                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                                    <property name="dataType">integer</property>
+                                                                </structure>
+                                                            </list-property>
+                                                            <property name="pageBreakInterval">50</property>
+                                                            <column id="2483">
+                                                                <property name="width">1.5in</property>
+                                                            </column>
+                                                            <column id="2484">
+                                                                <property name="width">3.5in</property>
+                                                            </column>
+                                                            <column id="2485">
+                                                                <property name="width">2in</property>
+                                                            </column>
+                                                            <column id="2486">
+                                                                <property name="width">3in</property>
+                                                            </column>
+                                                            <detail>
+                                                                <row id="2474">
+                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                    <cell id="2475">
+                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                        <property name="paddingLeft">0px</property>
+                                                                    </cell>
+                                                                    <cell id="2476">
+                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                        <property name="paddingLeft">0px</property>
+                                                                        <data id="2477">
+                                                                            <property name="textAlign">left</property>
+                                                                            <property name="resultSetColumn">description</property>
+                                                                        </data>
+                                                                    </cell>
+                                                                    <cell id="2478">
+                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                        <data id="2479">
+                                                                            <property name="textAlign">left</property>
+                                                                            <property name="resultSetColumn">classstructureid</property>
+                                                                            <structure name="action">
+                                                                                <property name="formatType">html</property>
+                                                                                <property name="linkType">drill-through</property>
+                                                                                <property name="reportName">class_struct.rptdesign</property>
+                                                                                <property name="targetWindow">_self</property>
+                                                                                <property name="targetFileType">report-design</property>
+                                                                                <list-property name="paramBindings">
+                                                                                    <structure>
+                                                                                        <property name="paramName">where</property>
+                                                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                                                    </structure>
+                                                                                    <structure>
+                                                                                        <property name="paramName">appname</property>
+                                                                                        <expression name="expression">params["appname"]</expression>
+                                                                                    </structure>
+                                                                                    <structure>
+                                                                                        <property name="paramName">paramdelimiter</property>
+                                                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                                                    </structure>
+                                                                                    <structure>
+                                                                                        <property name="paramName">paramstring</property>
+                                                                                        <expression name="expression">params["paramstring"]</expression>
+                                                                                    </structure>
+                                                                                </list-property>
+                                                                            </structure>
+                                                                        </data>
+                                                                    </cell>
+                                                                    <cell id="2480">
+                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                    </cell>
+                                                                </row>
+                                                                <row id="2481">
+                                                                    <cell id="2482">
+                                                                        <property name="colSpan">4</property>
+                                                                        <property name="rowSpan">1</property>
+                                                                        <property name="paddingLeft">0pt</property>
+                                                                        <table id="2487">
+                                                                            <property name="width">100%</property>
+                                                                            <property name="dataSet">subDataSet</property>
+                                                                            <list-property name="paramBindings">
+                                                                                <structure>
+                                                                                    <property name="paramName">classstructureid</property>
+                                                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="paramName">level</property>
+                                                                                    <expression name="expression">row["level"]+1</expression>
+                                                                                </structure>
+                                                                            </list-property>
+                                                                            <list-property name="boundDataColumns">
+                                                                                <structure>
+                                                                                    <property name="name">classstructureid</property>
+                                                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                                                    <property name="dataType">string</property>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="name">description</property>
+                                                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                                                    <property name="dataType">string</property>
+                                                                                </structure>
+                                                                                <structure>
+                                                                                    <property name="name">level</property>
+                                                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                                                    <property name="dataType">integer</property>
+                                                                                </structure>
+                                                                            </list-property>
+                                                                            <property name="pageBreakInterval">50</property>
+                                                                            <column id="2497">
+                                                                                <property name="width">2in</property>
+                                                                            </column>
+                                                                            <column id="2498">
+                                                                                <property name="width">3.5in</property>
+                                                                            </column>
+                                                                            <column id="2499">
+                                                                                <property name="width">2in</property>
+                                                                            </column>
+                                                                            <column id="2500">
+                                                                                <property name="width">2.5in</property>
+                                                                            </column>
+                                                                            <detail>
+                                                                                <row id="2488">
+                                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                                    <cell id="2489">
+                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                        <property name="paddingLeft">0px</property>
+                                                                                    </cell>
+                                                                                    <cell id="2490">
+                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                        <property name="paddingLeft">0px</property>
+                                                                                        <data id="2491">
+                                                                                            <property name="textAlign">left</property>
+                                                                                            <property name="resultSetColumn">description</property>
+                                                                                        </data>
+                                                                                    </cell>
+                                                                                    <cell id="2492">
+                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                        <data id="2493">
+                                                                                            <property name="textAlign">left</property>
+                                                                                            <property name="resultSetColumn">classstructureid</property>
+                                                                                            <structure name="action">
+                                                                                                <property name="formatType">html</property>
+                                                                                                <property name="linkType">drill-through</property>
+                                                                                                <property name="reportName">class_struct.rptdesign</property>
+                                                                                                <property name="targetWindow">_self</property>
+                                                                                                <property name="targetFileType">report-design</property>
+                                                                                                <list-property name="paramBindings">
+                                                                                                    <structure>
+                                                                                                        <property name="paramName">where</property>
+                                                                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                                                                    </structure>
+                                                                                                    <structure>
+                                                                                                        <property name="paramName">appname</property>
+                                                                                                        <expression name="expression">params["appname"]</expression>
+                                                                                                    </structure>
+                                                                                                    <structure>
+                                                                                                        <property name="paramName">paramdelimiter</property>
+                                                                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                                                                    </structure>
+                                                                                                    <structure>
+                                                                                                        <property name="paramName">paramstring</property>
+                                                                                                        <expression name="expression">params["paramstring"]</expression>
+                                                                                                    </structure>
+                                                                                                </list-property>
+                                                                                            </structure>
+                                                                                        </data>
+                                                                                    </cell>
+                                                                                    <cell id="2494">
+                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                    </cell>
+                                                                                </row>
+                                                                                <row id="2495">
+                                                                                    <cell id="2496">
+                                                                                        <property name="colSpan">4</property>
+                                                                                        <property name="rowSpan">1</property>
+                                                                                        <property name="paddingLeft">0pt</property>
+                                                                                        <table id="2501">
+                                                                                            <property name="width">100%</property>
+                                                                                            <property name="dataSet">subDataSet</property>
+                                                                                            <list-property name="paramBindings">
+                                                                                                <structure>
+                                                                                                    <property name="paramName">classstructureid</property>
+                                                                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                                                                </structure>
+                                                                                                <structure>
+                                                                                                    <property name="paramName">level</property>
+                                                                                                    <expression name="expression">row["level"]+1</expression>
+                                                                                                </structure>
+                                                                                            </list-property>
+                                                                                            <list-property name="boundDataColumns">
+                                                                                                <structure>
+                                                                                                    <property name="name">classstructureid</property>
+                                                                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                                                                    <property name="dataType">string</property>
+                                                                                                </structure>
+                                                                                                <structure>
+                                                                                                    <property name="name">description</property>
+                                                                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                                                                    <property name="dataType">string</property>
+                                                                                                </structure>
+                                                                                                <structure>
+                                                                                                    <property name="name">level</property>
+                                                                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                                                                    <property name="dataType">integer</property>
+                                                                                                </structure>
+                                                                                            </list-property>
+                                                                                            <property name="pageBreakInterval">50</property>
+                                                                                            <column id="2511">
+                                                                                                <property name="width">2.5in</property>
+                                                                                            </column>
+                                                                                            <column id="2512">
+                                                                                                <property name="width">3.5in</property>
+                                                                                            </column>
+                                                                                            <column id="2513">
+                                                                                                <property name="width">2in</property>
+                                                                                            </column>
+                                                                                            <column id="2514">
+                                                                                                <property name="width">2in</property>
+                                                                                            </column>
+                                                                                            <detail>
+                                                                                                <row id="2502">
+                                                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                                                    <cell id="2503">
+                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                    </cell>
+                                                                                                    <cell id="2504">
+                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                        <data id="2505">
+                                                                                                            <property name="textAlign">left</property>
+                                                                                                            <property name="resultSetColumn">description</property>
+                                                                                                        </data>
+                                                                                                    </cell>
+                                                                                                    <cell id="2506">
+                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                        <data id="2507">
+                                                                                                            <property name="textAlign">left</property>
+                                                                                                            <property name="resultSetColumn">classstructureid</property>
+                                                                                                            <structure name="action">
+                                                                                                                <property name="formatType">html</property>
+                                                                                                                <property name="linkType">drill-through</property>
+                                                                                                                <property name="reportName">class_struct.rptdesign</property>
+                                                                                                                <property name="targetWindow">_self</property>
+                                                                                                                <property name="targetFileType">report-design</property>
+                                                                                                                <list-property name="paramBindings">
+                                                                                                                    <structure>
+                                                                                                                        <property name="paramName">where</property>
+                                                                                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                                                                                    </structure>
+                                                                                                                    <structure>
+                                                                                                                        <property name="paramName">appname</property>
+                                                                                                                        <expression name="expression">params["appname"]</expression>
+                                                                                                                    </structure>
+                                                                                                                    <structure>
+                                                                                                                        <property name="paramName">paramdelimiter</property>
+                                                                                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                                                                                    </structure>
+                                                                                                                    <structure>
+                                                                                                                        <property name="paramName">paramstring</property>
+                                                                                                                        <expression name="expression">params["paramstring"]</expression>
+                                                                                                                    </structure>
+                                                                                                                </list-property>
+                                                                                                            </structure>
+                                                                                                        </data>
+                                                                                                    </cell>
+                                                                                                    <cell id="2508">
+                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                    </cell>
+                                                                                                </row>
+                                                                                                <row id="2509">
+                                                                                                    <cell id="2510">
+                                                                                                        <property name="colSpan">4</property>
+                                                                                                        <property name="rowSpan">1</property>
+                                                                                                        <property name="paddingLeft">0pt</property>
+                                                                                                        <table id="2540">
+                                                                                                            <property name="width">100%</property>
+                                                                                                            <property name="dataSet">subDataSet</property>
+                                                                                                            <list-property name="paramBindings">
+                                                                                                                <structure>
+                                                                                                                    <property name="paramName">classstructureid</property>
+                                                                                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                                                                                </structure>
+                                                                                                                <structure>
+                                                                                                                    <property name="paramName">level</property>
+                                                                                                                    <expression name="expression">row["level"]+1</expression>
+                                                                                                                </structure>
+                                                                                                            </list-property>
+                                                                                                            <list-property name="boundDataColumns">
+                                                                                                                <structure>
+                                                                                                                    <property name="name">classstructureid</property>
+                                                                                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                                                                                    <property name="dataType">string</property>
+                                                                                                                </structure>
+                                                                                                                <structure>
+                                                                                                                    <property name="name">description</property>
+                                                                                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                                                                                    <property name="dataType">string</property>
+                                                                                                                </structure>
+                                                                                                                <structure>
+                                                                                                                    <property name="name">level</property>
+                                                                                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                                                                                    <property name="dataType">integer</property>
+                                                                                                                </structure>
+                                                                                                            </list-property>
+                                                                                                            <property name="pageBreakInterval">50</property>
+                                                                                                            <column id="2551">
+                                                                                                                <property name="width">3in</property>
+                                                                                                            </column>
+                                                                                                            <column id="2552">
+                                                                                                                <property name="width">3.5in</property>
+                                                                                                            </column>
+                                                                                                            <column id="2553">
+                                                                                                                <property name="width">2in</property>
+                                                                                                            </column>
+                                                                                                            <column id="2554">
+                                                                                                                <property name="width">1.5in</property>
+                                                                                                            </column>
+                                                                                                            <detail>
+                                                                                                                <row id="2541">
+                                                                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                                                                    <cell id="2542">
+                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                                    </cell>
+                                                                                                                    <cell id="2543">
+                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                                        <data id="2544">
+                                                                                                                            <property name="textAlign">left</property>
+                                                                                                                            <property name="resultSetColumn">description</property>
+                                                                                                                        </data>
+                                                                                                                    </cell>
+                                                                                                                    <cell id="2545">
+                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                        <data id="2546">
+                                                                                                                            <property name="textAlign">left</property>
+                                                                                                                            <property name="resultSetColumn">classstructureid</property>
+                                                                                                                            <structure name="action">
+                                                                                                                                <property name="formatType">html</property>
+                                                                                                                                <property name="linkType">drill-through</property>
+                                                                                                                                <property name="reportName">class_struct.rptdesign</property>
+                                                                                                                                <property name="targetWindow">_self</property>
+                                                                                                                                <property name="targetFileType">report-design</property>
+                                                                                                                                <list-property name="paramBindings">
+                                                                                                                                    <structure>
+                                                                                                                                        <property name="paramName">where</property>
+                                                                                                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                                                                                                    </structure>
+                                                                                                                                    <structure>
+                                                                                                                                        <property name="paramName">appname</property>
+                                                                                                                                        <expression name="expression">params["appname"]</expression>
+                                                                                                                                    </structure>
+                                                                                                                                    <structure>
+                                                                                                                                        <property name="paramName">paramdelimiter</property>
+                                                                                                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                                                                                                    </structure>
+                                                                                                                                    <structure>
+                                                                                                                                        <property name="paramName">paramstring</property>
+                                                                                                                                        <expression name="expression">params["paramstring"]</expression>
+                                                                                                                                    </structure>
+                                                                                                                                </list-property>
+                                                                                                                            </structure>
+                                                                                                                        </data>
+                                                                                                                    </cell>
+                                                                                                                    <cell id="2547">
+                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                    </cell>
+                                                                                                                </row>
+                                                                                                                <row id="2549">
+                                                                                                                    <cell id="2550">
+                                                                                                                        <property name="colSpan">4</property>
+                                                                                                                        <property name="rowSpan">1</property>
+                                                                                                                        <property name="paddingLeft">0pt</property>
+                                                                                                                        <table id="2570">
+                                                                                                                            <property name="width">100%</property>
+                                                                                                                            <property name="dataSet">subDataSet</property>
+                                                                                                                            <list-property name="paramBindings">
+                                                                                                                                <structure>
+                                                                                                                                    <property name="paramName">classstructureid</property>
+                                                                                                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                                                                                                </structure>
+                                                                                                                                <structure>
+                                                                                                                                    <property name="paramName">level</property>
+                                                                                                                                    <expression name="expression">row["level"]+1</expression>
+                                                                                                                                </structure>
+                                                                                                                            </list-property>
+                                                                                                                            <list-property name="boundDataColumns">
+                                                                                                                                <structure>
+                                                                                                                                    <property name="name">classstructureid</property>
+                                                                                                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                                                                                                    <property name="dataType">string</property>
+                                                                                                                                </structure>
+                                                                                                                                <structure>
+                                                                                                                                    <property name="name">description</property>
+                                                                                                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                                                                                                    <property name="dataType">string</property>
+                                                                                                                                </structure>
+                                                                                                                                <structure>
+                                                                                                                                    <property name="name">level</property>
+                                                                                                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                                                                                                    <property name="dataType">integer</property>
+                                                                                                                                </structure>
+                                                                                                                            </list-property>
+                                                                                                                            <property name="pageBreakInterval">50</property>
+                                                                                                                            <column id="2581">
+                                                                                                                                <property name="width">3.5in</property>
+                                                                                                                            </column>
+                                                                                                                            <column id="2582">
+                                                                                                                                <property name="width">3.5in</property>
+                                                                                                                            </column>
+                                                                                                                            <column id="2583">
+                                                                                                                                <property name="width">2in</property>
+                                                                                                                            </column>
+                                                                                                                            <column id="2584">
+                                                                                                                                <property name="width">1in</property>
+                                                                                                                            </column>
+                                                                                                                            <detail>
+                                                                                                                                <row id="2571">
+                                                                                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                                                                                    <cell id="2572">
+                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                                                    </cell>
+                                                                                                                                    <cell id="2573">
+                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                                                        <data id="2574">
+                                                                                                                                            <property name="textAlign">left</property>
+                                                                                                                                            <property name="resultSetColumn">description</property>
+                                                                                                                                        </data>
+                                                                                                                                    </cell>
+                                                                                                                                    <cell id="2575">
+                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                        <data id="2576">
+                                                                                                                                            <property name="textAlign">left</property>
+                                                                                                                                            <property name="resultSetColumn">classstructureid</property>
+                                                                                                                                            <structure name="action">
+                                                                                                                                                <property name="formatType">html</property>
+                                                                                                                                                <property name="linkType">drill-through</property>
+                                                                                                                                                <property name="reportName">class_struct.rptdesign</property>
+                                                                                                                                                <property name="targetWindow">_self</property>
+                                                                                                                                                <property name="targetFileType">report-design</property>
+                                                                                                                                                <list-property name="paramBindings">
+                                                                                                                                                    <structure>
+                                                                                                                                                        <property name="paramName">where</property>
+                                                                                                                                                        <expression name="expression">"classstructure.classstructureid = '" + row["classstructureid"] + "'"</expression>
+                                                                                                                                                    </structure>
+                                                                                                                                                    <structure>
+                                                                                                                                                        <property name="paramName">appname</property>
+                                                                                                                                                        <expression name="expression">params["appname"]</expression>
+                                                                                                                                                    </structure>
+                                                                                                                                                    <structure>
+                                                                                                                                                        <property name="paramName">paramdelimiter</property>
+                                                                                                                                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                                                                                                                                    </structure>
+                                                                                                                                                    <structure>
+                                                                                                                                                        <property name="paramName">paramstring</property>
+                                                                                                                                                        <expression name="expression">params["paramstring"]</expression>
+                                                                                                                                                    </structure>
+                                                                                                                                                </list-property>
+                                                                                                                                            </structure>
+                                                                                                                                        </data>
+                                                                                                                                    </cell>
+                                                                                                                                    <cell id="2577">
+                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                    </cell>
+                                                                                                                                </row>
+                                                                                                                                <row id="2579">
+                                                                                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                                                                                    <cell id="2580">
+                                                                                                                                        <property name="colSpan">4</property>
+                                                                                                                                        <property name="rowSpan">1</property>
+                                                                                                                                        <property name="paddingLeft">0pt</property>
+                                                                                                                                        <table id="2399">
+                                                                                                                                            <property name="width">100%</property>
+                                                                                                                                            <property name="dataSet">subDataSet</property>
+                                                                                                                                            <list-property name="paramBindings">
+                                                                                                                                                <structure>
+                                                                                                                                                    <property name="paramName">classstructureid</property>
+                                                                                                                                                    <expression name="expression">row["classstructureid"]</expression>
+                                                                                                                                                </structure>
+                                                                                                                                                <structure>
+                                                                                                                                                    <property name="paramName">level</property>
+                                                                                                                                                    <expression name="expression">row["level"]+1</expression>
+                                                                                                                                                </structure>
+                                                                                                                                            </list-property>
+                                                                                                                                            <list-property name="boundDataColumns">
+                                                                                                                                                <structure>
+                                                                                                                                                    <property name="name">classstructureid</property>
+                                                                                                                                                    <expression name="expression">dataSetRow["classstructureid"]</expression>
+                                                                                                                                                    <property name="dataType">string</property>
+                                                                                                                                                </structure>
+                                                                                                                                                <structure>
+                                                                                                                                                    <property name="name">description</property>
+                                                                                                                                                    <expression name="expression">dataSetRow["description"]</expression>
+                                                                                                                                                    <property name="dataType">string</property>
+                                                                                                                                                </structure>
+                                                                                                                                                <structure>
+                                                                                                                                                    <property name="name">level</property>
+                                                                                                                                                    <expression name="expression">dataSetRow["level"]</expression>
+                                                                                                                                                    <property name="dataType">integer</property>
+                                                                                                                                                </structure>
+                                                                                                                                            </list-property>
+                                                                                                                                            <property name="pageBreakInterval">50</property>
+                                                                                                                                            <column id="2532">
+                                                                                                                                                <property name="width">3.5in</property>
+                                                                                                                                            </column>
+                                                                                                                                            <column id="2408">
+                                                                                                                                                <property name="width">3.5in</property>
+                                                                                                                                            </column>
+                                                                                                                                            <column id="2409">
+                                                                                                                                                <property name="width">2in</property>
+                                                                                                                                            </column>
+                                                                                                                                            <column id="2424">
+                                                                                                                                                <property name="width">0.5in</property>
+                                                                                                                                            </column>
+                                                                                                                                            <detail>
+                                                                                                                                                <row id="2400">
+                                                                                                                                                    <property name="style">tabledetailsdatarow</property>
+                                                                                                                                                    <cell id="2531">
+                                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                                                                    </cell>
+                                                                                                                                                    <cell id="2401">
+                                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                                        <property name="paddingLeft">0px</property>
+                                                                                                                                                        <data id="2402">
+                                                                                                                                                            <property name="textAlign">left</property>
+                                                                                                                                                            <property name="resultSetColumn">description</property>
+                                                                                                                                                        </data>
+                                                                                                                                                    </cell>
+                                                                                                                                                    <cell id="2403">
+                                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                                        <data id="2422">
+                                                                                                                                                            <property name="textAlign">left</property>
+                                                                                                                                                            <property name="resultSetColumn">classstructureid</property>
+                                                                                                                                                            <structure name="action">
+                                                                                                                                                                <property name="formatType">html</property>
+                                                                                                                                                                <property name="linkType">drill-through</property>
+                                                                                                                                                                <property name="reportName">class_hierarchy.rptdesign</property>
+                                                                                                                                                                <property name="targetWindow">_self</property>
+                                                                                                                                                                <property name="targetFileType">report-design</property>
+                                                                                                                                                                <list-property name="paramBindings">
+                                                                                                                                                                    <structure>
+                                                                                                                                                                        <property name="paramName">where</property>
+                                                                                                                                                                        <expression name="expression">"classstructure.classstructureid=" + row["classstructureid"]</expression>
+                                                                                                                                                                    </structure>
+                                                                                                                                                                    <structure>
+                                                                                                                                                                        <property name="paramName">appname</property>
+                                                                                                                                                                        <expression name="expression">params["appname"]</expression>
+                                                                                                                                                                    </structure>
+                                                                                                                                                                </list-property>
+                                                                                                                                                            </structure>
+                                                                                                                                                        </data>
+                                                                                                                                                    </cell>
+                                                                                                                                                    <cell id="2423">
+                                                                                                                                                        <property name="style">tabledetailsdatacell</property>
+                                                                                                                                                    </cell>
+                                                                                                                                                </row>
+                                                                                                                                            </detail>
+                                                                                                                                        </table>
+                                                                                                                                    </cell>
+                                                                                                                                </row>
+                                                                                                                            </detail>
+                                                                                                                        </table>
+                                                                                                                    </cell>
+                                                                                                                </row>
+                                                                                                            </detail>
+                                                                                                        </table>
+                                                                                                    </cell>
+                                                                                                </row>
+                                                                                            </detail>
+                                                                                        </table>
+                                                                                    </cell>
+                                                                                </row>
+                                                                            </detail>
+                                                                        </table>
+                                                                    </cell>
+                                                                </row>
+                                                            </detail>
+                                                        </table>
+                                                    </cell>
+                                                </row>
+                                            </detail>
+                                        </table>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="2585">
+                    <property name="height">0.08in</property>
+                    <cell id="2586">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

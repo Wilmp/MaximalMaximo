@@ -1,0 +1,1919 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <text-property name="title">Kwaliteitscontrole QC-vrijgave</text-property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="stelstam" id="1743">
+            <text-property name="promptText">Stel/Stam</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="matserie" id="1742">
+            <text-property name="promptText">Materieelserie</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="worklocation" id="1671">
+            <text-property name="promptText">Werklocatie</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdt" id="1672">
+            <text-property name="promptText">Van</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddt" id="1673">
+            <text-property name="promptText">Tot</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wogroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">beschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">materieelserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">stelstam</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">uitvoerder</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">persoon</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">actfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">werklocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">qctype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">matinfo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">reden</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">vrijgave</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">ldtext</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">volgorde</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">TASKWO</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">CONF</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wogroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">beschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">materieelserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">stelstam</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">uitvoerder</property>
+                </structure>
+                <structure>
+                    <property name="columnName">persoon</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">werklocatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">qctype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">matinfo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reden</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vrijgave</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ldtext</property>
+                </structure>
+                <structure>
+                    <property name="columnName">volgorde</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TASKWO</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CONF</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wogroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">beschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">materieelserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">stelstam</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">uitvoerder</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">persoon</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">actfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">werklocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">qctype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">matinfo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">reden</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">vrijgave</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">ldtext</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">volgorde</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">TASKWO</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">CONF</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//RYZ 20181012: S75.847 Nieuw rapport, Kwaliteitscontrole QC-vrijgave
+//RYZ 20190730: S87.1802 uitbreiding met QC vrijgave, QC checklijst, WIG checklijst, Resultaat vrijgave, groepering op WOgroup
+//WMU 20200305: S97.2405 QC checklijst en WIG checklijst in subqueries gezet
+
+var sqlText = new String();
+var stelstam= new String();
+var matserie= new String();
+var locatie	= new String();
+var actfinishBetween = new (String);
+
+if(params["stelstam"].value) 
+{
+    stelstam +=   MXReportSqlFormat.createParamWhereClause("woactivity.ntserialnum", params["stelstam"] );
+}
+if(params["matserie"].value) 
+{
+    matserie +=   MXReportSqlFormat.createParamWhereClause("woactivity.ntserie", params["matserie"] );
+}
+if(params["worklocation"].value) 
+{
+    locatie +=   MXReportSqlFormat.createParamWhereClause("woactivity.worklocation", params["worklocation"] );
+}
+if (params["startdt"].value)
+	actfinishBetween += " and WOACTIVITY.ACTFINISH >= "+ MXReportSqlFormat.getTimestampFunction(params["startdt"]) ;
+if (params["enddt"].value)
+	actfinishBetween += " and WOACTIVITY.ACTFINISH <= "+ MXReportSqlFormat.getTimestampFunction(params["enddt"]) ;
+	
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " WOACTIVITY.WOGROUP as wogroup, "
++ " (select workorder.description from workorder where workorder.wonum=WOACTIVITY.wogroup) as beschrijving, "
++ " WOACTIVITY.NTSERIE as materieelserie, "
++ " WOACTIVITY.NTSERIALNUM as stelstam, "
++ " WOACTIVITY.STATUS as status, "
++ " wostatus.CHANGEBY as uitvoerder, "
++ " person.displayname as persoon, "
++ " WOACTIVITY.ACTFINISH as actfinish, "
++ " WOACTIVITY.WORKLOCATION as werklocatie, "
++ " WOACTIVITY.wonum as taskwo, "
++ " NTCHECKLIST.NTQCTYPE as qctype, "
++ " NTCHECKLIST.NTMATERIEEL as matinfo, "
++ " (case when NTCHECKLISTTASK.DEFECT=1 then 'J' else 'N' end) CONF, "
++ " NTCHECKLISTTASK.REMARKS as reden, "
+//--Resultaat vrijgave
++ " longdescription.ldtext, "
++ " NTCHECKLIST.NTVRIJGAVE as vrijgave "
++ " from WOACTIVITY "
++ " left join NTCHECKLIST on NTCHECKLIST.REFWO=WOACTIVITY.WONUM "
++ " left join NTCHECKLISTTASK on NTCHECKLISTTASK.REFWO=WOACTIVITY.wonum and NTCHECKLISTTASK.CLTASKNUM =10"
++ " left outer join wostatus on wostatus.wonum=woactivity.wonum  and wostatus.status='GEREED' and wostatus.siteid=woactivity.siteid "
++ " left outer join person on person.personid=wostatus.changeby and wostatus.status='GEREED' "
++ " left join longdescription on longdescription.ldkey=ntchecklist.ntchecklistid and NTCHECKLIST.REFWO=WOACTIVITY.wogroup"
++ " left outer join RELATEDRECORD on relatedrecord.relatedreckey=woactivity.wogroup and RELATEDRECORD.RELATETYPE='FOLLOWUP' "
++ " where WOACTIVITY.NTCLNUM='QC' "
++ " and" + stelstam
++ " and" + matserie
++ " and" + locatie
++ actfinishBetween
++ " order by woactivity.actfinish"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["wogroup"] = maximoDataSet.getString("wogroup");	
+row["beschrijving"] = maximoDataSet.getString("beschrijving");
+row["materieelserie"] = maximoDataSet.getString("materieelserie");
+row["stelstam"] = maximoDataSet.getString("stelstam");
+row["status"] = maximoDataSet.getString("status");
+row["uitvoerder"] = maximoDataSet.getString("uitvoerder");
+row["persoon"] = maximoDataSet.getString("persoon");
+row["actfinish"] = maximoDataSet.getTimestamp("actfinish");
+row["werklocatie"] = maximoDataSet.getString("werklocatie");
+row["qctype"] = maximoDataSet.getString("qctype");
+row["matinfo"] = maximoDataSet.getString("matinfo");
+row["reden"] = maximoDataSet.getString("reden");
+
+row["CONF"] = maximoDataSet.getString("CONF");
+row["vrijgave"] = maximoDataSet.getString("vrijgave");
+row["ldtext"] = maximoDataSet.getString("ldtext");
+row["TASKWO"] = maximoDataSet.getString("TASKWO");
+//row["volgorde"] = maximoDataSet.getString("volgorde");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="WIGWO" id="3700">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">woomschr</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">primpotype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">werktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">locatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">SDM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">woactfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">goedgekeurd</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">afgekeurd</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">opmerkingen</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">woomschr</property>
+                </structure>
+                <structure>
+                    <property name="columnName">primpotype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">werktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SDM</property>
+                </structure>
+                <structure>
+                    <property name="columnName">woactfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">goedgekeurd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">afgekeurd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">opmerkingen</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">woomschr</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">primpotype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">werktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">locatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">SDM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">woactfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">goedgekeurd</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">afgekeurd</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">opmerkingen</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+	maximoDataSet.open();
+	var sqlText = new String();
+
+sqlText = " select "
++ " NTQCONWO.WONUM as wonum, "
++ " WORKORDER.DESCRIPTION as woomschr, "
++ " WORKORDER.NTPRIMPOTYPE as primpotype, "
++ " WORKORDER.WORKTYPE as werktype, "
++ " ASSET.SERIALNUM as serialnum, "
++ " WORKORDER.WORKLOCATION as locatie, "
++ " classstructure.CLASSIFICATIONID as SDM, "
++ " WORKORDER.ACTFINISH as woactfinish, "
++ " NTQCONWO.NTQCAPPROVED as goedgekeurd, "
++ " NTQCONWO.NTQCDISAPPROVED as afgekeurd, "
++ " NTQCONWO.DESCRIPTION as opmerkingen "
++ " from NTQCONWO   "
++ " 	left join WORKORDER on WORKORDER.WORKORDERID = NTQCONWO.WORKORDERID  "
++ " 	left join ASSETTRANS on NTQCONWO.ASSETTRANSID = ASSETTRANS.ASSETTRANSID  "
++ " 		left join classstructure on workorder.CLASSSTRUCTUREID = classstructure.CLASSSTRUCTUREID  "
++ " 		left join asset on asset.assetnum=workorder.assetnum  "
++ " where NTQCONWO.REFWO = 'M112753614' " 
+;
+	maximoDataSet.setQuery(sqlText);
+	//" + rows[0]["TASKWO"] + "]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	   return (false);
+	// Add a line for each output column
+	row["wonum"] = maximoDataSet.getString("wonum");
+	row["woomschr"] = maximoDataSet.getString("woomschr");
+	row["primpotype"] = maximoDataSet.getString("primpotype");
+	row["werktype"] = maximoDataSet.getString("werktype");
+	row["serialnum"] = maximoDataSet.getString("serialnum");
+	row["locatie"] = maximoDataSet.getString("locatie");
+	row["woactfinish"] = maximoDataSet.getString("woactfinish");
+	row["goedgekeurd"] = maximoDataSet.getString("goedgekeurd");
+	row["afgekeurd"] = maximoDataSet.getString("afgekeurd");
+	row["opmerkingen"] = maximoDataSet.getString("opmerkingen");	
+	
+	
+	
+	return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="CHECKLISTTASK" id="3822">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">0</property>
+                    <property name="name">taakbeschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">vervolgwerkorder</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">OK</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">NOK</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">CLTASKNUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">taakbeschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vervolgwerkorder</property>
+                </structure>
+                <structure>
+                    <property name="columnName">OK</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NOK</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CLTASKNUM</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">taakbeschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">vervolgwerkorder</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">OK</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">NOK</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">CLTASKNUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+	maximoDataSet.open();
+	var sqlText = new String();
+	// Add MM-Maximo query to sqlText variable.
+	sqlText = " select NTCHECKLISTTASK.CLTASKNUM as CLTASKNUM, "
++ " NTCHECKLISTTASK.DESCRIPTION as taakbeschrijving,  "
++ " (case when NTCHECKLISTTASK.CHECKED=0 then 'N' else 'J' end) OK, "
++ " (case when NTCHECKLISTTASK.DEFECT=0 then 'N' else 'J' end ) as NOK, " 
++ " NTCHECKLISTTASK.FOLLOWUPREFWO as vervolgwerkorder "
++ " from NTCHECKLISTTASK "
++ " where NTCHECKLISTTASK.REFWO='" + rows[0]["TASKWO"] + "'   "
++ " and NTCHECKLISTTASK.CLTASKNUM between 15 and 100  "
+;
+
+
+	
+	
+	maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	   return (false);
+	// Add a line for each output column
+	row["taakbeschrijving"] = maximoDataSet.getString("taakbeschrijving");
+	row["OK"] = maximoDataSet.getString("OK");
+	row["NOK"] = maximoDataSet.getString("NOK");
+	row["vervolgwerkorder"] = maximoDataSet.getDouble("vervolgwerkorder");
+	row["CLTASKNUM"] = maximoDataSet.getString("CLTASKNUM");
+	return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="type">a3</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="pageBreakAfter">avoid</property>
+            <property name="pageBreakBefore">auto</property>
+            <property name="pageBreakInside">avoid</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">wogroup</property>
+                    <text-property name="displayName">wogroup</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wogroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">beschrijving</property>
+                    <text-property name="displayName">beschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["beschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">uitvoerder</property>
+                    <text-property name="displayName">uitvoerder</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["uitvoerder"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werklocatie</property>
+                    <text-property name="displayName">werklocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werklocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">qctype</property>
+                    <text-property name="displayName">qctype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["qctype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">volgorde</property>
+                    <text-property name="displayName">volgorde</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["volgorde"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">materieelserie</property>
+                    <text-property name="displayName">materieelserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["materieelserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">stelstam</property>
+                    <text-property name="displayName">stelstam</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["stelstam"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">persoon</property>
+                    <text-property name="displayName">persoon</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["persoon"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">matinfo</property>
+                    <text-property name="displayName">matinfo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["matinfo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reden</property>
+                    <text-property name="displayName">reden</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reden"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vrijgave</property>
+                    <text-property name="displayName">vrijgave</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["vrijgave"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ldtext</property>
+                    <text-property name="displayName">ldtext</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ldtext"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">actfinish</property>
+                    <text-property name="displayName">actfinish</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["actfinish"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">taskwo</property>
+                    <text-property name="displayName">TASKWO</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TASKWO"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">TASKWO</property>
+                    <text-property name="displayName">TASKWO</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TASKWO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CONF</property>
+                    <text-property name="displayName">CONF</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CONF"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">7cm</property>
+            </column>
+            <column id="79">
+                <property name="width">4cm</property>
+            </column>
+            <column id="1736">
+                <property name="width">4cm</property>
+            </column>
+            <column id="91">
+                <property name="width">8cm</property>
+            </column>
+            <column id="2587">
+                <property name="width">3cm</property>
+            </column>
+            <column id="3570">
+                <property name="whiteSpace">nowrap</property>
+                <property name="width">3cm</property>
+            </column>
+            <column id="3593">
+                <property name="whiteSpace">nowrap</property>
+                <property name="width">3cm</property>
+            </column>
+            <column id="3616">
+                <property name="whiteSpace">nowrap</property>
+                <property name="width">3cm</property>
+            </column>
+            <column id="3639">
+                <property name="whiteSpace">nowrap</property>
+                <property name="width">3cm</property>
+            </column>
+            <column id="3662">
+                <property name="whiteSpace">nowrap</property>
+                <property name="width">3cm</property>
+            </column>
+            <column id="2606">
+                <property name="whiteSpace">nowrap</property>
+                <property name="width">3cm</property>
+            </column>
+            <header>
+                <row id="345">
+                    <property name="style">title</property>
+                    <cell id="346">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1640">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <text-property name="text"> nt_kwaliteitscontrole_QC_vrijgave.rptdesign v20200305</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <property name="textAlign">center</property>
+                    <cell id="181">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">center</property>
+                        <label id="1641">
+                            <property name="fontSize">150%</property>
+                            <property name="textAlign">center</property>
+                            <property name="whiteSpace">nowrap</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Kwaliteitscontrole QC-vrijgave</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="167">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="1980">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">2.6875in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Test</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="1978">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="1977">
+                                        <property name="resultSetColumn">wogroup</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="1979">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="1733">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="2572">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="3551">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="3574">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="3597">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="3620">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="3643">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="2591">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="1988">
+                <property name="groupName">NewTableGroup2</property>
+                <expression name="keyExpr" type="javascript">row["wogroup"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["wogroup"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="1989">
+                        <property name="backgroundColor">#408080</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <cell id="1990">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <label id="96">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">WO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1991">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <label id="2411">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Beschrijving</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1992">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <label id="1740">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Stel/Stam</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1993">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <label id="2413">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Status</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2573">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <label id="1666">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Uitvoerder</text-property>
+                            </label>
+                        </cell>
+                        <cell id="3552">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <label id="2414">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Datum taak gereed</text-property>
+                            </label>
+                        </cell>
+                        <cell id="3575">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                        </cell>
+                        <cell id="3598">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                        </cell>
+                        <cell id="3621">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                        </cell>
+                        <cell id="3644">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                        </cell>
+                        <cell id="2592">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                        </cell>
+                    </row>
+                    <row id="2386">
+                        <property name="backgroundColor">#B1CFBC</property>
+                        <property name="pageBreakAfter">avoid</property>
+                        <property name="pageBreakBefore">avoid</property>
+                        <cell id="2387">
+                            <data id="2021">
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">wogroup</property>
+                            </data>
+                        </cell>
+                        <cell id="2388">
+                            <data id="2048">
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">beschrijving</property>
+                            </data>
+                        </cell>
+                        <cell id="2389">
+                            <data id="2309">
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">stelstam</property>
+                            </data>
+                        </cell>
+                        <cell id="2390">
+                            <data id="2412">
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">status</property>
+                            </data>
+                        </cell>
+                        <cell id="2574">
+                            <data id="2307">
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">persoon</property>
+                            </data>
+                        </cell>
+                        <cell id="3553">
+                            <data id="3699">
+                                <property name="resultSetColumn">actfinish</property>
+                            </data>
+                        </cell>
+                        <cell id="3576">
+                            <data id="3772">
+                                <property name="resultSetColumn">TASKWO</property>
+                            </data>
+                        </cell>
+                        <cell id="3599"/>
+                        <cell id="3622"/>
+                        <cell id="3645"/>
+                        <cell id="2593"/>
+                    </row>
+                    <row id="2393">
+                        <cell id="2394"/>
+                        <cell id="2395"/>
+                        <cell id="2396"/>
+                        <cell id="2397"/>
+                        <cell id="2575"/>
+                        <cell id="3554"/>
+                        <cell id="3577"/>
+                        <cell id="3600"/>
+                        <cell id="3623"/>
+                        <cell id="3646"/>
+                        <cell id="2594"/>
+                    </row>
+                    <row id="2472">
+                        <cell id="2473">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="backgroundColor">#C0C0C0</property>
+                            <label id="2490">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">QC Vrijgave </text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="2463">
+                        <cell id="2464">
+                            <label id="2491">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Vrijgave type</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2465">
+                            <label id="2493">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Materieel informatie</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2466">
+                            <label id="2492">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Accepteer Configuratie fouten?</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2467">
+                            <label id="2494">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Reden Acceptatie</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2577"/>
+                        <cell id="3556"/>
+                        <cell id="3579"/>
+                        <cell id="3602"/>
+                        <cell id="3625"/>
+                        <cell id="3648"/>
+                        <cell id="2596"/>
+                    </row>
+                    <row id="2481">
+                        <cell id="2482">
+                            <data id="2529">
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">qctype</property>
+                            </data>
+                        </cell>
+                        <cell id="2483">
+                            <data id="2530">
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">matinfo</property>
+                            </data>
+                        </cell>
+                        <cell id="2484">
+                            <data id="3821">
+                                <property name="resultSetColumn">CONF</property>
+                            </data>
+                        </cell>
+                        <cell id="2485">
+                            <data id="2531">
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">reden</property>
+                            </data>
+                        </cell>
+                        <cell id="2578"/>
+                        <cell id="3557"/>
+                        <cell id="3580"/>
+                        <cell id="3603"/>
+                        <cell id="3626"/>
+                        <cell id="3649"/>
+                        <cell id="2597"/>
+                    </row>
+                </header>
+                <footer>
+                    <row id="2005">
+                        <property name="pageBreakAfter">auto</property>
+                        <cell id="2006">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="backgroundColor">#C0C0C0</property>
+                            <label id="3698">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Resultaat Vrijgave</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="3686">
+                        <property name="pageBreakAfter">auto</property>
+                        <cell id="3687">
+                            <label id="2611">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Toelichting</text-property>
+                            </label>
+                        </cell>
+                        <cell id="3688">
+                            <label id="2496">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Vrijgave</text-property>
+                            </label>
+                        </cell>
+                        <cell id="3689"/>
+                        <cell id="3690"/>
+                        <cell id="3691"/>
+                        <cell id="3692"/>
+                        <cell id="3693"/>
+                        <cell id="3694"/>
+                        <cell id="3695"/>
+                        <cell id="3696"/>
+                        <cell id="3697"/>
+                    </row>
+                    <row id="3674">
+                        <property name="pageBreakAfter">auto</property>
+                        <cell id="3675">
+                            <data id="2612">
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">ldtext</property>
+                            </data>
+                        </cell>
+                        <cell id="3676">
+                            <data id="2533">
+                                <property name="textAlign">left</property>
+                                <list-property name="highlightRules">
+                                    <structure>
+                                        <property name="operator">eq</property>
+                                        <property name="backgroundColor">#FF0000</property>
+                                        <expression name="testExpr" type="javascript">row["vrijgave"]</expression>
+                                        <simple-property-list name="value1">
+                                            <value type="javascript">AFGEBROKEN</value>
+                                        </simple-property-list>
+                                    </structure>
+                                    <structure>
+                                        <property name="operator">eq</property>
+                                        <property name="backgroundColor">#00FF00</property>
+                                        <expression name="testExpr" type="javascript">row["vrijgave"]</expression>
+                                        <simple-property-list name="value1">
+                                            <value type="javascript">GROEN</value>
+                                        </simple-property-list>
+                                    </structure>
+                                    <structure>
+                                        <property name="operator">eq</property>
+                                        <property name="backgroundColor">#FFFF00</property>
+                                        <expression name="testExpr" type="javascript">row["vrijgave"]</expression>
+                                        <simple-property-list name="value1">
+                                            <value type="javascript">GEEL</value>
+                                        </simple-property-list>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">vrijgave</property>
+                            </data>
+                        </cell>
+                        <cell id="3677"/>
+                        <cell id="3678"/>
+                        <cell id="3679"/>
+                        <cell id="3680"/>
+                        <cell id="3681"/>
+                        <cell id="3682"/>
+                        <cell id="3683"/>
+                        <cell id="3684"/>
+                        <cell id="3685"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="3785">
+                    <property name="backgroundColor">#C0C0C0</property>
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <cell id="3786">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <label id="2524">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">QC Checklijst</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="3809">
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <cell id="3810">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <table id="3823">
+                            <property name="width">20cm</property>
+                            <property name="dataSet">CHECKLISTTASK</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">taakbeschrijving</property>
+                                    <text-property name="displayName">taakbeschrijving</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["taakbeschrijving"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">vervolgwerkorder</property>
+                                    <text-property name="displayName">vervolgwerkorder</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["vervolgwerkorder"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">OK</property>
+                                    <text-property name="displayName">OK</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["OK"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">NOK</property>
+                                    <text-property name="displayName">NOK</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["NOK"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">CLTASKNUM</property>
+                                    <text-property name="displayName">CLTASKNUM</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["CLTASKNUM"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <list-property name="sort">
+                                <structure>
+                                    <expression name="key" type="javascript">row["CLTASKNUM"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                            </list-property>
+                            <column id="3852"/>
+                            <column id="3853"/>
+                            <column id="3854"/>
+                            <column id="3855"/>
+                            <header>
+                                <row id="3824">
+                                    <cell id="3825">
+                                        <label id="2525">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Taakbeschrijving</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3827">
+                                        <label id="2526">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">OK?</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3829">
+                                        <label id="2527">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">NOK?</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3831">
+                                        <label id="2528">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Vervolg WO</text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="3835">
+                                    <cell id="3836">
+                                        <data id="3837">
+                                            <property name="resultSetColumn">taakbeschrijving</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3838">
+                                        <data id="3841">
+                                            <property name="resultSetColumn">OK</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3840">
+                                        <data id="3843">
+                                            <property name="resultSetColumn">NOK</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3842">
+                                        <data id="3839">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">true</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">vervolgwerkorder</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+                <row id="3773">
+                    <property name="backgroundColor">#C0C0C0</property>
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <cell id="3774">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <label id="2422">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WIG Checklijst</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2930">
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <cell id="2931">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <table id="3702">
+                            <property name="width">45cm</property>
+                            <property name="dataSet">WIGWO</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">wonum</property>
+                                    <text-property name="displayName">wonum</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">woomschr</property>
+                                    <text-property name="displayName">woomschr</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["woomschr"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">primpotype</property>
+                                    <text-property name="displayName">primpotype</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["primpotype"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">werktype</property>
+                                    <text-property name="displayName">werktype</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["werktype"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">serialnum</property>
+                                    <text-property name="displayName">serialnum</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">locatie</property>
+                                    <text-property name="displayName">locatie</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["locatie"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">SDM</property>
+                                    <text-property name="displayName">SDM</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["SDM"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">woactfinish</property>
+                                    <text-property name="displayName">woactfinish</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["woactfinish"]</expression>
+                                    <property name="dataType">date-time</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">goedgekeurd</property>
+                                    <text-property name="displayName">goedgekeurd</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["goedgekeurd"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">afgekeurd</property>
+                                    <text-property name="displayName">afgekeurd</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["afgekeurd"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">opmerkingen</property>
+                                    <text-property name="displayName">opmerkingen</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["opmerkingen"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <property name="repeatHeader">false</property>
+                            <list-property name="sort">
+                                <structure>
+                                    <expression name="key" type="javascript">row["woactfinish"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                            </list-property>
+                            <column id="3761">
+                                <property name="width">7cm</property>
+                            </column>
+                            <column id="3762">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3763">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3764">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3765">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3766">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3767">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3768">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3769">
+                                <property name="width">5cm</property>
+                            </column>
+                            <column id="3770">
+                                <property name="width">5cm</property>
+                            </column>
+                            <header>
+                                <row id="3703">
+                                    <cell id="3704">
+                                        <label id="3537">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Werkorder</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3706">
+                                        <label id="3538">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Type werk</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3708">
+                                        <label id="3539">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Primair PO type</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3710">
+                                        <label id="3540">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Beschrijving</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3712">
+                                        <label id="3541">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Serienr.</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3714">
+                                        <label id="3664">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Werklocatie</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3716">
+                                        <label id="3665">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">SDM</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3718">
+                                        <label id="3666">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Werkelijk einde</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3720">
+                                        <label id="3667">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Goedgekeurd?</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3722">
+                                        <label id="3668">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">left</property>
+                                            <text-property name="text">Afgekeurd?</text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="3726">
+                                    <cell id="3727">
+                                        <data id="3728">
+                                            <property name="resultSetColumn">wonum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3729">
+                                        <data id="3734">
+                                            <property name="resultSetColumn">werktype</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3731">
+                                        <data id="3732">
+                                            <property name="resultSetColumn">primpotype</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3733">
+                                        <data id="3730">
+                                            <property name="resultSetColumn">woomschr</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3735">
+                                        <data id="3736">
+                                            <property name="resultSetColumn">serialnum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3737">
+                                        <data id="3738">
+                                            <property name="resultSetColumn">locatie</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3739">
+                                        <data id="3740">
+                                            <property name="resultSetColumn">SDM</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3741">
+                                        <data id="3742">
+                                            <property name="resultSetColumn">woactfinish</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3743">
+                                        <data id="3744">
+                                            <property name="resultSetColumn">goedgekeurd</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="3745">
+                                        <data id="3746">
+                                            <property name="resultSetColumn">afgekeurd</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="207">
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="208">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

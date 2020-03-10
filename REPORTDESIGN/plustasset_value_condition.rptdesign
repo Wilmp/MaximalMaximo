@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.6" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.1.1.v20060922-1058 Build &lt;20060926-0959></property>
+    <property name="units">in</property>
+    <property name="includeResource">plustasset</property>
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.</property>
+    <html-property name="description">This template will create a report with one or more groups, each having identical data fields.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+importPackage(Packages.java.text);
+importPackage(Packages.java.util);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogFile("C:/temp/plustasset_value_cond.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Grouped Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="240">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="241">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="242">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="638">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">plustyear</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">manufacturer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">plustmodel</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">plustcondition</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">totalcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">plustsolddate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">plustdepcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">plustsoldamt</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">plustrepairlimit</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">purchaseprice</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">plustdepperiodtype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">currentassetvalue</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">calulatedRepairLimit</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">plustdepmeter</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustyear</property>
+                </structure>
+                <structure>
+                    <property name="columnName">manufacturer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustmodel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustcondition</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustsolddate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustdepcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustsoldamt</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustrepairlimit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">purchaseprice</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustdepperiodtype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">currentassetvalue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">calulatedRepairLimit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustdepmeter</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">plustyear</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">manufacturer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">plustmodel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">plustcondition</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">totalcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">plustsolddate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">plustdepcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">plustsoldamt</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">plustrepairlimit</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">purchaseprice</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">plustdepperiodtype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">currentassetvalue</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">calulatedRepairLimit</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">plustdepmeter</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " select asset.siteid, asset.assetnum, asset.plustyear, asset.manufacturer, asset.plustmodel, "
+		+ " asset.status,asset.plustcondition,asset.totalcost, asset.plustsolddate, asset.plustdepcost, "
+		+ " asset.plustsoldamt, asset.plustrepairlimit, asset.purchaseprice, "
+		//+ " asset.plustdepperiodtype, "
+		+ " (select maxvalue from synonymdomain "
+		+ "   where synonymdomain.domainid = 'PLUSTDEPPERIODTYPE' and "
+		+ "   synonymdomain.value = asset.plustdepperiodtype) as plustdepperiodtype, "
+		+ " asset.plustdepmeter "
+		+ " from asset "
+		+ " where " + params["where"]
+		+ " order by asset.assetnum "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["siteid"] = maximoDataSet.getString("siteid");
+row["assetnum"] = maximoDataSet.getString("assetnum");
+row["plustyear"] = maximoDataSet.getString("plustyear");
+row["manufacturer"] = maximoDataSet.getString("manufacturer");
+row["plustmodel"] = maximoDataSet.getString("plustmodel");
+row["status"] = maximoDataSet.getString("status");
+row["plustcondition"] = maximoDataSet.getString("plustcondition");
+row["totalcost"] = maximoDataSet.getDouble("totalcost");
+row["plustsolddate"] = maximoDataSet.getTimestamp("plustsolddate");
+var plustdepcost = maximoDataSet.getDouble("plustdepcost");
+row["plustdepcost"] = plustdepcost;
+row["plustsoldamt"] = maximoDataSet.getDouble("plustsoldamt");
+var plustrepairlimit = maximoDataSet.getDouble("plustrepairlimit");
+row["plustrepairlimit"] = plustrepairlimit;
+var purchaseprice = maximoDataSet.getDouble("purchaseprice");
+row["purchaseprice"] = purchaseprice;
+var plustdepperiodtype = maximoDataSet.getString("plustdepperiodtype");
+row["plustdepperiodtype"] = plustdepperiodtype;
+row["plustdepmeter"] = maximoDataSet.getString("plustdepmeter");
+
+var currentassetvalue=0.0;
+var repairlimit=0.0;
+
+// Depreciation date
+var depDate = MXReportSqlFormat.getCurrentTimestampFunction();
+
+if (plustdepperiodtype == "DATE") {
+	// current value date
+	currValueByDateDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "currValueByDateDS");
+	currValueByDateDS.open();
+	
+	var currValueByDateSQL = "select plustdepschedule.currentassetvalue "
+	+ " from plustdepschedule "
+	+ " where plustdepschedule.siteid = ? "
+	+ " and plustdepschedule.assetnum = ? "
+	+ " and plustdepschedule.depreciationdate <= " + depDate
+	+ " order by plustdepschedule.depreciationdate desc "
+	;
+
+	currValueByDateDS.setQuery(currValueByDateSQL);
+	currValueByDateDS.setQueryParameterValue(1, maximoDataSet.getString("siteid"));
+	currValueByDateDS.setQueryParameterValue(2, maximoDataSet.getString("assetnum"));
+	
+	if (currValueByDateDS.fetch()) {
+		currentassetvalue = currValueByDateDS.getDouble("currentassetvalue");
+	} else {
+		// Set current value to null, so it will be retrieved from PLUSTDEPSCHEDULE in pediod # 1
+		currentassetvalue = null;
+	}
+
+	currValueByDateDS.close();
+}
+else if (plustdepperiodtype == "METER") {
+	// Determine latest life to date for this asset meter from table meterreading
+	meterReadingLifeToDateDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "meterReadingLifeToDateDS");
+	meterReadingLifeToDateDS.open();
+
+	var meterReadingLifeToDateSQL = "select meterreading.plustltd "
+	+ " from meterreading "
+	+ " where meterreading.assetnum = ? "
+	+ " and meterreading.metername = ? "
+	+ " and meterreading.siteid = ? "
+	+ " and meterreading.readingdate <= " + depDate
+	+ " order by meterreading.plustltd desc "
+	;
+
+	meterReadingLifeToDateDS.setQuery(meterReadingLifeToDateSQL);
+	meterReadingLifeToDateDS.setQueryParameterValue(1, maximoDataSet.getString("assetnum"));
+	meterReadingLifeToDateDS.setQueryParameterValue(2, maximoDataSet.getString("plustdepmeter"));
+	meterReadingLifeToDateDS.setQueryParameterValue(3, maximoDataSet.getString("siteid"));
+
+	// If any meterreading is found, take the greatest life to date
+	var lifeToDate = null;
+	if (meterReadingLifeToDateDS.fetch()) {
+		lifeToDate = meterReadingLifeToDateDS.getDouble("plustltd")
+	} else {
+		// Otherwise, determine latest life to date for the deprecation asset meter from table assetmeter
+		assetMeterLifeToDateDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "assetMeterLifeToDateDS");
+		assetMeterLifeToDateDS.open();
+
+		var assetMeterLifeToDateSQL = "select assetmeter.lifetodate "
+		+ " from assetmeter "
+		+ " where assetmeter.assetnum = ? "
+		+ " and assetmeter.metername = ? "
+		+ " and assetmeter.siteid = ? "
+		+ " order by assetmeter.lifetodate desc "
+		;
+
+		assetMeterLifeToDateDS.setQuery(assetMeterLifeToDateSQL);
+		assetMeterLifeToDateDS.setQueryParameterValue(1, maximoDataSet.getString("assetnum"));
+		assetMeterLifeToDateDS.setQueryParameterValue(2, maximoDataSet.getString("plustdepmeter"));
+		assetMeterLifeToDateDS.setQueryParameterValue(3, maximoDataSet.getString("siteid"));
+
+		// The asset meter should be found here (database is incossistent, otherwise). Anyway, if it exists, take its life to date
+		if (assetMeterLifeToDateDS.fetch()) {
+			lifeToDate = assetMeterLifeToDateDS.getDouble("lifetodate")
+		}
+
+		assetMeterLifeToDateDS.close();
+	}
+
+	meterReadingLifeToDateDS.close();
+
+	if (lifeToDate != null) {
+		// Retrieve current value
+		currValueByMeterDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "currValueByMeterDS");
+		currValueByMeterDS.open();
+		
+		var currValueByMeterSQL = "select plustdepschedule.currentassetvalue "
+		+ " from plustdepschedule "
+		+ " where plustdepschedule.siteid = ? "
+		+ " and plustdepschedule.assetnum = ? "
+		+ " and plustdepschedule.meterltd <= ? "
+		+ " order by plustdepschedule.meterltd desc "
+		;
+	
+		currValueByMeterDS.setQuery(currValueByMeterSQL);
+		currValueByMeterDS.setQueryParameterValue(1, maximoDataSet.getString("siteid"));
+		currValueByMeterDS.setQueryParameterValue(2, maximoDataSet.getString("assetnum"));
+		currValueByMeterDS.setQueryParameterValue(3, lifeToDate);
+	
+		if (currValueByMeterDS.fetch()) {
+			currentassetvalue = currValueByMeterDS.getDouble("currentassetvalue");
+		} else {
+			// Set current value to null, so it will be retrieved from PLUSTDEPSCHEDULE in pediod # 1
+			currentassetvalue = null;
+		}
+
+		currValueByMeterDS.close();
+	}
+} else {
+	currentassetvalue = null;
+}
+
+if (currentassetvalue == null && 
+	(plustdepperiodtype == "DATE" || plustdepperiodtype == "METER")) {
+	// Retrieve initial value
+	initialValueDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "initialValueDS");
+	initialValueDS.open();
+	
+	var initialValueSQL = "select plustdepschedule.currentassetvalue, "
+	+ " plustdepschedule.depreciationamt "
+	+ " from plustdepschedule "
+	+ " where plustdepschedule.siteid = ? "
+	+ " and plustdepschedule.assetnum = ? "
+	+ " and plustdepschedule.periodnum = 1 "
+	;
+
+	initialValueDS.setQuery(initialValueSQL);
+	initialValueDS.setQueryParameterValue(1, maximoDataSet.getString("siteid"));
+	initialValueDS.setQueryParameterValue(2, maximoDataSet.getString("assetnum"));
+
+	if (initialValueDS.fetch()) {
+		currentassetvalue = initialValueDS.getDouble("depreciationamt")
+		+ initialValueDS.getDouble("currentassetvalue");
+	}
+
+	initialValueDS.close();
+}
+
+row["currentassetvalue"] = currentassetvalue;
+var calulatedRepairLimit;
+	
+if(plustrepairlimit==null) {
+	calulatedRepairLimit=null;
+} else if(currentassetvalue!=null) {
+	calulatedRepairLimit=currentassetvalue*(plustrepairlimit/100)
+} else if(currentassetvalue==null) {
+	calulatedRepairLimit=purchaseprice*(plustrepairlimit/100)
+}
+row["calulatedRepairLimit"] = calulatedRepairLimit;
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2"/>
+                <ref-entry baseId="340" name="NewImage1"/>
+                <ref-entry baseId="310" name="NewImage"/>
+                <ref-entry baseId="322" name="NewGrid"/>
+                <ref-entry baseId="328" name="NewText"/>
+                <ref-entry baseId="329" name="NewGrid1"/>
+                <ref-entry baseId="335" name="NewAutoText"/>
+                <ref-entry baseId="337" name="NewText1"/>
+                <ref-entry baseId="339" name="NewAutoText1"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">siteid</property>
+                    <expression name="expression">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <expression name="expression">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plustyear</property>
+                    <expression name="expression">dataSetRow["plustyear"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">manufacturer</property>
+                    <expression name="expression">dataSetRow["manufacturer"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plustmodel</property>
+                    <expression name="expression">dataSetRow["plustmodel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <expression name="expression">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plustcondition</property>
+                    <expression name="expression">dataSetRow["plustcondition"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">totalcost</property>
+                    <expression name="expression">dataSetRow["totalcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plustsolddate</property>
+                    <expression name="expression">dataSetRow["plustsolddate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">plustdepcost</property>
+                    <expression name="expression">dataSetRow["plustdepcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plustsoldamt</property>
+                    <expression name="expression">dataSetRow["plustsoldamt"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plustrepairlimit</property>
+                    <expression name="expression">dataSetRow["plustrepairlimit"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">purchaseprice</property>
+                    <expression name="expression">dataSetRow["purchaseprice"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plustdepperiodtype</property>
+                    <expression name="expression">dataSetRow["plustdepperiodtype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">currentassetvalue</property>
+                    <expression name="expression">dataSetRow["currentassetvalue"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">calulatedRepairLimit</property>
+                    <expression name="expression">dataSetRow["calulatedRepairLimit"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="587"/>
+            <column id="617"/>
+            <column id="607"/>
+            <column id="597"/>
+            <column id="577"/>
+            <column id="18"/>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="paddingBottom">3pt</property>
+                        <label id="466">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="plust_asset_value_cond_title">Report Title</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <group id="138">
+                <property name="groupName">Site id</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["siteid"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="287">
+                        <property name="height">0.08in</property>
+                        <cell id="288">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="139">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="140">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tableheaderlabel</property>
+                            <grid id="255">
+                                <property name="width">100%</property>
+                                <column id="256">
+                                    <property name="width">1in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="257">
+                                    <property name="width">9in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <row id="260">
+                                    <cell id="261">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="180">
+                                            <text-property name="text" key="plust_siteid_colon"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="262">
+                                        <property name="style">tableheaderdata</property>
+                                        <data id="639">
+                                            <property name="resultSetColumn">siteid</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="280">
+                        <property name="height">0.06in</property>
+                        <cell id="281">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="160">
+                        <property name="style">tabledetailslabel</property>
+                        <property name="textAlign">left</property>
+                        <cell id="161">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="96">
+                                <text-property name="text" key="plust_asset"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="162">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="565">
+                                <text-property name="text" key="plust_year"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="163">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="566">
+                                <text-property name="text" key="plust_manufacturer"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="164">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="567">
+                                <text-property name="text" key="plust_model"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="165">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="618">
+                                <text-property name="text" key="plust_status"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="584">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="619">
+                                <text-property name="text" key="plust_condition"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="614">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="620">
+                                <text-property name="text" key="plust_currentvalue"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="604">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="621">
+                                <text-property name="text" key="plust_total_cost"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="594">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="622">
+                                <text-property name="text" key="plust_repairlimit"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="574">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="623">
+                                <text-property name="text" key="plust_solddate"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="166">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="624">
+                                <text-property name="text" key="plust_sold"></text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="146">
+                        <property name="height">0.08in</property>
+                        <cell id="147">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <property name="textAlign">left</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="640">
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="641">
+                            <property name="resultSetColumn">plustyear</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="642">
+                            <property name="resultSetColumn">manufacturer</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="643">
+                            <property name="resultSetColumn">plustmodel</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="644">
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="585">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="645">
+                            <property name="resultSetColumn">plustcondition</property>
+                        </data>
+                    </cell>
+                    <cell id="615">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="648">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">currentassetvalue</property>
+                        </data>
+                    </cell>
+                    <cell id="605">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="646">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">totalcost</property>
+                        </data>
+                    </cell>
+                    <cell id="595">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="647">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">calulatedRepairLimit</property>
+                        </data>
+                    </cell>
+                    <cell id="575">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="649">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Date</property>
+                                <property name="pattern">Short Date</property>
+                            </structure>
+                            <property name="resultSetColumn">plustsolddate</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="651">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">plustsoldamt</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="636">
+                    <property name="height">0.08in</property>
+                    <cell id="637">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

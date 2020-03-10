@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+OCO Source Materials
+5724-M19
+(C) COPYRIGHT IBM CORP. 2006
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000
+AutoLayout@000</property>
+    <property name="createdBy">MAXIMO Create List Report run-time functionality</property>
+    <html-property name="description">Maurice Vuijk: actieve PO's per dienst per materieelserie</html-property>
+    <simple-property-list name="includeResource">
+        <value>NTPLUSAPM_00861997_15149801451514981152828</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+ mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+ mxReportScriptContext.setDefaultLogLevel("DEBUG");
+ mxReportScriptContext.setDefaultLogFile("c:/temp/myreport.log");
+ scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+ displayWhere = "";
+ if (params["paramstring"].value &amp;&amp; params["paramdelimiter"].value)
+ {
+   displayWhere = MXReportUtil.getParameterFromString("displayWhere", params["paramstring"], params["paramdelimiter"]);
+
+ }]]></method>
+    <method name="beforeFactory"><![CDATA[
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["dataSet_pm_id16#"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null) {
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[// Close the report context to cleanup resources.
+ MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Maurice Vuijk: actieve PO's per dienst per materieelserie</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="5">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="6">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="7">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="8">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="9">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntserie" id="10">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="status" id="11">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntprimpotype" id="12">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="13" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet_pm" id="15">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">pmnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">masterpm</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ntprimpotype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ntsecpotype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">priority</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ntworklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">wostatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">commodity</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">commoditygroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">pmnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">masterpm</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntprimpotype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntsecpotype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">priority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntworklocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wostatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commodity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commoditygroup</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[
+ dataSet_pm = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+ dataSet_pm.open();
+ var sqlText = new String();
+ sqlText = 
+   "select  " 
+ + " pm.pmnum,pm.description,pm.masterpm,pm.ntprimpotype,pm.ntserie,pm.assetnum,pm.ntsecpotype,pm.priority,pm.ntworklocation,pm.status,pm.wostatus,pm.commodity,pm.commoditygroup "
+ + "from pm " 
+ + "where " +  params["where"] +  " and ( "  + "( ( pm.status  =  'ACTIEF'  or pm.status  =  'CONCEPT'  or pm.status  =  'INACTIEF'  ) and pm.plusahistoryflag  =  0 and pm.siteid  =  '9030'  )" + " ) " 
+ + "  "
+ ;
+
+ dataSet_pm.setQuery(sqlText);
+]]></method>
+            <method name="fetch"><![CDATA[if (!dataSet_pm.fetch()) 
+   return (false);
+ 
+//         Add a line for each output column
+//         The specific get method should match the data type of the output column.
+ row["pmnum"] = dataSet_pm.getString("pmnum"); 
+ row["description"] = dataSet_pm.getString("description"); 
+ row["masterpm"] = dataSet_pm.getString("masterpm"); 
+ row["ntprimpotype"] = dataSet_pm.getString("ntprimpotype"); 
+ row["ntserie"] = dataSet_pm.getString("ntserie"); 
+ row["assetnum"] = dataSet_pm.getString("assetnum"); 
+ row["ntsecpotype"] = dataSet_pm.getString("ntsecpotype"); 
+ if (dataSet_pm.getString("priority") != null) 
+ { 
+     row["priority"] = dataSet_pm.getInteger("priority"); 
+ }
+ row["ntworklocation"] = dataSet_pm.getString("ntworklocation"); 
+ row["status"] = dataSet_pm.getString("status"); 
+ row["wostatus"] = dataSet_pm.getString("wostatus"); 
+ row["commodity"] = dataSet_pm.getString("commodity"); 
+ row["commoditygroup"] = dataSet_pm.getString("commoditygroup"); 
+ return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="2">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="3">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="report" id="4"/>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="14" extends="MaximoSystemLibrary.maximoLandscape"/>
+    </page-setup>
+    <body>
+        <table name="dataSet_pm_id16#" id="16">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet_pm</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">pmnum</property>
+                    <expression name="expression">dataSetRow["pmnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">masterpm</property>
+                    <expression name="expression">dataSetRow["masterpm"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntprimpotype</property>
+                    <expression name="expression">dataSetRow["ntprimpotype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <expression name="expression">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <expression name="expression">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntsecpotype</property>
+                    <expression name="expression">dataSetRow["ntsecpotype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">priority</property>
+                    <expression name="expression">dataSetRow["priority"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ntworklocation</property>
+                    <expression name="expression">dataSetRow["ntworklocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <expression name="expression">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wostatus</property>
+                    <expression name="expression">dataSetRow["wostatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity</property>
+                    <expression name="expression">dataSetRow["commodity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commoditygroup</property>
+                    <expression name="expression">dataSetRow["commoditygroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">params_where</property>
+                    <expression name="expression">if (!displayWhere.equals("1=1"))
+{displayWhere;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="100">
+                <property name="width">1in</property>
+            </column>
+            <column id="101">
+                <property name="width">1.5in</property>
+            </column>
+            <column id="102">
+                <property name="width">1in</property>
+            </column>
+            <column id="103">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="104">
+                <property name="width">1in</property>
+            </column>
+            <column id="105">
+                <property name="width">1in</property>
+            </column>
+            <column id="106">
+                <property name="width">1in</property>
+            </column>
+            <column id="107">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="108">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="109">
+                <property name="width">1in</property>
+            </column>
+            <column id="110">
+                <property name="width">1in</property>
+            </column>
+            <column id="111">
+                <property name="width">1in</property>
+            </column>
+            <column id="112">
+                <property name="width">1in</property>
+            </column>
+            <header>
+                <row id="17">
+                    <property name="style">title</property>
+                    <cell id="18">
+                        <property name="colSpan">13</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label name="refTemplateParameter" id="19">
+                            <text-property name="text" key="report_title">Maurice Vuijk: actieve PO's per dienst per materieelserie</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="20">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="21">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_pmnum_0" id="22">
+                            <text-property name="text" key="header_pmnum_0">PO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="23">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_description_0" id="24">
+                            <text-property name="text" key="header_description_0">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="25">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_masterpm_0" id="26">
+                            <text-property name="text" key="header_masterpm_0">PO-hoofdschema</text-property>
+                        </label>
+                    </cell>
+                    <cell id="27">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntprimpotype_0" id="28">
+                            <text-property name="text" key="header_ntprimpotype_0">Primair PO type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="29">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntserie_0" id="30">
+                            <text-property name="text" key="header_ntserie_0">Materieel serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="31">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_assetnum_0" id="32">
+                            <text-property name="text" key="header_assetnum_0">Activum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="33">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntsecpotype_0" id="34">
+                            <text-property name="text" key="header_ntsecpotype_0">Onderhoudscluster</text-property>
+                        </label>
+                    </cell>
+                    <cell id="35">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_priority_0" id="36">
+                            <text-property name="text" key="header_priority_0">Prioriteit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="37">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntworklocation_0" id="38">
+                            <text-property name="text" key="header_ntworklocation_0">Werklocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="39">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_status_0" id="40">
+                            <text-property name="text" key="header_status_0">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="41">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_wostatus_0" id="42">
+                            <text-property name="text" key="header_wostatus_0">Status werkorder</text-property>
+                        </label>
+                    </cell>
+                    <cell id="43">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_commodity_0" id="44">
+                            <text-property name="text" key="header_commodity_0">Dienst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="45">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_commoditygroup_0" id="46">
+                            <text-property name="text" key="header_commoditygroup_0">Dienstgroep</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="47">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="48">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailpmnum_0" id="49">
+                            <property name="resultSetColumn">pmnum</property>
+                        </data>
+                    </cell>
+                    <cell id="50">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detaildescription_0" id="51">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="52">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailmasterpm_0" id="53">
+                            <property name="resultSetColumn">masterpm</property>
+                        </data>
+                    </cell>
+                    <cell id="54">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntprimpotype_0" id="55">
+                            <property name="resultSetColumn">ntprimpotype</property>
+                        </data>
+                    </cell>
+                    <cell id="56">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntserie_0" id="57">
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="58">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailassetnum_0" id="59">
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="60">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntsecpotype_0" id="61">
+                            <property name="resultSetColumn">ntsecpotype</property>
+                        </data>
+                    </cell>
+                    <cell id="62">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailpriority_0" id="63">
+                            <property name="resultSetColumn">priority</property>
+                        </data>
+                    </cell>
+                    <cell id="64">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntworklocation_0" id="65">
+                            <property name="resultSetColumn">ntworklocation</property>
+                        </data>
+                    </cell>
+                    <cell id="66">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailstatus_0" id="67">
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="68">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailwostatus_0" id="69">
+                            <property name="resultSetColumn">wostatus</property>
+                        </data>
+                    </cell>
+                    <cell id="70">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailcommodity_0" id="71">
+                            <property name="resultSetColumn">commodity</property>
+                        </data>
+                    </cell>
+                    <cell id="72">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailcommoditygroup_0" id="73">
+                            <property name="resultSetColumn">commoditygroup</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="74">
+                    <cell id="75">
+                        <property name="colSpan">13</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid name="Grid2" id="76">
+                            <property name="width">100%</property>
+                            <column id="77">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.8in</property>
+                            </column>
+                            <column id="78">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.2in</property>
+                            </column>
+                            <column id="79">
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="80">
+                                <cell id="81">
+                                    <label name="footernoofrecords" id="82">
+                                        <text-property name="text" key="pm_selected">Aantal records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="83">
+                                    <data name="footertotalrecs" id="84">
+                                        <property name="textAlign">left</property>
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                                <cell id="85"/>
+                            </row>
+                            <row id="86">
+                                <property name="height">0.06in</property>
+                                <cell id="87">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                </cell>
+                            </row>
+                            <row id="88">
+                                <cell id="89">
+                                    <label name="footersavedwherelabel" id="90">
+                                        <text-property name="text" key="saved_where_clause">Opgeslagen Where-clausule:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="91">
+                                    <label name="footersavedwherevalue" id="92">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">( ( pm.status  =  'ACTIEF'  or pm.status  =  'CONCEPT'  or pm.status  =  'INACTIEF'  ) and pm.plusahistoryflag  =  0 and pm.siteid  =  '9030'  )</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="93"/>
+                            </row>
+                            <row id="94">
+                                <cell id="95">
+                                    <label name="footerdynamicwherelabel" id="96">
+                                        <text-property name="text" key="dynamic_where_clause">Dynamische Where-clausule:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="97">
+                                    <data name="footerdynamicwherevalue" id="98">
+                                        <property name="textAlign">left</property>
+                                        <property name="resultSetColumn">params_where</property>
+                                    </data>
+                                </cell>
+                                <cell id="99"/>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

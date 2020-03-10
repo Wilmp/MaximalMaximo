@@ -1,0 +1,4278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields, and contains three styles of charts.</html-property>
+    <simple-property-list name="includeResource">
+        <value>report</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("./temp/reportschedule.log");
+
+//scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+var total_limit = 0;
+var total_queue = 0;
+var total_hist  = 0;]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable", "childTable1", "childTable2"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Subreport Chart Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="871">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="securitygroups" id="875">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="scheduleLimitsGraph" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">qtd</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">categories</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">percent</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">total</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">qtd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">categories</property>
+                </structure>
+                <structure>
+                    <property name="columnName">percent</property>
+                </structure>
+                <structure>
+                    <property name="columnName">total</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">qtd</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">categories</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">percent</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">total</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[scheduleLimitsGraph = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+scheduleLimitsGraph.open();
+
+var sqlText = new String();
+
+sqlText = " select count(groupname) as qtd, "
+ + " 'report_access' as categories "
+ + " from maxgroup "
+ + " where " + params["where"]
+ + " and groupname in "
+ + " (select distinct groupname from applicationauth "
+ + " where optionname = 'RUNREPORTS') "
+ + " union all "
+ + " select count(groupname) as qtd, "
+ + " 'schedule_limits' as categories "
+ + " from maxgroup "
+ + " where " + params["where"]
+ + " and maxschedreport is not null "
+ + " order by categories"
+;
+
+scheduleLimitsGraph.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!scheduleLimitsGraph.fetch())
+	return (false);
+
+row["qtd"] = scheduleLimitsGraph.getInteger("qtd");
+row["categories"] = reportContext.getMessage(scheduleLimitsGraph.getString("categories"), reportContext.getLocale());
+row["total"] = total_limit;
+
+if (row["qtd"] != 0 &amp;&amp; total_limit != 0){
+	row["percent"] = row["qtd"]/total_limit;	
+}else{
+row["percent"] = 0;
+}
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="totals" id="1844">
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[totals = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+totals.open();
+
+var sqlText = new String();
+
+if(params["securitygroups"].value) {
+	params["where"]+=" and " + MXReportSqlFormat.createParamWhereClause("maxgroup.groupname", params["securitygroups"]);//.toUpperCase());
+}
+
+sqlText = "select count(maxgroup.groupname) as total, "
+ + " 'total_limit' as category "
+ + " from maxgroup "
+ + " where " + params["where"]
+ + " union all "
+ + " select count(reportsched.reportschedid) as total, "
+ + " 'total_queue' as category "
+ + " from reportsched "
+ + " where reportsched.userid in (select groupuser.userid from maxgroup "
+ + " join groupuser "
+ + " on maxgroup.groupname = groupuser.groupname "
+ + " and " + params["where"] + " join maxuser "
+ + " on maxuser.userid = groupuser.userid ) "
+ + " union all "
+ + " select count(reportusagelogid) as total, "
+ + " 'total_hist' as category "
+ + " from reportusagelog "
+ + " where reportusagelog.userid in (select groupuser.userid from maxgroup "
+ + " join groupuser "
+ + " on maxgroup.groupname = groupuser.groupname "
+ + " and " + params["where"] + " join maxuser "
+ + " on maxuser.userid = groupuser.userid ) "
+
+
+
+totals.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!totals.fetch())
+	return (false);
+
+if (totals.getString("category") == "total_limit")
+	total_limit = totals.getInteger("total");
+
+
+if (totals.getString("category") == "total_queue")
+	total_queue = totals.getInteger("total");
+
+
+if (totals.getString("category") == "total_hist")
+	total_hist = totals.getInteger("total");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="scheduleQueueGraph" id="239">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">qtd_queue</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">categories_queue</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">percent_queue</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">total_queue</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">qtd_queue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">categories_queue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">percent_queue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">total_queue</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">qtd_queue</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">categories_queue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">percent_queue</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">total_queue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[scheduleQueueGraph = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+scheduleQueueGraph.open();
+
+var sqlText = new String();
+
+var securitygroups = "";
+
+if (params["securitygroups"].value != null &amp;&amp; params["securitygroups"].value != ""){
+	securitygroups = " and " + MXReportSqlFormat.createParamWhereClause("maxgroup.groupname", params["securitygroups"]);
+}
+
+sqlText = "select count(case type when 'recurring' then 1 else null end) as qtd_queue, "
+ + " 'recurring_reports' as categories_queue "
+ + " from reportsched "
+ + " where reportsched.userid in (select groupuser.userid from maxgroup "
+ + " join groupuser "
+ + " on maxgroup.groupname = groupuser.groupname "
+ + " join maxuser "
+ + " on maxuser.userid = groupuser.userid "
+ + securitygroups + ") "
+ + " union all "
+ + " select count(case type when 'once' then 1 else null end) as qtd_queue, "
+ + " 'single_reports' as categories_queue "
+ + " from reportsched "
+ + " where reportsched.userid in (select groupuser.userid from maxgroup "
+ + " join groupuser "
+ + " on maxgroup.groupname = groupuser.groupname "
+ + " join maxuser "
+ + " on maxuser.userid = groupuser.userid "
+ + securitygroups + ") "
+ + " order by categories_queue "
+ ;
+
+scheduleQueueGraph.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!scheduleQueueGraph.fetch())
+	return (false);
+
+row["qtd_queue"] = scheduleQueueGraph.getInteger("qtd_queue");		
+row["categories_queue"] = reportContext.getMessage(scheduleQueueGraph.getString("categories_queue"), reportContext.getLocale());
+row["total_queue"] = total_queue;
+
+if (row["qtd_queue"] != 0 &amp;&amp; total_queue != 0){
+	row["percent_queue"] = row["qtd_queue"]/total_queue;	
+}else{
+	row["percent_queue"] = 0;
+}
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="scheduleLimitsDetails" id="1143">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">groupname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">maxschedreport</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">groupname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxschedreport</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">groupname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">maxschedreport</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[subDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+subDataSet.open();
+
+var sqlText = new String();
+
+sqlText = "select maxgroup.groupname, maxgroup.description, "
+ + " maxgroup.maxschedreport from maxgroup "
+ + " where " + params["where"]
+ + " and maxgroup.maxschedreport is not null "
+ + " order by maxgroup.maxschedreport desc "
+ ;
+
+subDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!subDataSet.fetch())
+	return (false);
+
+row["groupname"] = subDataSet.getString("groupname");		
+row["description"] = subDataSet.getString("description");	
+row["maxschedreport"] = subDataSet.getInteger("maxschedreport");	
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="scheduleHistoryGraph" id="1252">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">qtd_hist</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">categories_hist</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">percent_hist</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">report_usage</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">total_hist</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">qtd_hist</property>
+                </structure>
+                <structure>
+                    <property name="columnName">categories_hist</property>
+                </structure>
+                <structure>
+                    <property name="columnName">percent_hist</property>
+                </structure>
+                <structure>
+                    <property name="columnName">report_usage</property>
+                </structure>
+                <structure>
+                    <property name="columnName">total_hist</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">qtd_hist</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">categories_hist</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">percent_hist</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">report_usage</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">total_hist</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[scheduleHistoryGraph = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+scheduleHistoryGraph.open();
+
+var sqlText = new String();
+
+var securitygroups = "";
+
+if (params["securitygroups"].value != null &amp;&amp; params["securitygroups"].value != ""){
+	securitygroups = " and " + MXReportSqlFormat.createParamWhereClause("maxgroup.groupname", params["securitygroups"]);
+}
+
+var currenttime = new String();
+
+if(scheduleHistoryGraph.isOracle()){
+	currenttime = " sysdate";
+}
+
+if(scheduleHistoryGraph.isSQLServer()){
+	currenttime = " getdate()";
+}
+
+if(scheduleHistoryGraph.isDB2()){
+	currenttime = " current timestamp";	
+
+}
+  
+ sqlText = "select count(case immediatejob when 1 then 1 else null end) as qtd_hist, "
+ + " 'reports_immediately' as categories_hist, "
+ + " min(reportusagelog.startdate) as startdate, "
+ + currenttime + " as enddate "
+ + " from reportusagelog "
+ + " where reportusagelog.userid in (select groupuser.userid from maxgroup "
+ + " join groupuser "
+ + " on maxgroup.groupname = groupuser.groupname "
+ + " join maxuser "
+ + " on maxuser.userid = groupuser.userid "
+ + securitygroups + ") "
+ + " union all "
+ + " select count(case immediatejob when 0 then 1 else null end) as qtd_hist, "
+ + " 'reports_exeschedule' as categories_hist, "
+ + " min(reportusagelog.startdate) as startdate, "
+ + currenttime + " as enddate "
+ + " from reportusagelog "
+ + " where reportusagelog.userid in (select groupuser.userid from maxgroup "
+ + " join groupuser "
+ + " on maxgroup.groupname = groupuser.groupname "
+ + " join maxuser "
+ + " on maxuser.userid = groupuser.userid "
+ + securitygroups + ") "
+ + " order by categories_hist "
+ ;
+
+scheduleHistoryGraph.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!scheduleHistoryGraph.fetch())
+	return (false);
+
+row["qtd_hist"] = scheduleHistoryGraph.getInteger("qtd_hist");
+row["categories_hist"] = reportContext.getMessage(scheduleHistoryGraph.getString("categories_hist"), reportContext.getLocale());
+row["total_hist"] = total_hist;
+
+if ((row["qtd_hist"] != 0) &amp;&amp; (total_hist != 0)){
+	row["percent_hist"] = row["qtd_hist"]/total_hist;
+}else{
+	row["percent_hist"] = 0;
+}
+
+if (scheduleHistoryGraph.getTimestamp("startdate") == null){
+	row["report_usage"] = 0;
+}else{
+	var startdate = new java.util.GregorianCalendar(reportContext.getLocale());
+	var enddate = new java.util.GregorianCalendar(reportContext.getLocale());
+	startdate.setTime(scheduleHistoryGraph.getTimestamp("startdate"));
+	enddate.setTime(scheduleHistoryGraph.getTimestamp("enddate"));
+
+	startdate.set(java.util.GregorianCalendar.HOUR_OF_DAY, 0);
+	startdate.set(java.util.GregorianCalendar.MINUTE, 0);
+	startdate.set(java.util.GregorianCalendar.SECOND, 0);
+	startdate.set(java.util.GregorianCalendar.MILLISECOND, 0);
+
+	enddate.set(java.util.GregorianCalendar.HOUR_OF_DAY, 0);
+	enddate.set(java.util.GregorianCalendar.MINUTE, 0);
+	enddate.set(java.util.GregorianCalendar.SECOND, 0);
+	enddate.set(java.util.GregorianCalendar.MILLISECOND, 0);
+
+	row["report_usage"] = ((enddate.getTime().getTime() - startdate.getTime().getTime())/(24 * 3600 * 1000));
+}
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="872">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="873">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">totals</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">chart_key</property>
+                    <expression name="expression">1</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <label id="874">
+                            <text-property name="text" key="report_schedule_limits_and_maintenance.title"></text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">(params["securitygroups"].value == null || params["securitygroups"].value == "")</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="220">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="202">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">(params["securitygroups"].value == null || params["securitygroups"].value == "")</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="203">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="191">
+                                <property name="height">0.06in</property>
+                                <cell id="192"/>
+                                <cell id="193">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="securitygroups_colon">Parameter 1:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="877">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">securitygroups</property>
+                                                <expression name="expression">params["securitygroups"].value</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">securitygroups</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128"/>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="212">
+                    <property name="height">0.06in</property>
+                    <cell id="213">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="1723">
+                <property name="groupName">Schedule Limits</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["chart_key"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["chart_key"]</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="1853">
+                        <cell id="1854">
+                            <table id="1855">
+                                <property name="pageBreakAfter">always</property>
+                                <property name="width">100%</property>
+                                <property name="dataSet">scheduleLimitsGraph</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">qtd</property>
+                                        <expression name="expression">dataSetRow["qtd"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">categories</property>
+                                        <expression name="expression">dataSetRow["categories"].replace("\n", " ")</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">percent</property>
+                                        <expression name="expression">dataSetRow["percent"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">total</property>
+                                        <text-property name="displayName">total</text-property>
+                                        <expression name="expression">dataSetRow["total"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                </list-property>
+                                <column id="1868">
+                                    <property name="width">3in</property>
+                                </column>
+                                <column id="1869">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="1877">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="1870">
+                                    <property name="width">5in</property>
+                                </column>
+                                <header>
+                                    <row id="1998">
+                                        <property name="style">tableheaderrow</property>
+                                        <cell id="1999">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="style">tableheaderlabel</property>
+                                            <label id="1618">
+                                                <text-property name="text" key="schedulelimit"></text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="1993">
+                                        <cell id="1994">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="textAlign">center</property>
+                                            <extended-item extensionName="Chart" name="Bar Chart111" id="1040">
+                                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Bar Chart</Type>
+  <SubType>Side-by-side</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>securitygroupschedulelimits=</Value>
+          <Font>
+            <Size>12.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>254</Red>
+          <Green>254</Green>
+          <Blue>254</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>false</Visible>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>2.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Categories</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>504.0</Width>
+      <Height>252.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <GridColumnCount>0</GridColumnCount>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>'A','B','C','D','E'</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>6,4,12,8,10</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+    <AncillarySampleData>
+      <DataSetRepresentation>Series 1</DataSetRepresentation>
+    </AncillarySampleData>
+  </SampleData>
+  <Interactivity>
+    <Enable>true</Enable>
+    <LegendBehavior>None</LegendBehavior>
+  </Interactivity>
+  <EmptyMessage>
+    <Caption>
+      <Value></Value>
+      <Font>
+        <Alignment/>
+      </Font>
+    </Caption>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>0</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+    </Outline>
+    <Insets>
+      <Top>0.0</Top>
+      <Left>2.0</Left>
+      <Bottom>0.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Visible>false</Visible>
+  </EmptyMessage>
+  <Axes>
+    <Type>Text</Type>
+    <Title>
+      <Caption>
+        <Value>X-Axis Title</Value>
+        <Font>
+          <Size>14.0</Size>
+          <Bold>true</Bold>
+          <Alignment>
+            <horizontalAlignment>Center</horizontalAlignment>
+            <verticalAlignment>Center</verticalAlignment>
+          </Alignment>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>false</Visible>
+    </Title>
+    <TitlePosition>Below</TitlePosition>
+    <AssociatedAxes>
+      <Type>Linear</Type>
+      <Title>
+        <Caption>
+          <Value>number=Y-Axis Title</Value>
+          <Font>
+            <Size>14.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+            <Rotation>90.0</Rotation>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Title>
+      <TitlePosition>Left</TitlePosition>
+      <SeriesDefinitions>
+        <Query>
+          <Definition></Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>34</Red>
+            <Green>89</Green>
+            <Blue>114</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>72</Red>
+            <Green>153</Green>
+            <Blue>119</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>221</Red>
+            <Green>205</Green>
+            <Blue>93</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>199</Red>
+            <Green>134</Green>
+            <Blue>57</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>152</Red>
+            <Green>96</Green>
+            <Blue>48</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>141</Red>
+            <Green>134</Green>
+            <Blue>142</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>131</Red>
+            <Green>162</Green>
+            <Blue>176</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>187</Red>
+            <Green>217</Green>
+            <Blue>0</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>10.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>false</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>row[&quot;qtd&quot;]</Definition>
+          </DataDefinition>
+          <SeriesIdentifier>Series 1</SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>false</Enabled>
+          <GroupingInterval>1.0</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+        <Sorting>Ascending</Sorting>
+      </SeriesDefinitions>
+      <Orientation>Vertical</Orientation>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+      <LabelPosition>Left</LabelPosition>
+      <MajorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>51</Red>
+            <Green>51</Green>
+            <Blue>51</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>192</Red>
+            <Green>192</Green>
+            <Blue>192</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </TickAttributes>
+      </MajorGrid>
+      <MinorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </TickAttributes>
+      </MinorGrid>
+      <Scale>
+        <Min xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Min>
+        <MinorGridsPerUnit>5</MinorGridsPerUnit>
+      </Scale>
+      <Origin>
+        <Type>Min</Type>
+        <Value xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Value>
+      </Origin>
+      <PrimaryAxis>true</PrimaryAxis>
+      <Percent>false</Percent>
+    </AssociatedAxes>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>244</Red>
+          <Green>203</Green>
+          <Blue>77</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>159</Red>
+          <Green>170</Green>
+          <Blue>197</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>81</Red>
+          <Green>91</Green>
+          <Blue>115</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>118</Red>
+          <Green>48</Green>
+          <Blue>76</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>180</Red>
+          <Green>179</Green>
+          <Blue>179</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>201</Red>
+          <Green>165</Green>
+          <Blue>165</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>210</Red>
+          <Green>202</Green>
+          <Blue>170</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>101</Red>
+          <Green>134</Green>
+          <Blue>97</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>111</Red>
+          <Green>63</Green>
+          <Blue>16</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>27</Green>
+          <Blue>119</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series>
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>false</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;categories&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Orthogonal_Value</Type>
+          </Components>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+      </Series>
+      <Grouping>
+        <Enabled>false</Enabled>
+        <GroupingInterval>1.0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+    </SeriesDefinitions>
+    <Orientation>Horizontal</Orientation>
+    <LineAttributes>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Visible>true</Visible>
+    </LineAttributes>
+    <Label>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Alignment/>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>true</Visible>
+    </Label>
+    <LabelPosition>Below</LabelPosition>
+    <MajorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>192</Red>
+          <Green>192</Green>
+          <Blue>192</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </TickAttributes>
+    </MajorGrid>
+    <MinorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </TickAttributes>
+    </MinorGrid>
+    <Scale>
+      <MinorGridsPerUnit>5</MinorGridsPerUnit>
+    </Scale>
+    <Origin>
+      <Type>Min</Type>
+      <Value xsi:type="data:NumberDataElement">
+        <Value>0.0</Value>
+      </Value>
+    </Origin>
+    <PrimaryAxis>true</PrimaryAxis>
+    <CategoryAxis>true</CategoryAxis>
+    <Percent>false</Percent>
+  </Axes>
+  <Orientation>Vertical</Orientation>
+  <Rotation/>
+</model:ChartWithAxes>
+]]></xml-property>
+                                                <property name="outputFormat">SVG</property>
+                                                <property name="pageBreakAfter">auto</property>
+                                                <property name="marginTop">15px</property>
+                                                <property name="marginBottom">15px</property>
+                                                <property name="marginLeft">15px</property>
+                                                <property name="dataSet">scheduleLimitsGraph</property>
+                                                <property name="height">3.5in</property>
+                                                <property name="width">7in</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">qtd</property>
+                                                        <expression name="expression">dataSetRow["qtd"]</expression>
+                                                        <property name="dataType">integer</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">categories</property>
+                                                        <expression name="expression">dataSetRow["categories"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">percent</property>
+                                                        <expression name="expression">dataSetRow["percent"]</expression>
+                                                        <property name="dataType">decimal</property>
+                                                    </structure>
+                                                </list-property>
+                                            </extended-item>
+                                        </cell>
+                                    </row>
+                                    <row id="1856">
+                                        <property name="style">tabledetailslabel</property>
+                                        <cell id="1857">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1837">
+                                                <text-property name="text" key="categories"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1858">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1067">
+                                                <text-property name="text" key="number"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1875">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1068">
+                                                <text-property name="text" key="percentage"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1859">
+                                            <property name="style">tabledetailslabelcell</property>
+                                        </cell>
+                                    </row>
+                                    <row id="1871">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1872">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <label id="1851">
+                                                <text-property name="text" key="security_group"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1873">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <data id="2133">
+                                                <property name="resultSetColumn">total</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1876">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                        <cell id="1874">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                    </row>
+                                </header>
+                                <detail>
+                                    <row id="1969">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1970">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1449">
+                                                <property name="resultSetColumn">categories</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1971">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1451">
+                                                <property name="resultSetColumn">qtd</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1972">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1528">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Percent</property>
+                                                    <property name="pattern">###0%</property>
+                                                </structure>
+                                                <property name="resultSetColumn">percent</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1973">
+                                            <property name="style">tabledetailsdatacell</property>
+                                        </cell>
+                                    </row>
+                                </detail>
+                                <footer>
+                                    <row id="1974">
+                                        <property name="height">0.08in</property>
+                                        <cell id="1975">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                        </cell>
+                                    </row>
+                                </footer>
+                            </table>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="1767">
+                <property name="groupName">Schedule Limit Detail</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["chart_key"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["chart_key"]</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="2027">
+                        <property name="pageBreakAfter">always</property>
+                        <cell id="2028">
+                            <table id="2045">
+                                <property name="width">100%</property>
+                                <property name="dataSet">scheduleLimitsDetails</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">groupname</property>
+                                        <expression name="expression">dataSetRow["groupname"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">description</property>
+                                        <expression name="expression">dataSetRow["description"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">maxschedreport</property>
+                                        <expression name="expression">dataSetRow["maxschedreport"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">tot_groups</property>
+                                        <expression name="expression">Total.count()</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                </list-property>
+                                <column id="2061">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="2062">
+                                    <property name="width">3in</property>
+                                </column>
+                                <column id="2063">
+                                    <property name="width">1.5in</property>
+                                </column>
+                                <column id="2064">
+                                    <property name="width">4.5in</property>
+                                </column>
+                                <header>
+                                    <row id="2046">
+                                        <property name="style">tableheaderrow</property>
+                                        <cell id="2047">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="style">tableheaderlabel</property>
+                                            <label id="1161">
+                                                <text-property name="text" key="schedulelimitdetails"></text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="2065">
+                                        <property name="style">tabledetailslabel</property>
+                                        <cell id="2066">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1164">
+                                                <text-property name="text" key="securitygroup"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="2067">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1166">
+                                                <text-property name="text" key="description"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="2068">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1168">
+                                                <text-property name="text" key="schedulelimitvalue"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="2069">
+                                            <property name="style">tabledetailslabelcell</property>
+                                        </cell>
+                                    </row>
+                                </header>
+                                <detail>
+                                    <row id="2051">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="2052">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1174">
+                                                <property name="resultSetColumn">groupname</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="2053">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1176">
+                                                <property name="resultSetColumn">description</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="2054">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1178">
+                                                <property name="resultSetColumn">maxschedreport</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="2055">
+                                            <property name="style">tabledetailsdatacell</property>
+                                        </cell>
+                                    </row>
+                                </detail>
+                                <footer>
+                                    <row id="2056">
+                                        <cell id="2057">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <grid id="392">
+                                                <property name="width">100%</property>
+                                                <column id="393">
+                                                    <property name="width">1.3in</property>
+                                                </column>
+                                                <column id="394">
+                                                    <property name="width">8.7in</property>
+                                                </column>
+                                                <row id="395">
+                                                    <cell id="396">
+                                                        <label id="390">
+                                                            <property name="fontWeight">bold</property>
+                                                            <text-property name="text" key="numberofrecords_colon">Number of Records:</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="397">
+                                                        <property name="textAlign">left</property>
+                                                        <data id="1708">
+                                                            <property name="resultSetColumn">tot_groups</property>
+                                                        </data>
+                                                    </cell>
+                                                </row>
+                                            </grid>
+                                        </cell>
+                                    </row>
+                                </footer>
+                            </table>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="1783">
+                <property name="groupName">Schedule Queue</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["chart_key"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["chart_key"]</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="1880">
+                        <property name="pageBreakAfter">auto</property>
+                        <cell id="1881">
+                            <table id="1882">
+                                <property name="pageBreakAfter">always</property>
+                                <property name="width">100%</property>
+                                <property name="dataSet">scheduleQueueGraph</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">qtd_queue</property>
+                                        <expression name="expression">dataSetRow["qtd_queue"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">categories_queue</property>
+                                        <expression name="expression">dataSetRow["categories_queue"].replace("\n", " ")</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">percent_queue</property>
+                                        <expression name="expression">dataSetRow["percent_queue"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">categories_queue_1</property>
+                                        <expression name="expression">dataSetRow["categories_queue"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">total_queue</property>
+                                        <text-property name="displayName">total_queue</text-property>
+                                        <expression name="expression">dataSetRow["total_queue"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <column id="1898">
+                                    <property name="width">3in</property>
+                                </column>
+                                <column id="1899">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="1900">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="1901">
+                                    <property name="width">5in</property>
+                                </column>
+                                <header>
+                                    <row id="1988">
+                                        <property name="style">tableheaderrow</property>
+                                        <cell id="1989">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="style">tableheaderlabel</property>
+                                            <label id="1280">
+                                                <text-property name="text" key="schedulequeue"></text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="1983">
+                                        <cell id="1984">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="textAlign">center</property>
+                                            <extended-item extensionName="Chart" name="Pie Chart112" id="1937">
+                                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithoutAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Pie Chart</Type>
+  <SubType>Standard</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>schedulequeue=</Value>
+          <Font>
+            <Size>12.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <ShadowColor>
+          <Transparency>0</Transparency>
+          <Red>51</Red>
+          <Green>51</Green>
+          <Blue>51</Blue>
+        </ShadowColor>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>15.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Categories</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Size>10.0</Size>
+            <Bold>true</Bold>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+      <WrappingSize>0.0</WrappingSize>
+      <MaxPercent>0.5</MaxPercent>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>576.0</Width>
+      <Height>252.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <GridColumnCount>1</GridColumnCount>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>'A','B','C'</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity>
+    <Enable>true</Enable>
+    <LegendBehavior>ToggleSerieVisibility</LegendBehavior>
+  </Interactivity>
+  <EmptyMessage>
+    <Caption>
+      <Value></Value>
+      <Font>
+        <Alignment/>
+      </Font>
+    </Caption>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>0</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+    </Outline>
+    <Insets>
+      <Top>0.0</Top>
+      <Left>2.0</Left>
+      <Bottom>0.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Visible>false</Visible>
+  </EmptyMessage>
+  <SeriesDefinitions>
+    <Query>
+      <Definition></Definition>
+    </Query>
+    <SeriesPalette>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>244</Red>
+        <Green>203</Green>
+        <Blue>77</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>159</Red>
+        <Green>170</Green>
+        <Blue>197</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>81</Red>
+        <Green>91</Green>
+        <Blue>115</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>118</Red>
+        <Green>48</Green>
+        <Blue>76</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>180</Red>
+        <Green>179</Green>
+        <Blue>179</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>201</Red>
+        <Green>165</Green>
+        <Blue>165</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>210</Red>
+        <Green>202</Green>
+        <Blue>170</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>101</Red>
+        <Green>134</Green>
+        <Blue>97</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>111</Red>
+        <Green>63</Green>
+        <Blue>16</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>225</Red>
+        <Green>27</Green>
+        <Blue>119</Blue>
+      </Entries>
+    </SeriesPalette>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>34</Red>
+          <Green>89</Green>
+          <Blue>114</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>72</Red>
+          <Green>153</Green>
+          <Blue>119</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>221</Red>
+          <Green>205</Green>
+          <Blue>93</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>199</Red>
+          <Green>134</Green>
+          <Blue>57</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>152</Red>
+          <Green>96</Green>
+          <Blue>48</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>141</Red>
+          <Green>134</Green>
+          <Blue>142</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>131</Red>
+          <Green>162</Green>
+          <Blue>176</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>187</Red>
+          <Green>217</Green>
+          <Blue>0</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series xsi:type="type:PieSeries">
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Name>SansSerif</Name>
+              <Size>10.0</Size>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>true</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;qtd_queue&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Percentile_Orthogonal_Value</Type>
+            <FormatSpecifier xsi:type="attribute:JavaNumberFormatSpecifier">
+              <Pattern>##%</Pattern>
+            </FormatSpecifier>
+          </Components>
+          <Suffix></Suffix>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+        <Explosion>1</Explosion>
+        <ExplosionExpression></ExplosionExpression>
+        <Title>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Size>10.0</Size>
+              <Bold>true</Bold>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>true</Visible>
+        </Title>
+        <TitlePosition>Below</TitlePosition>
+        <LeaderLineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>51</Red>
+            <Green>51</Green>
+            <Blue>51</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LeaderLineAttributes>
+        <LeaderLineStyle>Fixed_Length</LeaderLineStyle>
+        <LeaderLineLength>40.0</LeaderLineLength>
+        <SliceOutline>
+          <Transparency>255</Transparency>
+          <Red>254</Red>
+          <Green>254</Green>
+          <Blue>254</Blue>
+        </SliceOutline>
+        <Ratio>1.0</Ratio>
+      </Series>
+      <Grouping>
+        <Enabled>false</Enabled>
+        <GroupingInterval>1.0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+      <Sorting>Ascending</Sorting>
+    </SeriesDefinitions>
+    <Series>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Label>
+      <DataDefinition>
+        <Definition>row[&quot;categories_queue&quot;]</Definition>
+      </DataDefinition>
+      <SeriesIdentifier></SeriesIdentifier>
+      <DataPoint>
+        <Components>
+          <Type>Orthogonal_Value</Type>
+        </Components>
+        <Separator>, </Separator>
+      </DataPoint>
+      <LabelPosition>Outside</LabelPosition>
+      <Stacked>false</Stacked>
+    </Series>
+    <Grouping>
+      <Enabled>true</Enabled>
+      <GroupingInterval>1.0</GroupingInterval>
+      <GroupType>Text</GroupType>
+      <AggregateExpression>Sum</AggregateExpression>
+    </Grouping>
+  </SeriesDefinitions>
+  <MinSlicePercent>false</MinSlicePercent>
+</model:ChartWithoutAxes>
+]]></xml-property>
+                                                <property name="outputFormat">SVG</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="marginTop">15px</property>
+                                                <property name="marginBottom">15px</property>
+                                                <property name="dataSet">scheduleQueueGraph</property>
+                                                <property name="height">3.5in</property>
+                                                <property name="width">8in</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">qtd_queue</property>
+                                                        <expression name="expression">dataSetRow["qtd_queue"]</expression>
+                                                        <property name="dataType">integer</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">categories_queue</property>
+                                                        <expression name="expression">dataSetRow["categories_queue"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">percent_queue</property>
+                                                        <expression name="expression">dataSetRow["percent_queue"]</expression>
+                                                        <property name="dataType">decimal</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="style">chart</property>
+                                            </extended-item>
+                                        </cell>
+                                    </row>
+                                    <row id="1883">
+                                        <property name="style">tabledetailslabel</property>
+                                        <cell id="1884">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1838">
+                                                <text-property name="text" key="categories"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1885">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1314">
+                                                <text-property name="text" key="number"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1886">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1316">
+                                                <text-property name="text" key="percentage"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1887">
+                                            <property name="style">tabledetailslabelcell</property>
+                                        </cell>
+                                    </row>
+                                    <row id="1902">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1903">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <label id="1908">
+                                                <text-property name="text" key="reports_schedule"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1904">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <data id="2132">
+                                                <property name="resultSetColumn">total_queue</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1905">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                        <cell id="1906">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                    </row>
+                                </header>
+                                <detail>
+                                    <row id="1947">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1948">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1487">
+                                                <property name="resultSetColumn">categories_queue</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1949">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1483">
+                                                <property name="resultSetColumn">qtd_queue</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1950">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="1529">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Percent</property>
+                                                    <property name="pattern">###0%</property>
+                                                </structure>
+                                                <property name="resultSetColumn">percent_queue</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1951">
+                                            <property name="style">tabledetailsdatacell</property>
+                                        </cell>
+                                    </row>
+                                </detail>
+                                <footer>
+                                    <row id="1952">
+                                        <property name="height">0.08in</property>
+                                        <cell id="1953">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                        </cell>
+                                    </row>
+                                </footer>
+                            </table>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="1024">
+                <property name="groupName">Schedule History</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["chart_key"]</expression>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="1649">
+                        <cell id="1650">
+                            <property name="colSpan">1</property>
+                            <property name="rowSpan">1</property>
+                            <property name="textAlign">center</property>
+                            <table id="1909">
+                                <property name="width">100%</property>
+                                <property name="dataSet">scheduleHistoryGraph</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">qtd_hist</property>
+                                        <expression name="expression">dataSetRow["qtd_hist"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">categories_hist</property>
+                                        <expression name="expression">dataSetRow["categories_hist"].replace("\n", " ")</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">percent_hist</property>
+                                        <expression name="expression">dataSetRow["percent_hist"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">report_usage</property>
+                                        <expression name="expression">dataSetRow["report_usage"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">total_hist</property>
+                                        <expression name="expression">dataSetRow["total_hist"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                </list-property>
+                                <column id="1925">
+                                    <property name="width">3in</property>
+                                </column>
+                                <column id="1926">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="1927">
+                                    <property name="width">1in</property>
+                                </column>
+                                <column id="1928">
+                                    <property name="width">5in</property>
+                                </column>
+                                <header>
+                                    <row id="2008">
+                                        <property name="style">tableheaderrow</property>
+                                        <cell id="2009">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="style">tableheaderlabel</property>
+                                            <label id="1371">
+                                                <text-property name="text" key="schedulehistory"></text-property>
+                                            </label>
+                                        </cell>
+                                    </row>
+                                    <row id="2003">
+                                        <cell id="2004">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <extended-item extensionName="Chart" name="Pie Chart1121" id="2075">
+                                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithoutAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Pie Chart</Type>
+  <SubType>Standard</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>schedulehistory=&lt;Value of key 'schedulehistory'></Value>
+          <Font>
+            <Size>12.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <ShadowColor>
+          <Transparency>0</Transparency>
+          <Red>51</Red>
+          <Green>51</Green>
+          <Blue>51</Blue>
+        </ShadowColor>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>15.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Categories</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Size>10.0</Size>
+            <Bold>true</Bold>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+      <WrappingSize>0.0</WrappingSize>
+      <MaxPercent>0.5</MaxPercent>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>576.0</Width>
+      <Height>252.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <GridColumnCount>1</GridColumnCount>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>'A','B','C'</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity>
+    <Enable>true</Enable>
+    <LegendBehavior>ToggleSerieVisibility</LegendBehavior>
+  </Interactivity>
+  <EmptyMessage>
+    <Caption>
+      <Value></Value>
+      <Font>
+        <Alignment/>
+      </Font>
+    </Caption>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>0</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+    </Outline>
+    <Insets>
+      <Top>0.0</Top>
+      <Left>2.0</Left>
+      <Bottom>0.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Visible>false</Visible>
+  </EmptyMessage>
+  <SeriesDefinitions>
+    <Query>
+      <Definition></Definition>
+    </Query>
+    <SeriesPalette>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>244</Red>
+        <Green>203</Green>
+        <Blue>77</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>159</Red>
+        <Green>170</Green>
+        <Blue>197</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>81</Red>
+        <Green>91</Green>
+        <Blue>115</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>118</Red>
+        <Green>48</Green>
+        <Blue>76</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>180</Red>
+        <Green>179</Green>
+        <Blue>179</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>201</Red>
+        <Green>165</Green>
+        <Blue>165</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>210</Red>
+        <Green>202</Green>
+        <Blue>170</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>101</Red>
+        <Green>134</Green>
+        <Blue>97</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>111</Red>
+        <Green>63</Green>
+        <Blue>16</Blue>
+      </Entries>
+      <Entries xsi:type="attribute:ColorDefinition">
+        <Transparency>255</Transparency>
+        <Red>225</Red>
+        <Green>27</Green>
+        <Blue>119</Blue>
+      </Entries>
+    </SeriesPalette>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>34</Red>
+          <Green>89</Green>
+          <Blue>114</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>72</Red>
+          <Green>153</Green>
+          <Blue>119</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>221</Red>
+          <Green>205</Green>
+          <Blue>93</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>199</Red>
+          <Green>134</Green>
+          <Blue>57</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>152</Red>
+          <Green>96</Green>
+          <Blue>48</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>141</Red>
+          <Green>134</Green>
+          <Blue>142</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>131</Red>
+          <Green>162</Green>
+          <Blue>176</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>187</Red>
+          <Green>217</Green>
+          <Blue>0</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series xsi:type="type:PieSeries">
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Name>SansSerif</Name>
+              <Size>10.0</Size>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>true</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;qtd_hist&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Percentile_Orthogonal_Value</Type>
+            <FormatSpecifier xsi:type="attribute:JavaNumberFormatSpecifier">
+              <Pattern>##%</Pattern>
+            </FormatSpecifier>
+          </Components>
+          <Suffix></Suffix>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+        <Explosion>1</Explosion>
+        <ExplosionExpression></ExplosionExpression>
+        <Title>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Size>10.0</Size>
+              <Bold>true</Bold>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>true</Visible>
+        </Title>
+        <TitlePosition>Below</TitlePosition>
+        <LeaderLineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>51</Red>
+            <Green>51</Green>
+            <Blue>51</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LeaderLineAttributes>
+        <LeaderLineStyle>Fixed_Length</LeaderLineStyle>
+        <LeaderLineLength>40.0</LeaderLineLength>
+        <SliceOutline>
+          <Transparency>255</Transparency>
+          <Red>254</Red>
+          <Green>254</Green>
+          <Blue>254</Blue>
+        </SliceOutline>
+        <Ratio>1.0</Ratio>
+      </Series>
+      <Grouping>
+        <Enabled>false</Enabled>
+        <GroupingInterval>1.0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+      <Sorting>Ascending</Sorting>
+    </SeriesDefinitions>
+    <Series>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Label>
+      <DataDefinition>
+        <Definition>row[&quot;categories_hist&quot;]</Definition>
+      </DataDefinition>
+      <SeriesIdentifier></SeriesIdentifier>
+      <DataPoint>
+        <Components>
+          <Type>Orthogonal_Value</Type>
+        </Components>
+        <Separator>, </Separator>
+      </DataPoint>
+      <LabelPosition>Outside</LabelPosition>
+      <Stacked>false</Stacked>
+    </Series>
+    <Grouping>
+      <Enabled>true</Enabled>
+      <GroupingInterval>1.0</GroupingInterval>
+      <GroupType>Text</GroupType>
+      <AggregateExpression>Sum</AggregateExpression>
+    </Grouping>
+  </SeriesDefinitions>
+  <MinSlicePercent>false</MinSlicePercent>
+</model:ChartWithoutAxes>
+]]></xml-property>
+                                                <property name="outputFormat">SVG</property>
+                                                <property name="pageBreakBefore">auto</property>
+                                                <property name="marginTop">15px</property>
+                                                <property name="marginBottom">15px</property>
+                                                <property name="dataSet">scheduleHistoryGraph</property>
+                                                <property name="height">3.5in</property>
+                                                <property name="width">8in</property>
+                                                <list-property name="boundDataColumns">
+                                                    <structure>
+                                                        <property name="name">qtd_hist</property>
+                                                        <expression name="expression">dataSetRow["qtd_hist"]</expression>
+                                                        <property name="dataType">integer</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">categories_hist</property>
+                                                        <expression name="expression">dataSetRow["categories_hist"]</expression>
+                                                        <property name="dataType">string</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">percent_hist</property>
+                                                        <expression name="expression">dataSetRow["percent_hist"]</expression>
+                                                        <property name="dataType">decimal</property>
+                                                    </structure>
+                                                    <structure>
+                                                        <property name="name">report_usage</property>
+                                                        <expression name="expression">dataSetRow["report_usage"]</expression>
+                                                        <property name="dataType">integer</property>
+                                                    </structure>
+                                                </list-property>
+                                                <property name="style">chart</property>
+                                            </extended-item>
+                                        </cell>
+                                    </row>
+                                    <row id="1910">
+                                        <property name="style">tabledetailslabel</property>
+                                        <cell id="1911">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1912">
+                                                <text-property name="text" key="categories"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1913">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1914">
+                                                <text-property name="text" key="number"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1915">
+                                            <property name="style">tabledetailslabelcell</property>
+                                            <label id="1916">
+                                                <text-property name="text" key="percentage"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1917">
+                                            <property name="style">tabledetailslabelcell</property>
+                                        </cell>
+                                    </row>
+                                    <row id="1918">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1919">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <label id="1934">
+                                                <text-property name="text" key="report_usage"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1921">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <data id="2076">
+                                                <property name="resultSetColumn">report_usage</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1923">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                        <cell id="1924">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                    </row>
+                                    <row id="1929">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1930">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <label id="1920">
+                                                <text-property name="text" key="reports_executed"></text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="1931">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                            <data id="2134">
+                                                <property name="resultSetColumn">total_hist</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1932">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                        <cell id="1933">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <property name="fontWeight">normal</property>
+                                        </cell>
+                                    </row>
+                                </header>
+                                <detail>
+                                    <row id="1938">
+                                        <property name="style">tabledetailsdatarow</property>
+                                        <cell id="1939">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="2074">
+                                                <property name="resultSetColumn">categories_hist</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1940">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="2077">
+                                                <property name="resultSetColumn">qtd_hist</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1941">
+                                            <property name="style">tabledetailsdatacell</property>
+                                            <data id="2080">
+                                                <structure name="numberFormat">
+                                                    <property name="category">Percent</property>
+                                                    <property name="pattern">###0%</property>
+                                                </structure>
+                                                <property name="resultSetColumn">percent_hist</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="1942">
+                                            <property name="style">tabledetailsdatacell</property>
+                                        </cell>
+                                    </row>
+                                </detail>
+                                <footer>
+                                    <row id="2023">
+                                        <property name="height">0.08in</property>
+                                        <cell id="2024">
+                                            <property name="colSpan">4</property>
+                                            <property name="rowSpan">1</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                        </cell>
+                                    </row>
+                                </footer>
+                            </table>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+        </table>
+    </body>
+</report>

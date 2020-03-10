@@ -1,0 +1,1763 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_license_overview.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Portrait List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSetAppsNotNTApps" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">app</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">originalapp</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">maintbname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">maxappsid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">app</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">originalapp</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maintbname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxappsid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">app</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">originalapp</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">maintbname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">maxappsid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetAppsNotNTApps = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetAppsNotNTApps.open();
+
+// MPI 04-03-2015 S23.RAP05 created
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   app,"
++ "   description,"
++ "   originalapp,"
++ "   maintbname,"
++ "   maxappsid"
++ " from maxapps"
++ " where not exists (select 1 from ntmaxapps where app = maxapps.app)"
+;
+
+dataSetAppsNotNTApps.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetAppsNotNTApps.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["app"] = dataSetAppsNotNTApps.getString("app");	
+row["description"] = dataSetAppsNotNTApps.getString("description");
+row["originalapp"] = dataSetAppsNotNTApps.getString("originalapp");
+row["maintbname"] = dataSetAppsNotNTApps.getString("maintbname");
+row["maxappsid"] = dataSetAppsNotNTApps.getString("maxappsid");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetGroupNotNTGroup" id="817">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">groupname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">maxgroupid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">groupname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxgroupid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">groupname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">maxgroupid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetGroupNotNTGroup = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetGroupNotNTGroup.open();
+
+// MPI 04-03-2015 S23.RAP05 created
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   groupname,"
++ "   description,"
++ "   maxgroupid"
++ " from maxgroup"
++ " where not exists (select 1 from ntmaxgroup where groupname = maxgroup.groupname)"
+;
+
+
+dataSetGroupNotNTGroup.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetGroupNotNTGroup.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["groupname"] = dataSetGroupNotNTGroup.getString("groupname");	
+row["description"] = dataSetGroupNotNTGroup.getString("description");
+row["maxgroupid"] = dataSetGroupNotNTGroup.getString("maxgroupid");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetNTGroupNotGroup" id="859">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">groupname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ntlicense</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntmaxgroupid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">groupname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntlicense</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaxgroupid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">groupname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ntlicense</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntmaxgroupid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetNTGroupNotGroup = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetNTGroupNotGroup.open();
+
+// MPI 04-03-2015 S23.RAP05 created
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   groupname,"
++ "   ntlicense,"
++ "   ntmaxgroupid"
++ " from ntmaxgroup"
++ " where not exists (select 1 from maxgroup where groupname = ntmaxgroup.groupname)"
+;
+
+
+dataSetNTGroupNotGroup.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetNTGroupNotGroup.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["groupname"] = dataSetNTGroupNotGroup.getString("groupname");	
+row["ntlicense"] = dataSetNTGroupNotGroup.getString("ntlicense");
+row["ntmaxgroupid"] = dataSetNTGroupNotGroup.getString("ntmaxgroupid");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetNTAppsNotApps" id="466">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">app</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ntlicense</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntnedtrainuse</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ntmaxappsid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">app</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntlicense</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntnedtrainuse</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaxappsid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">app</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ntlicense</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntnedtrainuse</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ntmaxappsid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetNTAppsNotApps = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetNTAppsNotApps.open();
+
+// MPI 04-03-2015 S23.RAP05 created
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   app,"
++ "   ntlicense,"
++ "   ntnedtrainuse,"
++ "   ntmaxappsid"
++ " from ntmaxapps"
++ " where not exists (select 1 from maxapps where app = ntmaxapps.app )"
+;
+
+
+dataSetNTAppsNotApps.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetNTAppsNotApps.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["app"] = dataSetNTAppsNotApps.getString("app");	
+row["ntlicense"] = dataSetNTAppsNotApps.getString("ntlicense");
+row["ntnedtrainuse"] = dataSetNTAppsNotApps.getString("ntnedtrainuse");
+row["ntmaxappsid"] = dataSetNTAppsNotApps.getString("ntmaxappsid");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetSigOptNotNTSigOpt" id="767">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">app</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">optionname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">sigoptionid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">app</property>
+                </structure>
+                <structure>
+                    <property name="columnName">optionname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sigoptionid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">app</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">optionname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">sigoptionid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetSigOptNotNTSigOpt = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetSigOptNotNTSigOpt.open();
+
+// MPI 04-03-2015 S23.RAP05 created
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   app," 
++ "   optionname," 
++ "   description," 
++ "   sigoptionid" 
++ " from sigoption"
++ " where not exists (select 1 from ntsigoption where app = sigoption.app and optionname = sigoption.optionname )"
+
+dataSetSigOptNotNTSigOpt.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetSigOptNotNTSigOpt.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["app"] = dataSetSigOptNotNTSigOpt.getString("app");	
+row["optionname"] = dataSetSigOptNotNTSigOpt.getString("optionname");
+row["description"] = dataSetSigOptNotNTSigOpt.getString("description");
+row["sigoptionid"] = dataSetSigOptNotNTSigOpt.getString("sigoptionid");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetNTSigOptNotSigOpt" id="779">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">app</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">optionname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntlicense</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ntsigoptionid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">app</property>
+                </structure>
+                <structure>
+                    <property name="columnName">optionname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntlicense</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntsigoptionid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">app</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">optionname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntlicense</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ntsigoptionid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetNTSigOptNotSigOpt = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetNTSigOptNotSigOpt.open();
+
+// MPI 04-03-2015 S23.RAP05 created
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   app," 
++ "   optionname," 
++ "   ntlicense," 
++ "   ntsigoptionid" 
++ " from ntsigoption"
++ " where not exists (select 1 from sigoption where app = ntsigoption.app and optionname = ntsigoption.optionname )"
+
+dataSetNTSigOptNotSigOpt.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetNTSigOptNotSigOpt.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["app"] = dataSetNTSigOptNotSigOpt.getString("app");	
+row["optionname"] = dataSetNTSigOptNotSigOpt.getString("optionname");
+row["ntlicense"] = dataSetNTSigOptNotSigOpt.getString("ntlicense");
+row["ntsigoptionid"] = dataSetNTSigOptNotSigOpt.getString("ntsigoptionid");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="370">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="371">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoPortrait" id="343" extends="MaximoSystemLibrary.maximoPortrait">
+            <overridden-values>
+                <ref-entry baseId="342" name="NewGrid21" id="344"/>
+                <ref-entry baseId="343" id="345"/>
+                <ref-entry baseId="344" id="346"/>
+                <ref-entry baseId="345" id="347"/>
+                <ref-entry baseId="346" id="348"/>
+                <ref-entry baseId="347" name="NewImage11" id="349"/>
+                <ref-entry baseId="348" id="350"/>
+                <ref-entry baseId="350" name="NewGrid3" id="352"/>
+                <ref-entry baseId="351" id="353"/>
+                <ref-entry baseId="352" id="354"/>
+                <ref-entry baseId="353" id="355"/>
+                <ref-entry baseId="354" id="356"/>
+                <ref-entry baseId="355" name="NewText2" id="357"/>
+                <ref-entry baseId="356" id="358"/>
+                <ref-entry baseId="357" name="NewGrid11" id="359"/>
+                <ref-entry baseId="358" id="360"/>
+                <ref-entry baseId="359" id="361"/>
+                <ref-entry baseId="360" id="362"/>
+                <ref-entry baseId="361" id="363"/>
+                <ref-entry baseId="362" id="364"/>
+                <ref-entry baseId="363" name="NewAutoText2" id="365"/>
+                <ref-entry baseId="364" id="366"/>
+                <ref-entry baseId="365" name="NewText11" id="367"/>
+                <ref-entry baseId="366" id="368"/>
+                <ref-entry baseId="367" name="NewAutoText11" id="369"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSetAppsNotNTApps</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">app</property>
+                    <text-property name="displayName">app</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["app"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">originalapp</property>
+                    <text-property name="displayName">originalapp</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["originalapp"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">maintbname</property>
+                    <text-property name="displayName">maintbname</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["maintbname"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">maxappsid</property>
+                    <text-property name="displayName">maxappsid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["maxappsid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="372">
+                    <property name="style">title</property>
+                    <cell id="373">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="464">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <text-property name="text">nt_license_overviewv20150304</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="465">
+                            <property name="fontSize">12pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">License Management Rapport</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+        </table>
+        <grid id="634">
+            <column id="635"/>
+            <row id="636">
+                <cell id="637">
+                    <grid id="612">
+                        <column id="613"/>
+                        <row id="614">
+                            <cell id="615">
+                                <label id="522">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Maxapps niet geregistreerd in License Management</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="616">
+                            <cell id="617">
+                                <table id="658">
+                                    <property name="dataSet">dataSetAppsNotNTApps</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">app</property>
+                                            <text-property name="displayName">app</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["app"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">description</property>
+                                            <text-property name="displayName">description</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">originalapp</property>
+                                            <text-property name="displayName">originalapp</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["originalapp"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">maintbname</property>
+                                            <text-property name="displayName">maintbname</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["maintbname"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">maxappsid</property>
+                                            <text-property name="displayName">maxappsid</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["maxappsid"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="687"/>
+                                    <column id="688"/>
+                                    <column id="689"/>
+                                    <column id="690"/>
+                                    <column id="691"/>
+                                    <header>
+                                        <row id="659">
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <cell id="660">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="692">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">APP</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="662">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="694">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">OMSCHRIJVING</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="664">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="696">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">ORIGINAL</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="666">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="698">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">MAINTABLE</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="668">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="700">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">MAXAPPSID</text-property>
+                                                </label>
+                                            </cell>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="670">
+                                            <cell id="671">
+                                                <data id="693">
+                                                    <property name="resultSetColumn">app</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="673">
+                                                <data id="695">
+                                                    <property name="resultSetColumn">description</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="675">
+                                                <data id="697">
+                                                    <property name="resultSetColumn">originalapp</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="677">
+                                                <data id="699">
+                                                    <property name="resultSetColumn">maintbname</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="679">
+                                                <data id="701">
+                                                    <property name="resultSetColumn">maxappsid</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="681">
+                                            <cell id="682"/>
+                                            <cell id="683"/>
+                                            <cell id="684"/>
+                                            <cell id="685"/>
+                                            <cell id="686"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                        </row>
+                        <row id="705">
+                            <cell id="706">
+                                <property name="color">#FFFFFF</property>
+                                <label id="707">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="702">
+                            <cell id="703">
+                                <property name="color">#FFFFFF</property>
+                                <label id="704">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="618">
+                            <cell id="619">
+                                <label id="565">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="620">
+                            <cell id="621">
+                                <table id="568">
+                                    <property name="dataSet">dataSetNTAppsNotApps</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">app</property>
+                                            <text-property name="displayName">app</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["app"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntlicense</property>
+                                            <text-property name="displayName">ntlicense</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntlicense"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntnedtrainuse</property>
+                                            <text-property name="displayName">ntnedtrainuse</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntnedtrainuse"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntmaxappsid</property>
+                                            <text-property name="displayName">ntmaxappsid</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntmaxappsid"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="597"/>
+                                    <column id="598"/>
+                                    <column id="599"/>
+                                    <column id="600"/>
+                                    <column id="601"/>
+                                    <header>
+                                        <row id="569">
+                                            <cell id="570">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="602">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">APP</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="572">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="604">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">NTLICENSE</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="574">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="608">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">NDT USE</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="576">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="610">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">NTMAXAPPSID</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="578">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="580">
+                                            <cell id="581">
+                                                <data id="603">
+                                                    <property name="resultSetColumn">app</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="583">
+                                                <data id="605">
+                                                    <property name="resultSetColumn">ntlicense</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="585">
+                                                <data id="609">
+                                                    <property name="resultSetColumn">ntnedtrainuse</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="587">
+                                                <data id="611">
+                                                    <property name="resultSetColumn">ntmaxappsid</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="589"/>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="591">
+                                            <cell id="592"/>
+                                            <cell id="593"/>
+                                            <cell id="594"/>
+                                            <cell id="595"/>
+                                            <cell id="596"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                        </row>
+                        <row id="622">
+                            <cell id="623">
+                                <label id="732">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="730">
+                            <cell id="731">
+                                <label id="733">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="728">
+                            <cell id="729">
+                                <label id="734">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Sigoptions niet geregistreerd in License Management</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="726">
+                            <cell id="727">
+                                <table id="735">
+                                    <property name="dataSet">dataSetSigOptNotNTSigOpt</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">app</property>
+                                            <text-property name="displayName">app</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["app"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">optionname</property>
+                                            <text-property name="displayName">optionname</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["optionname"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">description</property>
+                                            <text-property name="displayName">description</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">sigoptionid</property>
+                                            <text-property name="displayName">sigoptionid</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["sigoptionid"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="762"/>
+                                    <column id="763"/>
+                                    <column id="764"/>
+                                    <column id="765"/>
+                                    <column id="766"/>
+                                    <header>
+                                        <row id="736">
+                                            <cell id="737">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="768">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">APP</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="739">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="769">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">OPTIE</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="741">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="770">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">OMSCHRIJVING</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="743">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="771">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">SIGOPTIONID</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="745">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="746">
+                                            <cell id="747">
+                                                <data id="772">
+                                                    <property name="resultSetColumn">app</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="749">
+                                                <data id="773">
+                                                    <property name="resultSetColumn">optionname</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="751">
+                                                <data id="774">
+                                                    <property name="resultSetColumn">description</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="753">
+                                                <data id="775">
+                                                    <property name="resultSetColumn">sigoptionid</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="755"/>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="756">
+                                            <cell id="757"/>
+                                            <cell id="758"/>
+                                            <cell id="759"/>
+                                            <cell id="760"/>
+                                            <cell id="761"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                        </row>
+                        <row id="724">
+                            <cell id="725">
+                                <label id="776">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="722">
+                            <cell id="723">
+                                <label id="777">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="720">
+                            <cell id="721">
+                                <label id="778">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Sigoptions</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="718">
+                            <cell id="719">
+                                <table id="780">
+                                    <property name="dataSet">dataSetNTSigOptNotSigOpt</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">app</property>
+                                            <text-property name="displayName">app</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["app"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">optionname</property>
+                                            <text-property name="displayName">optionname</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["optionname"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntlicense</property>
+                                            <text-property name="displayName">ntlicense</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntlicense"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntsigoptionid</property>
+                                            <text-property name="displayName">ntsigoptionid</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntsigoptionid"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="807"/>
+                                    <column id="808"/>
+                                    <column id="809"/>
+                                    <column id="810"/>
+                                    <column id="811"/>
+                                    <header>
+                                        <row id="781">
+                                            <cell id="782">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="783">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">APP</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="784">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="785">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">OPTIE</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="786">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="787">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">NTLICENSE</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="788">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="789">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">NTSIGOPTIONID</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="790">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="791">
+                                            <cell id="792">
+                                                <data id="812">
+                                                    <property name="resultSetColumn">app</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="794">
+                                                <data id="813">
+                                                    <property name="resultSetColumn">optionname</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="796">
+                                                <data id="814">
+                                                    <property name="resultSetColumn">ntlicense</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="798">
+                                                <data id="816">
+                                                    <property name="resultSetColumn">ntsigoptionid</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="800"/>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="801">
+                                            <cell id="802"/>
+                                            <cell id="803"/>
+                                            <cell id="804"/>
+                                            <cell id="805"/>
+                                            <cell id="806"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                        </row>
+                        <row id="716">
+                            <cell id="717">
+                                <label id="818">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="714">
+                            <cell id="715">
+                                <label id="819">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="712">
+                            <cell id="713">
+                                <label id="820">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Maxgroups niet geregistreerd in License Management</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="710">
+                            <cell id="711">
+                                <table id="821">
+                                    <property name="dataSet">dataSetGroupNotNTGroup</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">groupname</property>
+                                            <text-property name="displayName">groupname</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["groupname"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">description</property>
+                                            <text-property name="displayName">description</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">maxgroupid</property>
+                                            <text-property name="displayName">maxgroupid</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["maxgroupid"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="848"/>
+                                    <column id="849"/>
+                                    <column id="850"/>
+                                    <column id="851"/>
+                                    <column id="852"/>
+                                    <header>
+                                        <row id="822">
+                                            <cell id="823">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="824">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">MAXGROUP</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="825">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="826">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">OMSCHRIJVING</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="827">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="828">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">MAXGROUPID</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="829">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                            <cell id="831">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="832">
+                                            <cell id="833">
+                                                <data id="856">
+                                                    <property name="resultSetColumn">groupname</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="835">
+                                                <data id="857">
+                                                    <property name="resultSetColumn">description</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="837">
+                                                <data id="858">
+                                                    <property name="resultSetColumn">maxgroupid</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="839"/>
+                                            <cell id="841"/>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="842">
+                                            <cell id="843"/>
+                                            <cell id="844"/>
+                                            <cell id="845"/>
+                                            <cell id="846"/>
+                                            <cell id="847"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                        </row>
+                        <row id="708">
+                            <cell id="709">
+                                <label id="853">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="624">
+                            <cell id="625">
+                                <label id="854">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#FFFFFF</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxapps</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="626">
+                            <cell id="627">
+                                <label id="855">
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">center</property>
+                                    <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                    <text-property name="text">Geregistreerd in License Management maar niet in Maxgroups</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="628">
+                            <cell id="629">
+                                <table id="860">
+                                    <property name="dataSet">dataSetNTGroupNotGroup</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">groupname</property>
+                                            <text-property name="displayName">groupname</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["groupname"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntlicense</property>
+                                            <text-property name="displayName">ntlicense</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntlicense"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">ntmaxgroupid</property>
+                                            <text-property name="displayName">ntmaxgroupid</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["ntmaxgroupid"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="885"/>
+                                    <column id="886"/>
+                                    <column id="887"/>
+                                    <column id="888"/>
+                                    <column id="889"/>
+                                    <header>
+                                        <row id="861">
+                                            <cell id="862">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="863">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">MAXGROUP</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="864">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="865">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">OMSCHRIJVING</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="866">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <label id="867">
+                                                    <property name="fontSize">10pt</property>
+                                                    <property name="fontWeight">bold</property>
+                                                    <property name="textAlign">left</property>
+                                                    <text-property name="text">NTMAXGROUPID</text-property>
+                                                </label>
+                                            </cell>
+                                            <cell id="868">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                            <cell id="869">
+                                                <property name="borderBottomColor">#000000</property>
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                            </cell>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="870">
+                                            <cell id="871">
+                                                <data id="890">
+                                                    <property name="resultSetColumn">groupname</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="873">
+                                                <data id="891">
+                                                    <property name="resultSetColumn">ntlicense</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="875">
+                                                <data id="892">
+                                                    <property name="resultSetColumn">ntmaxgroupid</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="877"/>
+                                            <cell id="878"/>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="879">
+                                            <cell id="880"/>
+                                            <cell id="881"/>
+                                            <cell id="882"/>
+                                            <cell id="883"/>
+                                            <cell id="884"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                        </row>
+                        <row id="630">
+                            <cell id="631"/>
+                        </row>
+                        <row id="632">
+                            <cell id="633"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="654">
+                <cell id="655"/>
+            </row>
+        </grid>
+    </body>
+</report>

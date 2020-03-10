@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/clmaster.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">checklijst</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">beschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">matserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">type_cl</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">taaktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">inspectietype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">hfdst</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">volgorde</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">taakbeschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">waarde_verplicht</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">eenheid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">mbnurgentie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">sdm_code</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">vervolgprio</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">storingstekst</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">checklijst</property>
+                </structure>
+                <structure>
+                    <property name="columnName">beschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">matserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">type_cl</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taaktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">inspectietype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">hfdst</property>
+                </structure>
+                <structure>
+                    <property name="columnName">volgorde</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taakbeschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">waarde_verplicht</property>
+                </structure>
+                <structure>
+                    <property name="columnName">eenheid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mbnurgentie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sdm_code</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vervolgprio</property>
+                </structure>
+                <structure>
+                    <property name="columnName">storingstekst</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">checklijst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">beschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">matserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">type_cl</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">taaktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">inspectietype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">hfdst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">volgorde</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">taakbeschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">waarde_verplicht</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">eenheid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">mbnurgentie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">sdm_code</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">vervolgprio</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">storingstekst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//MPI 12-04-2016: S38.SU01: New report Master Checklist (Michael Vink)
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   ntclmaster.clnum as checklijst," 
++ "   ntclmaster.description as beschrijving," 
++ "   ntclmaster.ntserie as matserie,"
++ "   ntclmaster.nttype as type_cl," 
++ "   ntclmastertask.nttasktype as taaktype," 
++ "   ntclmastertask.ntchecktype as inspectietype," 
++ "   ntclmastertask.ntchapternum as hfdst," 
++ "   ntclmastertask.sequence as volgorde," 
++ "   ntclmastertask.description as taakbeschrijving," 
++ "   case ntclmastertask.ntvaluereq" 
++ "     when 1 then 'ja' "
++ "     when 0 then 'nee'"
++ "   end as waarde_verplicht, "
++ "   ntclmastertask.ntunit as eenheid," 
++ "   ntclmastertask.ntmbnurgentie as mbnurgentie," 
++ "   classstructure.classificationid as sdm_code, "
++ "   ntclmastertask.ntpredefinedtext as storingstekst," 
++ "   ntclmastertask.ntclpriority as vervolgprio"
++ " from ntclmaster"
++ "   join ntclmastertask on ntclmaster.clnum = ntclmastertask.clnum"
++ "   left join classstructure on ntclmastertask.classstructureid = classstructure.classstructureid"
++ " where " + params["where"]
++ " order by "
++ "   ntclmaster.clnum,"
++ "   ntclmaster.ntserie," 
++ "   ntclmastertask.ntchapternum,"  
++ "   ntclmastertask.sequence"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["checklijst"] = maximoDataSet.getString("checklijst");	
+row["beschrijving"] = maximoDataSet.getString("beschrijving");	
+row["matserie"] = maximoDataSet.getString("matserie");	
+row["type_cl"] = maximoDataSet.getString("type_cl");	
+row["taaktype"] = maximoDataSet.getString("taaktype");	
+row["inspectietype"] = maximoDataSet.getString("inspectietype");	
+row["hfdst"] = maximoDataSet.getString("hfdst");	
+row["volgorde"] = maximoDataSet.getString("volgorde");	
+row["taakbeschrijving"] = maximoDataSet.getString("taakbeschrijving");	
+row["waarde_verplicht"] = maximoDataSet.getString("waarde_verplicht");	
+row["eenheid"] = maximoDataSet.getString("eenheid");	
+row["mbnurgentie"] = maximoDataSet.getString("mbnurgentie");	
+row["sdm_code"] = maximoDataSet.getString("sdm_code");	
+row["vervolgprio"] = maximoDataSet.getString("vervolgprio");	
+row["storingstekst"] = maximoDataSet.getString("storingstekst");
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="leftMargin">0.25in</property>
+            <property name="rightMargin">0.25in</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">checklijst</property>
+                    <text-property name="displayName">checklijst</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijst"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">beschrijving</property>
+                    <text-property name="displayName">beschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["beschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">matserie</property>
+                    <text-property name="displayName">matserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["matserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">type_c1</property>
+                    <text-property name="displayName">type_cl</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["type_cl"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">taaktype</property>
+                    <text-property name="displayName">taaktype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taaktype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">inspectietype</property>
+                    <text-property name="displayName">inspectietype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["inspectietype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">hfdst</property>
+                    <text-property name="displayName">hfdst</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["hfdst"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">volgorde</property>
+                    <text-property name="displayName">volgorde</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["volgorde"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taakbeschrijving</property>
+                    <text-property name="displayName">taakbeschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taakbeschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">waarde_verplicht</property>
+                    <text-property name="displayName">waarde_verplicht</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["waarde_verplicht"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">eenheid</property>
+                    <text-property name="displayName">eenheid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["eenheid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mbnurgentie</property>
+                    <text-property name="displayName">mbnurgentie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mbnurgentie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">sdm_code</property>
+                    <text-property name="displayName">sdm_code</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["sdm_code"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vervolgprio</property>
+                    <text-property name="displayName">vervolgprio</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["vervolgprio"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">0.6979166666666666in</property>
+            </column>
+            <column id="79">
+                <property name="width">1.423in</property>
+            </column>
+            <column id="476">
+                <property name="width">0.525in</property>
+            </column>
+            <column id="469">
+                <property name="width">0.588in</property>
+            </column>
+            <column id="462"/>
+            <column id="455"/>
+            <column id="504"/>
+            <column id="497"/>
+            <column id="490">
+                <property name="width">1.97in</property>
+            </column>
+            <column id="483">
+                <property name="width">0.5in</property>
+            </column>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17">
+                <property name="width">0.498in</property>
+            </column>
+            <column id="18">
+                <property name="width">0.37in</property>
+            </column>
+            <header>
+                <row id="345">
+                    <property name="style">title</property>
+                    <cell id="346">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <text id="447">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[nt_clmaster v20160412]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <label id="448">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Master checklist</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">8.875in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Parameter 1:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="520">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Checklijst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="521">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="473">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="507">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">MatSerie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="466">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="522">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type Checklist</text-property>
+                        </label>
+                    </cell>
+                    <cell id="459">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="523">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taaktype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="452">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="524">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">inspectietype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="501">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="525">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Hoofdstuk</text-property>
+                        </label>
+                    </cell>
+                    <cell id="494">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="526">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Volgorde</text-property>
+                        </label>
+                    </cell>
+                    <cell id="487">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="527">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taakbeschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="480">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="528">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Waarde verplicht ?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="529">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Eenheid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="530">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">MBN Urgentie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="531">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SDM </text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="532">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vervolg prio</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="505">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">checklijst</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="506">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">beschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="474">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="508">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">matserie</property>
+                        </data>
+                    </cell>
+                    <cell id="467">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="509">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">type_c1</property>
+                        </data>
+                    </cell>
+                    <cell id="460">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="510">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">taaktype</property>
+                        </data>
+                    </cell>
+                    <cell id="453">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="511">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">inspectietype</property>
+                        </data>
+                    </cell>
+                    <cell id="502">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="512">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">hfdst</property>
+                        </data>
+                    </cell>
+                    <cell id="495">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="513">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">volgorde</property>
+                        </data>
+                    </cell>
+                    <cell id="488">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="514">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">taakbeschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="481">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="515">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">waarde_verplicht</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="516">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">eenheid</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="517">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">mbnurgentie</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="518">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">sdm_code</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="519">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">vervolgprio</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

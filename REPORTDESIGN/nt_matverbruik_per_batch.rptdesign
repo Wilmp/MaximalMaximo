@@ -1,0 +1,1191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report with one or more groups, each having identical data fields.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_billed_returns.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Grouped Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="240">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="241">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="242">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="341">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">billbatchnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">agreement</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">customer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">pricesched</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">commoditygroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">commodity</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">refwo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">parent</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">taskid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">itemnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">quantity</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">issuetype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">pluspbillprice</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">plusplineprice</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">plusplistprice</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">conditioncode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">wodesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">itemdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">listprice</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">totprice</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">assetdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">billbatchnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">agreement</property>
+                </structure>
+                <structure>
+                    <property name="columnName">customer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pricesched</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commoditygroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commodity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">refwo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">parent</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taskid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">quantity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">issuetype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pluspbillprice</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusplineprice</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusplistprice</property>
+                </structure>
+                <structure>
+                    <property name="columnName">conditioncode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wodesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">listprice</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totprice</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetdesc</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">billbatchnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">agreement</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">customer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">pricesched</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">commoditygroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">commodity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">refwo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">parent</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">taskid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">itemnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">quantity</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">issuetype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">pluspbillprice</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">plusplineprice</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">plusplistprice</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">conditioncode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">wodesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">itemdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">listprice</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">totprice</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">assetdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// MPI 23-07-2013 Elementtool #3246
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ "   pluspbillbatch.billbatchnum, " 
++ "   pluspbillbatch.description, "
++ "   pluspbillbatch.agreement, "
++ "   pluspbillbatch.customer, "
++ "   pluspbillbatch.ntserie, "
++ "   pluspbillbatch.status, "
++ "   bl.pricesched, "
++ "   bl.commoditygroup, "
++ "   bl.commodity, "
++ "   bl.refwo, "
++ "   wo.wonum, "
++ "   wo.parent, "
++ "   wo.taskid, "
++ "   st.assetnum, "
++ "   st.description as assetdesc, "
++ "   mu.itemnum, "
++ "   mu.quantity*-1 as quantity, "
++ "   mu.issuetype, "
++ "   mu.pluspbillprice, "
++ "   mu.plusplineprice, "
++ "   mu.plusplistprice, "
++ "   m1.conditioncode, "
++ "   wo.description as wodesc,"
++ "   it.description as itemdesc,"
++ "   pb.listprice,"
++ "   pb.listprice * (mu.quantity*-1) as totprice"
++ " from pluspbillbatch  "
++ "   join pluspbillline bl on bl.billbatchnum = pluspbillbatch.billbatchnum "
++ "   join workorder wo on bl.refwo = wo.wonum  "
++ "                     or bl.refwo = wo.parent "
++ "   join matusetrans mu on  mu.refwo = wo.wonum "
++ "   join matusetrans m1 on  m1.itemnum = mu.itemnum " 
++ "                       and m1.refwo = wo.wonum  "
++ "                       and m1.issuetype = 'RETURN' "
++ "                       and m1.conditioncode in ('V','S') "
++ "   left join plusppbline pb on pb.itemnum = mu.itemnum"
++ "   join item it on it.itemnum = mu.itemnum"
++ "   left join asset st on wo.assetnum = st.assetnum " 
+// Include the Maximo where clause
++ " where " + params["where"]
+//+ " where pluspbillbatch.billbatchnum = '75500201'"
++ " order by "
++ "   pluspbillbatch.billbatchnum, "
++ "   wo.wonum, "
++ "   mu.itemnum, "
++ "   mu.issuetype "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["billbatchnum"] = maximoDataSet.getString("billbatchnum");
+row["description"] = maximoDataSet.getString("description");
+row["agreement"] = maximoDataSet.getString("agreement");
+row["customer"] = maximoDataSet.getString("customer");
+row["ntserie"] = maximoDataSet.getString("ntserie");
+row["status"] = maximoDataSet.getString("status");
+row["pricesched"] = maximoDataSet.getString("pricesched");
+row["commoditygroup"] = maximoDataSet.getString("commoditygroup");
+row["commodity"] = maximoDataSet.getString("commodity");
+row["refwo"] = maximoDataSet.getString("refwo");
+row["wonum"] = maximoDataSet.getString("wonum");
+row["parent"] = maximoDataSet.getString("parent");
+row["taskid"] = maximoDataSet.getString("taskid");
+row["itemnum"] = maximoDataSet.getString("itemnum");
+row["quantity"] = maximoDataSet.getDouble("quantity");
+row["issuetype"] = maximoDataSet.getString("issuetype");
+row["pluspbillprice"] = maximoDataSet.getString("pluspbillprice");
+row["plusplineprice"] = maximoDataSet.getString("plusplineprice");
+row["plusplistprice"] = maximoDataSet.getString("plusplistprice");
+row["conditioncode"] = maximoDataSet.getString("conditioncode");
+row["wodesc"] = maximoDataSet.getString("wodesc");
+row["itemdesc"] = maximoDataSet.getString("itemdesc");
+row["listprice"] = maximoDataSet.getDouble("listprice");
+row["totprice"] = maximoDataSet.getDouble("totprice");
+row["assetnum"] = maximoDataSet.getString("assetnum");
+row["assetdesc"] = maximoDataSet.getString("assetdesc");
+
+//row["datefield"] = maximoDataSet.getTimestamp("datefield");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="342">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">billbatchnum</property>
+                    <text-property name="displayName">billbatchnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["billbatchnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">agreement</property>
+                    <text-property name="displayName">agreement</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["agreement"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">customer</property>
+                    <text-property name="displayName">customer</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["customer"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <text-property name="displayName">wonum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taskid</property>
+                    <text-property name="displayName">taskid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taskid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commoditygroup</property>
+                    <text-property name="displayName">commoditygroup</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["commoditygroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity</property>
+                    <text-property name="displayName">commodity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["commodity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemnum</property>
+                    <text-property name="displayName">itemnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">issuetype</property>
+                    <text-property name="displayName">issuetype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["issuetype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">quantity</property>
+                    <text-property name="displayName">quantity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["quantity"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plusplineprice</property>
+                    <text-property name="displayName">plusplineprice</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["plusplineprice"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">parent</property>
+                    <text-property name="displayName">parent</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["parent"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pricesched</property>
+                    <text-property name="displayName">pricesched</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pricesched"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">conditioncode</property>
+                    <text-property name="displayName">conditioncode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["conditioncode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wodesc</property>
+                    <text-property name="displayName">wodesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wodesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemdesc</property>
+                    <text-property name="displayName">itemdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">listprice</property>
+                    <text-property name="displayName">listprice</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["listprice"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totprice</property>
+                    <text-property name="displayName">totprice</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["totprice"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <text-property name="displayName">assetnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetdesc</property>
+                    <text-property name="displayName">assetdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="411"/>
+            <column id="508"/>
+            <column id="519"/>
+            <column id="79"/>
+            <column id="87"/>
+            <column id="424"/>
+            <column id="17"/>
+            <column id="464"/>
+            <column id="365"/>
+            <column id="439"/>
+            <column id="377"/>
+            <column id="486"/>
+            <column id="18"/>
+            <header>
+                <row id="381">
+                    <property name="style">title</property>
+                    <cell id="382">
+                        <property name="colSpan">5</property>
+                        <property name="rowSpan">1</property>
+                        <label id="390">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <text-property name="text">nt_matverbruik_per_batch v20140221</text-property>
+                        </label>
+                    </cell>
+                    <cell id="385"/>
+                    <cell id="414"/>
+                    <cell id="386"/>
+                    <cell id="454"/>
+                    <cell id="387"/>
+                    <cell id="429"/>
+                    <cell id="388"/>
+                    <cell id="476"/>
+                    <cell id="389"/>
+                </row>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <label id="380">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Materiaalverbruiken per factuurbatch</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="202">
+                    <cell id="203">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="191">
+                                <property name="height">0.06in</property>
+                                <cell id="192"/>
+                                <cell id="193">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Selectie:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="428">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">where</property>
+                                                <expression name="expression" type="javascript">params["where"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">where</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116"/>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="138">
+                <property name="groupName">tableGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["billbatchnum"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["billbatchnum"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="287">
+                        <property name="height">0.08in</property>
+                        <cell id="288">
+                            <property name="colSpan">14</property>
+                            <property name="rowSpan">1</property>
+                            <data id="379">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">true</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">billbatchnum</property>
+                            </data>
+                        </cell>
+                    </row>
+                    <row id="139">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="140">
+                            <property name="colSpan">14</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tableheaderlabel</property>
+                            <grid id="255">
+                                <property name="width">100%</property>
+                                <column id="256">
+                                    <property name="width">0.9166666667in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="257">
+                                    <property name="width">2.0416666667in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <column id="258">
+                                    <property name="width">1.2291666667in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="259">
+                                    <property name="width">2.4895833333in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <row id="260">
+                                    <cell id="261">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="180">
+                                            <text-property name="text">BillBatch: </text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="262">
+                                        <property name="style">tableheaderdata</property>
+                                        <text-data id="391">
+                                            <expression name="valueExpr">BirtStr.concat("",row["billbatchnum"]," - ",row["description"])</expression>
+                                            <property name="contentType">html</property>
+                                        </text-data>
+                                    </cell>
+                                    <cell id="263">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="392">
+                                            <text-property name="text">Klant/Overeenkomst/Serie: </text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="264">
+                                        <property name="style">tableheaderdata</property>
+                                        <text-data id="393">
+                                            <expression name="valueExpr">BirtStr.concat("",row["customer"]," - ",row["agreement"]," - ",row["ntserie"])</expression>
+                                            <property name="contentType">html</property>
+                                        </text-data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="280">
+                        <property name="height">0.06in</property>
+                        <cell id="281">
+                            <property name="colSpan">14</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="160">
+                        <property name="style">tabledetailslabel</property>
+                        <cell id="161">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="96">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Werkorder</text-property>
+                            </label>
+                        </cell>
+                        <cell id="408">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="394">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Bovenliggende WO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="505">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="523">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Activum</text-property>
+                            </label>
+                        </cell>
+                        <cell id="516">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="524">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Activum omschrijving</text-property>
+                            </label>
+                        </cell>
+                        <cell id="162">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="413">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Taak</text-property>
+                            </label>
+                        </cell>
+                        <cell id="164">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="396">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Dienst</text-property>
+                            </label>
+                        </cell>
+                        <cell id="421">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="425">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Prijsafspraak</text-property>
+                            </label>
+                        </cell>
+                        <cell id="165">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="397">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Artikel</text-property>
+                            </label>
+                        </cell>
+                        <cell id="461">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="488">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Artikelomschrijving</text-property>
+                            </label>
+                        </cell>
+                        <cell id="362">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="398">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Transactietype</text-property>
+                            </label>
+                        </cell>
+                        <cell id="436">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="440">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Conditie</text-property>
+                            </label>
+                        </cell>
+                        <cell id="374">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="399">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Aantal</text-property>
+                            </label>
+                        </cell>
+                        <cell id="483">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="489">
+                                <property name="textAlign">right</property>
+                                <text-property name="text">Verkoopprijs per stuk</text-property>
+                            </label>
+                        </cell>
+                        <cell id="166">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="490">
+                                <property name="textAlign">right</property>
+                                <text-property name="text">Subtotaal ex korting</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="146">
+                        <property name="height">0.1in</property>
+                        <cell id="147">
+                            <property name="colSpan">14</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="textAlign">left</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="351">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="409">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="412">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">parent</property>
+                        </data>
+                    </cell>
+                    <cell id="506">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="521">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="517">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="522">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">assetdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="352">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">taskid</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="354">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">commodity</property>
+                        </data>
+                    </cell>
+                    <cell id="422">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="427">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pricesched</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="355">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">itemnum</property>
+                        </data>
+                    </cell>
+                    <cell id="462">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="493">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">itemdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="363">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="366">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">issuetype</property>
+                        </data>
+                    </cell>
+                    <cell id="437">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="442">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">conditioncode</property>
+                        </data>
+                    </cell>
+                    <cell id="375">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="367">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">quantity</property>
+                        </data>
+                    </cell>
+                    <cell id="484">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="495">
+                            <structure name="numberFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">listprice</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <text-data id="520">
+                            <expression name="valueExpr">row["quantity"]*row["listprice"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

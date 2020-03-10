@@ -1,0 +1,1302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report with one or more groups, each having identical data fields.</html-property>
+    <simple-property-list name="includeResource">
+        <value>location</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+ mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/asset_maintcost.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger(); 
+
+var dbClause = new String();
+var asClause = new String();
+var db2QueryAlias = new String();
+var labtransStartDateParam = "";
+var labtransEndDateParam = "";
+var matusetransStartDateParam = "";
+var matusetransEndDateParam = "";
+var tooltransStartDateParam = "";
+var tooltransEndDateParam = "";
+var servrectransStartDateParam = "";
+var servrectransEndDateParam = "";
+
+var parentParam="";
+if(params["paramstring"].value &amp;&amp; params["paramdelimiter"].value) 
+{
+	parentParam = MXReportUtil.getParameterFromString("parent", params["paramstring"], params["paramdelimiter"]);
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Grouped Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="240">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="241">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="242">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="siteid" id="391">
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="location" id="392">
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="427">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="428">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">children</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">totalcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">groupfield</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">childlocdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">parentlocdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">children</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">groupfield</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childlocdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">parentlocdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">children</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">totalcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">groupfield</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">childlocdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">parentlocdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+if(maximoDataSet.isOracle()){
+	dbClause = "nvl";
+	asClause = "";
+	db2QueryAlias = "";	
+}
+else{
+	dbClause = "coalesce";
+	asClause = " as "
+	db2QueryAlias = " as totalcost ";	
+}
+
+if(params["location"].value) {
+	params["location"] = params["location"].toUpperCase();
+	params["where"] += " and " + MXReportSqlFormat.createParamWhereClause("asset.location", params["location"].replace(/[=!,]/,""));
+}
+
+if (params["siteid"].value){
+	params["siteid"] = params["siteid"].toUpperCase();
+	params["siteid"] = params["siteid"].replace("=", "");
+	params["where"] += " and asset.siteid = '" + params["siteid"] + "' ";
+}
+
+if(parentParam.equals(""))
+	params["where"] += " and parentloc.location = asset.location and asset.parent is null ";
+else 
+	params["where"] += " and parentloc.location in (select parentasset.location from asset " + asClause + " parentasset join locations "
+	+ " on parentasset.location = locations.location and parentasset.siteid = locations.siteid and parentasset.assetnum = '" + parentParam + "') "
+	+ " and asset.parent = '" + parentParam + "'";
+
+if(params["startdate"].value){
+	labtransStartDateParam = " and labtrans.startdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+				 
+	matusetransStartDateParam = " and matusetrans.actualdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+	
+	tooltransStartDateParam = " and tooltrans.transdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+	
+	servrectransStartDateParam = " and servrectrans.transdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+}
+
+if(params["enddate"].value){
+	labtransEndDateParam = " and labtrans.startdate <= "  + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+			   
+	matusetransEndDateParam = " and matusetrans.actualdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+	
+	tooltransEndDateParam = " and tooltrans.transdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+	
+	servrectransEndDateParam  = " and servrectrans.transdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+	
+}
+
+sqlText = " select asset.assetnum, asset.description, asset.children, asset.location, parentloc.description as parentlocdesc, "
+		+ " childasset.description as childlocdesc from asset "
+		+ " join locations on asset.location = locations.location and asset.siteid = locations.siteid "
+		+ " left outer join locations " + asClause + " parentloc on asset.siteid = parentloc.siteid "
+		+ " left outer join asset childasset on asset.parent = childasset.assetnum and asset.siteid = childasset.siteid "
+		+ " where " + params["where"]
+		;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+// populate location descriptions
+
+row["assetnum"] = maximoDataSet.getString("assetnum");	
+row["description"] = maximoDataSet.getString("description");	
+row["children"] = maximoDataSet.getBooleanString("children");
+row["location"] = maximoDataSet.getString("location");
+row["parentlocdesc"] = maximoDataSet.getString("parentlocdesc");
+row["childlocdesc"] = maximoDataSet.getString("childlocdesc");
+row["groupfield"] = row["assetnum"];
+
+parentTotalCost = MXReportDataSetProvider.create(getDataSource().getName(),"parentTotalCost");
+parentTotalCost.open();
+
+var cost = 0;	
+var parentTotalCostSQL = new String();
+
+parentTotalCostSQL = " select " + dbClause + "(sum(totalcost),0) as totalcost "
+				  + " from   (select " + dbClause + "(sum(labtrans.linecost),0) as totalcost "
+				  + " from   labtrans "
+				  + " where  labtrans.assetnum = '" + row["assetnum"] + "' "
+				  + " and 	 labtrans.siteid = '" + params["siteid"] + "' "
+				  + labtransStartDateParam
+				  + labtransEndDateParam
+				  + " union  all "
+				  + " select " + dbClause + "(sum(matusetrans.linecost),0) as totalcost "
+				  + " from   matusetrans "
+				  + " where  matusetrans.assetnum = '" + row["assetnum"] + "' "
+				  + " and 	 matusetrans.siteid = '" + params["siteid"] + "' "
+				  + matusetransStartDateParam
+				  + matusetransEndDateParam
+				  + " union  all "
+				  + " select " + dbClause + "(sum(tooltrans.linecost),0) as totalcost "
+				  + " from   tooltrans "
+				  + " where  tooltrans.assetnum = '" + row["assetnum"] + "' "
+				  + " and 	 tooltrans.siteid = '" + params["siteid"] + "' "
+				  + tooltransStartDateParam
+				  + tooltransEndDateParam
+				  + " union  all "
+				  + " select " + dbClause + "(sum(servrectrans.linecost),0) as totalcost "
+				  + " from   servrectrans "
+				  + " where  servrectrans.assetnum = '" + row["assetnum"] + "' "
+				  + " and 	 servrectrans.siteid = '" + params["siteid"]  + "' "
+				  + servrectransStartDateParam
+				  + servrectransEndDateParam
+				  + ")" + db2QueryAlias
+				  ;
+
+parentTotalCost.setQuery(parentTotalCostSQL);
+
+if(parentTotalCost.fetch())
+{
+	row["totalcost"] = parentTotalCost.getDouble("totalcost");
+}
+	
+parentTotalCost.close();
+
+
+return (true);
+
+maximoDataSet.close();]]></method>
+        </script-data-set>
+        <script-data-set name="childrenDataSet" id="443">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">childassetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">childdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">children</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">child_totalcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">childrenbool</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">childlocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">childassetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">children</property>
+                </structure>
+                <structure>
+                    <property name="columnName">child_totalcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childrenbool</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childlocation</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">childassetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">childdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">children</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">child_totalcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">childrenbool</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">childlocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+sqlText = " select asset.assetnum as childassetnum, asset.description as childdesc, "
+		+ " asset.children, asset.location as childlocation"
+		+ " from asset "
+		+ " where parent = ? " 
+		+ " and asset.siteid = ? " 
+		;
+
+maximoDataSet.setQuery(sqlText);
+
+maximoDataSet.setQueryParameterValue(1, rows[0]["assetnum"]);
+maximoDataSet.setQueryParameterValue(2, params["siteid"]);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+// populate location descriptions
+
+row["childdesc"] = maximoDataSet.getString("childdesc");
+row["children"] = maximoDataSet.getBooleanString("children");
+row["childrenbool"] = maximoDataSet.getInteger("children");
+row["childassetnum"] = maximoDataSet.getString("childassetnum");
+row["childlocation"] = maximoDataSet.getString("childlocation");
+
+
+if(row["childrenbool"]){
+	var allChildAry = new Array();
+	allChildAry.push(row["childassetnum"]);	
+	getChildAsset(row["childassetnum"]);
+
+	row["child_totalcost"] = getTotalCost("('" + allChildAry.join("','") + "')");
+
+}
+else {
+	row["child_totalcost"] = getTotalCost("('" + row["childassetnum"] + "')");
+}
+
+return(true);
+
+
+function getChildAsset(childassetnum){
+
+	childRec = MXReportDataSetProvider.create(getDataSource().getName(),"childRec");
+	childRec.open();
+		
+	var childRecSQL = new String();
+	var childArray = new Array();
+				
+	childRecSQL = " select  asset.assetnum "
+				+ " from    asset "
+				+ " join 	locations on asset.location = locations.location and asset.siteid = locations.siteid "
+				+ " where   asset.parent = ? "
+				+ " and 	asset.siteid = ? ";
+	
+	childRec.setQuery(childRecSQL);
+	
+	childRec.setQueryParameterValue(1, childassetnum);
+	childRec.setQueryParameterValue(2, params["siteid"]);
+
+	
+	while(childRec.fetch()){
+		childArray.push(childRec.getString("assetnum"));
+	}
+
+	for(var i = 0; i < childArray.length; i++){
+		allChildAry.push(childArray[i]);	
+		getChildAsset(childArray[i]);
+	}
+
+}
+
+function getTotalCost(assetnum){
+
+	childTotalCost = MXReportDataSetProvider.create(getDataSource().getName(),"childTotalCost");
+	childTotalCost.open();
+
+	var cost = 0;	
+	var childTotalCostSQL = new String();
+
+	childTotalCostSQL = " select " + dbClause + "(sum(totalcost),0) as totalcost "
+					  + " from   (select " + dbClause + "(sum(labtrans.linecost),0) as totalcost "
+					  + " from   labtrans "
+					  + " where  labtrans.assetnum in " + assetnum 
+					  + " and 	 labtrans.siteid = '" + params["siteid"] + "' "
+					  + labtransStartDateParam
+					  + labtransEndDateParam
+					  + " union  all "
+					  + " select " + dbClause + "(sum(matusetrans.linecost),0) as totalcost "
+					  + " from   matusetrans "
+					  + " where  matusetrans.assetnum in " + assetnum
+					  + " and 	 matusetrans.siteid = '" + params["siteid"] + "' "
+					  + matusetransStartDateParam
+					  + matusetransEndDateParam
+					  + " union  all "
+					  + " select " + dbClause + "(sum(tooltrans.linecost),0) as totalcost "
+					  + " from   tooltrans "
+					  + " where  tooltrans.assetnum in " + assetnum
+					  + " and 	 tooltrans.siteid = '" + params["siteid"] + "' "
+					  + tooltransStartDateParam
+					  + tooltransEndDateParam
+					  + " union  all "
+					  + " select " + dbClause + "(sum(servrectrans.linecost),0) as totalcost "
+					  + " from   servrectrans "
+					  + " where  servrectrans.assetnum in " + assetnum
+					  + " and 	 servrectrans.siteid = '" + params["siteid"] + "' " 
+					  + servrectransStartDateParam
+					  + servrectransEndDateParam
+					  + ")" + db2QueryAlias
+					  ;
+
+	childTotalCost.setQuery(childTotalCostSQL);
+	
+	if(childTotalCost.fetch())
+	{
+		cost = childTotalCost.getDouble("totalcost");
+	}
+		
+	childTotalCost.close();
+	
+	return cost;
+
+}]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">assetnum</property>
+                    <expression name="expression">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">children</property>
+                    <expression name="expression">dataSetRow["children"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">totalcost</property>
+                    <expression name="expression">dataSetRow["totalcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">groupfield</property>
+                    <expression name="expression">dataSetRow["groupfield"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">childlocdesc</property>
+                    <expression name="expression">dataSetRow["childlocdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">parentlocdesc</property>
+                    <expression name="expression">dataSetRow["parentlocdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">location</property>
+                    <expression name="expression">if (BirtComp.notEqual(params["location"],null)) {
+params["location"].replace(/[=]/, "")
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <text-property name="displayName">parentParam</text-property>
+                    <expression name="expression">parentParam</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">1in</property>
+            </column>
+            <column id="79">
+                <property name="width">2.5in</property>
+            </column>
+            <column id="91">
+                <property name="width">1in</property>
+            </column>
+            <column id="87">
+                <property name="width">2.5in</property>
+            </column>
+            <column id="17">
+                <property name="width">1in</property>
+            </column>
+            <column id="350">
+                <property name="width">1.5in</property>
+            </column>
+            <column id="18">
+                <property name="width">0.5in</property>
+            </column>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <property name="pageBreakInside">auto</property>
+                    <cell id="210">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <label id="371">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="assetmaintcosti_title">Cost by Location</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <property name="pageBreakInside">auto</property>
+                    <cell id="220">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="202">
+                    <property name="pageBreakInside">auto</property>
+                    <cell id="203">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">9in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="191">
+                                <property name="height">0.06in</property>
+                                <cell id="192"/>
+                                <cell id="193">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="location_colon">Location:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="441">
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="411">
+                                <cell id="412">
+                                    <label id="414">
+                                        <text-property name="text" key="description_colon">Description:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="413">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="415">
+                                        <property name="resultSetColumn">parentlocdesc</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="419">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">parentParam.equals("")</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="420">
+                                    <label id="422">
+                                        <text-property name="text" key="parent_colon">Parent:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="421">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="548">
+                                        <property name="resultSetColumn">Column Binding</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="416">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">parentParam.equals("")</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="417">
+                                    <label id="423">
+                                        <text-property name="text" key="description_colon">Description:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="418">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="424">
+                                        <property name="resultSetColumn">childlocdesc</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="site_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="393">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">siteid</property>
+                                                <expression name="expression">if (BirtComp.notEqual(params["siteid"],null)) {
+params["siteid"].replace(/[=]/, "")
+}</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">siteid</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="429">
+                                <cell id="430">
+                                    <label id="435">
+                                        <text-property name="text" key="startdate_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="431">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="439">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="432">
+                                <cell id="433">
+                                    <label id="436">
+                                        <text-property name="text" key="enddate_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="434">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="440">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">enddate</property>
+                                                <expression name="expression">params["enddate"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">enddate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="138">
+                <property name="groupName">tableGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["groupfield"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["groupfield"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="280">
+                        <property name="height">0.06in</property>
+                        <property name="pageBreakInside">auto</property>
+                        <cell id="281">
+                            <property name="colSpan">7</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="160">
+                        <property name="style">tabledetailslabel</property>
+                        <property name="pageBreakInside">auto</property>
+                        <cell id="161">
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="textAlign">right</property>
+                            <label id="96">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="asset">Asset</text-property>
+                            </label>
+                        </cell>
+                        <cell id="162">
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="textAlign">right</property>
+                            <label id="372">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="description">Description</text-property>
+                            </label>
+                        </cell>
+                        <cell id="163">
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="textAlign">right</property>
+                            <label id="373">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="children">Children</text-property>
+                            </label>
+                        </cell>
+                        <cell id="164">
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="textAlign">right</property>
+                            <label id="374">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="description">Description</text-property>
+                            </label>
+                        </cell>
+                        <cell id="165">
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="textAlign">right</property>
+                            <label id="375">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="add_children">Additional Children?</text-property>
+                            </label>
+                        </cell>
+                        <cell id="347">
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="textAlign">right</property>
+                            <label id="376">
+                                <text-property name="text" key="totcosts">Total Costs</text-property>
+                            </label>
+                        </cell>
+                        <cell id="166">
+                            <property name="style">tabledetailslabelcell</property>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="146">
+                        <property name="height">0.1in</property>
+                        <cell id="147">
+                            <property name="colSpan">7</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <property name="pageBreakInside">auto</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="381">
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="382">
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="385">
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">children</property>
+                        </data>
+                    </cell>
+                    <cell id="348">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="386">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">totalcost</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+                <row id="444">
+                    <property name="style">tabledetailsdatarow</property>
+                    <property name="pageBreakInside">auto</property>
+                    <cell id="445">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <table id="484">
+                            <property name="width">100%</property>
+                            <property name="dataSet">childrenDataSet</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">childassetnum</property>
+                                    <expression name="expression">dataSetRow["childassetnum"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childdesc</property>
+                                    <expression name="expression">dataSetRow["childdesc"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">children</property>
+                                    <expression name="expression">dataSetRow["children"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">child_totalcost</property>
+                                    <expression name="expression">dataSetRow["child_totalcost"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childrenbool</property>
+                                    <expression name="expression">dataSetRow["childrenbool"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childlocation</property>
+                                    <expression name="expression">dataSetRow["childlocation"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">groupfield</property>
+                                    <expression name="expression">rows[0]["groupfield"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">assetnum_cost</property>
+                                    <expression name="expression">Total.sum(dataSetRow["child_totalcost"]) + row._outer["totalcost"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                            </list-property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="506">
+                                <property name="width">3.5in</property>
+                            </column>
+                            <column id="507">
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="508">
+                                <property name="width">2.5in</property>
+                            </column>
+                            <column id="509">
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="510">
+                                <property name="width">1.5in</property>
+                            </column>
+                            <column id="511">
+                                <property name="width">0.5in</property>
+                            </column>
+                            <detail>
+                                <row id="492">
+                                    <cell id="493">
+                                        <property name="style">tabledetailsdatacell</property>
+                                    </cell>
+                                    <cell id="494">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="520">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr">BirtComp.equalTo(row["childrenbool"], 0)</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">childassetnum</property>
+                                            <list-property name="action">
+                                                <structure>
+                                                    <property name="formatType">html</property>
+                                                    <property name="linkType">drill-through</property>
+                                                    <property name="reportName">asset_maintcost_tbl.rptdesign</property>
+                                                    <property name="targetWindow">_self</property>
+                                                    <property name="targetFileType">report-design</property>
+                                                    <list-property name="paramBindings">
+                                                        <structure>
+                                                            <property name="paramName">where</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>" asset.assetnum = '" + row["childassetnum"] + "' "</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">appname</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["appname"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">paramdelimiter</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["paramdelimiter"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">paramstring</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["paramstring"]+params["paramdelimiter"]+"parent="+row._outer["groupfield"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">siteid</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["siteid"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">location</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>row["childlocation"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">startdate</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["startdate"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">enddate</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["enddate"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                    </list-property>
+                                                </structure>
+                                            </list-property>
+                                        </data>
+                                        <data id="519">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr">BirtComp.equalTo(row["childrenbool"], 1)</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">childassetnum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="495">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="521">
+                                            <property name="resultSetColumn">childdesc</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="496">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="522">
+                                            <property name="resultSetColumn">children</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="497">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="525">
+                                            <structure name="numberFormat">
+                                                <property name="category">Fixed</property>
+                                                <property name="pattern">Fixed</property>
+                                            </structure>
+                                            <property name="resultSetColumn">child_totalcost</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="498">
+                                        <property name="style">tabledetailsdatacell</property>
+                                    </cell>
+                                </row>
+                            </detail>
+                            <footer>
+                                <row id="499">
+                                    <property name="height">0.1in</property>
+                                    <cell id="500">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                    </cell>
+                                    <cell id="501">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                    </cell>
+                                    <cell id="502">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                    </cell>
+                                    <cell id="503">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                    </cell>
+                                    <cell id="504">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                    </cell>
+                                    <cell id="505">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                    </cell>
+                                </row>
+                                <row id="512">
+                                    <cell id="513"/>
+                                    <cell id="514"/>
+                                    <cell id="515">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                    </cell>
+                                    <cell id="546">
+                                        <property name="colSpan">2</property>
+                                        <property name="rowSpan">1</property>
+                                        <grid id="526">
+                                            <property name="width">100%</property>
+                                            <column id="527">
+                                                <property name="width">1in</property>
+                                            </column>
+                                            <column id="528">
+                                                <property name="width">0.7in</property>
+                                            </column>
+                                            <column id="529">
+                                                <property name="width">0.8in</property>
+                                            </column>
+                                            <row id="530">
+                                                <cell id="531">
+                                                    <label id="545">
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="textAlign">right</property>
+                                                        <text-property name="text" key="totforasset">Total for Asset:   </text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="532">
+                                                    <property name="textAlign">left</property>
+                                                    <data id="544">
+                                                        <property name="resultSetColumn">groupfield</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="533">
+                                                    <data id="543">
+                                                        <structure name="numberFormat">
+                                                            <property name="category">Fixed</property>
+                                                            <property name="pattern">Fixed</property>
+                                                        </structure>
+                                                        <property name="resultSetColumn">assetnum_cost</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                    <cell id="518"/>
+                                </row>
+                            </footer>
+                        </table>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

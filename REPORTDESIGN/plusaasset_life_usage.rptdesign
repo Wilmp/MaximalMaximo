@@ -1,0 +1,2028 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <simple-property-list name="includeResource">
+        <value>plusaasset_life_usage</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+importPackage(Packages.psdi.server);
+importPackage(Packages.psdi.util);
+importPackage(Packages.psdi.plusa.orapiranha);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogFile("c:/temp/plusaasset_life_usage.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+params["paramstring"]=reportContext.getMessage("life_usage_simple_title", reportContext.getLocale()); 
+
+if ( params["fleetname"].value ) {
+	params["paramstring"] = reportContext.getMessage("life_usage_fleet_title", reportContext.getLocale())  + " " + params["fleetname"] ;  
+}
+
+if ( params["assetnum"].value ) {
+	params["paramstring"] = reportContext.getMessage("life_usage_complete_title", reportContext.getLocale()) + " " + params["assetnum"] ; 
+} ]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="assetnum" id="491">
+            <text-property name="promptText">Asset</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="asofdate" id="486">
+            <text-property name="promptText">As Of Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">dateTime</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="fleetname" id="726">
+            <text-property name="promptText">Fleet Name</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="plusaassetlifeusage" id="345">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">assetid</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">plusareg</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">item</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">metername</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">extrapolatelife</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">measureunitid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">lifetodate</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">sinceinstall</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">sincelastinspect</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">sincelastoverhaul</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">sincelastrepair</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">attributename</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">attributevalue</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">plusaanchorcount</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusareg</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">item</property>
+                </structure>
+                <structure>
+                    <property name="columnName">metername</property>
+                </structure>
+                <structure>
+                    <property name="columnName">extrapolatelife</property>
+                </structure>
+                <structure>
+                    <property name="columnName">measureunitid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">lifetodate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sinceinstall</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sincelastinspect</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sincelastoverhaul</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sincelastrepair</property>
+                </structure>
+                <structure>
+                    <property name="columnName">attributename</property>
+                </structure>
+                <structure>
+                    <property name="columnName">attributevalue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusaanchorcount</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">assetid</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">plusareg</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">item</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">metername</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">extrapolatelife</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">measureunitid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">lifetodate</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">sinceinstall</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">sincelastinspect</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">sincelastoverhaul</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">sincelastrepair</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">attributename</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">attributevalue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">plusaanchorcount</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+ 
+// get the current connection
+maximoDataSource = CustomDataSourceProvider.create(this.getDataSource().getName()) ;
+
+var sqlText = new String();
+
+sqlText = " " 
++ " select asset.assetnum "
++ ",asset.assetid "
++ ",asset.siteid "
++ ",asset.plusareg "
++ ",asset.description "
++ ",asset.serialnum "
++ ",plusacacat.item "
++ ",assetmeter.metername "
++ ",plusacmmodel.extrapolatelife "
++ ",assetmeter.measureunitid "
++ ",assetmeter.changedate "
++ ",sum(assetmeter.lifetodate) lifetodate "
++ ",sum(assetmeter.sinceinstall) sinceinstall"
++ ",sum(assetmeter.sincelastinspect) sincelastinspect "
++ ",sum(assetmeter.sincelastoverhaul) sincelastoverhaul "
++ ",sum(assetmeter.sincelastrepair) sincelastrepair "
++ ",sum(assetmeter.plusaanchorcount) plusaanchorcount "
++ ",plusacmattrchange.attributename "
++ ",plusacmattrchange.attributevalue  "
++ " from asset "
++ "inner join plusacacat on plusacacat.plusacacatid = asset.plusacatid "
++ "inner join assetmeter on asset.assetnum = assetmeter.assetnum "
++ "left outer join plusacmmodel on asset.plusamodelid = plusacmmodel.plusacmmodelid  "
++ "left outer join plusacmattrchange on asset.assetid = plusacmattrchange.assetid  "
++ "left outer join plusasafleet on asset.assetid = plusasafleet.assetid and plusasafleet.removed is null "
++ "left outer join plusacmfleet on plusasafleet.fleetid = plusacmfleet.plusacmfleetid " 
++ " where " + params["where"]
++ " and assetmeter.changedate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["asofdate"])
++ " and assetmeter.changedate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["asofdate"])
++ " group by "
++ "asset.assetnum "
++ ",asset.assetid "
++ ",asset.siteid "
++ ",asset.plusareg "
++ ",asset.description "
++ ",asset.serialnum "
++ ",plusacacat.item "
++ ",assetmeter.metername "
++ ",plusacmmodel.extrapolatelife "
++ ",assetmeter.measureunitid "
++ ",assetmeter.changedate "
++ ",assetmeter.sinceinstall "
++ ",assetmeter.sincelastinspect  "
++ ",assetmeter.sincelastoverhaul "
++ ",assetmeter.sincelastrepair "
++ ",assetmeter.plusaanchorcount "
++ ",plusacmattrchange.attributename "
++ ",plusacmattrchange.attributevalue  "
++ "order by asset.assetnum " ;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["assetnum"] 		= maximoDataSet.getString("assetnum");	
+row["assetid"]			= maximoDataSet.getInteger("assetid");
+row["siteid"]           = maximoDataSet.getString("siteid");
+row["plusareg"] 		= maximoDataSet.getString("plusareg");	
+row["description"] 		= maximoDataSet.getString("description");	
+row["serialnum"] 		= maximoDataSet.getString("serialnum");	
+row["item"] 			= maximoDataSet.getString("item");	
+row["metername"] 		= maximoDataSet.getString("metername");	
+row["extrapolatelife"] 	= maximoDataSet.getBooleanString("extrapolatelife");	
+row["measureunitid"] 	= maximoDataSet.getString("measureunitid");	
+row["lifetodate"] 		= maximoDataSet.getDouble("lifetodate");	
+//row["sinceinstall"] 	= maximoDataSet.getDouble("sinceinstall");	
+row["sincelastinspect"] = maximoDataSet.getDouble("sincelastinspect");	
+row["sincelastoverhaul"]= maximoDataSet.getDouble("sincelastoverhaul");	
+row["sincelastrepair"]  = maximoDataSet.getDouble("sincelastrepair");	
+row["plusaanchorcount"] = maximoDataSet.getDouble("plusaanchorcount");
+row["attributename"]    = maximoDataSet.getString("attributename");
+row["attributevalue"]   = maximoDataSet.getString("attributevalue");
+
+current= 0 ;
+
+current= RapCall.calcLifeReport( maximoDataSource.getConnection() , maximoDataSet.getInteger("assetid"), maximoDataSet.getString("metername"), maximoDataSet.getTimestamp("changedate"), maximoDataSet.getString("siteid") ) ;
+
+// AssetMeter
+// PlusAMeterReading
+// PlusAMeter
+
+if( maximoDataSet.getDouble("plusaanchorcount").value ){
+	row["sinceinstall"]= current - maximoDataSet.getDouble("plusaanchorcount") ;
+} else {
+	row["sinceinstall"]= current ;
+}
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="plusaassetlifeusagegraphSubDataSet" id="461">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">attributename</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">attributevalue</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">count_reading</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">count_meter</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">count_initial</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">attributename</property>
+                </structure>
+                <structure>
+                    <property name="columnName">attributevalue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">count_reading</property>
+                </structure>
+                <structure>
+                    <property name="columnName">count_meter</property>
+                </structure>
+                <structure>
+                    <property name="columnName">count_initial</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">attributename</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">attributevalue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">count_reading</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">count_meter</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">count_initial</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoSubDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoSubDataSet.open();
+
+var sqlText = new String();
+
+sqlText = " "
++ " select  "
++ "asset.assetnum  "
++ ",asset.assetid  "
++ ",asset.siteid  "
++ ",asset.plusareg "
++ ",asset.description "
++ ",asset.serialnum "
++ ",plusacmattrchange.attributename "
++ ",plusacmattrchange.attributevalue  "
++ ",sum(meterreading.reading) count_reading "
++ ",sum(meterreading.delta) count_meter "
++ ",( select sum(assetmeter.plusaanchorcount) from assetmeter where asset.assetnum = assetmeter.assetnum and asset.siteid = assetmeter.siteid and assetmeter.metername = 'FLTHRS' ) count_initial "
++ "from asset "
++ "inner join meterreading on asset.assetid = meterreading.assetid and asset.siteid = meterreading.siteid "
++ "inner join plusacmattrchange on asset.assetid = plusacmattrchange.assetid "
++ "where 1 = 1 "
++ "and asset.assetnum = '" +  rows[0]["assetnum"]  + "' "
++ "and meterreading.metername = 'FLTHRS' "
+
++ " group by  "
++ "asset.assetnum  "
++ ",asset.assetid  "
++ ",asset.siteid  "
++ ",asset.plusareg "
++ ",asset.description "
++ ",asset.serialnum "
++ ",plusacmattrchange.attributename "
++ ",plusacmattrchange.attributevalue  "
++ " order by asset.assetnum  ";
+
+maximoSubDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoSubDataSet.fetch())
+	return (false);
+
+row["attributename"] 		= maximoSubDataSet.getString("attributename");	
+row["attributevalue"] 		= maximoSubDataSet.getString("attributevalue");	
+
+//row["count_reading"] 		= maximoSubDataSet.getInteger("count_reading");	
+row["count_initial"] 		= maximoSubDataSet.getDouble("count_initial");	
+row["count_meter"] 			= maximoSubDataSet.getDouble("count_meter") ;	
+
+if(maximoSubDataSet.getDouble("count_reading").value){
+	row["count_meter"]+= maximoSubDataSet.getDouble("count_reading");	
+}
+
+if(maximoSubDataSet.getDouble("count_initial").value){
+	row["count_meter"]+= maximoSubDataSet.getDouble("count_initial");	
+}
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="pageBreakAfter">auto</property>
+            <property name="height">4.96875in</property>
+            <property name="width">9.989583333333334in</property>
+            <property name="dataSet">plusaassetlifeusage</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">assetnum</property>
+                    <expression name="expression">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetid</property>
+                    <expression name="expression">dataSetRow["assetid"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">siteid</property>
+                    <expression name="expression">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusareg</property>
+                    <expression name="expression">dataSetRow["plusareg"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <expression name="expression">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item</property>
+                    <expression name="expression">dataSetRow["item"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">metername</property>
+                    <expression name="expression">dataSetRow["metername"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">extrapolatelife</property>
+                    <expression name="expression">dataSetRow["extrapolatelife"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">measureunitid</property>
+                    <expression name="expression">dataSetRow["measureunitid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">lifetodate</property>
+                    <expression name="expression">dataSetRow["lifetodate"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">sinceinstall</property>
+                    <expression name="expression">dataSetRow["sinceinstall"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">sincelastinspect</property>
+                    <expression name="expression">dataSetRow["sincelastinspect"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">sincelastoverhaul</property>
+                    <expression name="expression">dataSetRow["sincelastoverhaul"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">sincelastrepair</property>
+                    <expression name="expression">dataSetRow["sincelastrepair"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">attributename</property>
+                    <expression name="expression">dataSetRow["attributename"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">attributevalue</property>
+                    <expression name="expression">dataSetRow["attributevalue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pdateof</property>
+                    <expression name="expression">params["asofdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">ptitle</property>
+                    <expression name="expression">params["paramstring"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusaanchorcount</property>
+                    <expression name="expression">dataSetRow["plusaanchorcount"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79">
+                <property name="width">0.9479166667in</property>
+            </column>
+            <column id="91">
+                <property name="width">1.3020833333in</property>
+            </column>
+            <column id="87"/>
+            <column id="385"/>
+            <column id="376"/>
+            <column id="367">
+                <property name="width">0.96875in</property>
+            </column>
+            <column id="358">
+                <property name="width">0.9270833333in</property>
+            </column>
+            <column id="17">
+                <property name="width">1.1458333333in</property>
+            </column>
+            <column id="18"/>
+            <header>
+                <row id="681">
+                    <property name="height">0.3541666666666667in</property>
+                    <cell id="682">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="692">
+                            <property name="width">100%</property>
+                            <column id="693"/>
+                            <column id="694"/>
+                            <column id="695">
+                                <property name="width">1.2604166667in</property>
+                            </column>
+                            <column id="696">
+                                <property name="width">2.6979166667in</property>
+                            </column>
+                            <column id="697"/>
+                            <row id="698">
+                                <property name="style">title</property>
+                                <cell id="699">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <label id="730">
+                                        <text-property name="text" key="life_usage_simple_title"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="702">
+                                    <label id="723">
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text" key="pasofdate"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="703">
+                                    <data id="724">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Medium Date</property>
+                                            <property name="pattern">Medium Date</property>
+                                        </structure>
+                                        <property name="resultSetColumn">pdateof</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="618">
+                <property name="groupName">siteidGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["siteid"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["siteid"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="619">
+                        <property name="height">0.1in</property>
+                        <cell id="620">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="492">
+                <property name="groupName">assetnumGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["assetnum"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["assetnum"]</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always-excluding-last</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="516">
+                        <cell id="517">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                            <grid id="109">
+                                <property name="marginTop">3pt</property>
+                                <property name="marginBottom">3pt</property>
+                                <property name="height">0.5520833333in</property>
+                                <property name="width">9.90625in</property>
+                                <column id="110">
+                                    <property name="width">1.8125in</property>
+                                    <property name="style">reportheaderlabel</property>
+                                </column>
+                                <column id="111">
+                                    <property name="width">2.2291666667in</property>
+                                    <property name="style">reportheaderdata</property>
+                                </column>
+                                <column id="472">
+                                    <property name="width">1.1979166667in</property>
+                                    <property name="style">reportheaderdata</property>
+                                </column>
+                                <column id="468">
+                                    <property name="width">1.8333333333in</property>
+                                    <property name="style">reportheaderdata</property>
+                                </column>
+                                <column id="476">
+                                    <property name="width">2.84375in</property>
+                                    <property name="style">reportheaderdata</property>
+                                </column>
+                                <row id="112">
+                                    <cell id="113">
+                                        <label id="480">
+                                            <text-property name="text" key="assetnum"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="114">
+                                        <property name="paddingLeft">2px</property>
+                                        <data id="718">
+                                            <property name="resultSetColumn">assetnum</property>
+                                            <list-property name="action">
+                                                <structure>
+                                                    <property name="formatType">html</property>
+                                                    <property name="linkType">drill-through</property>
+                                                    <property name="reportName">plusaasset_life_usage_trace.rptdesign</property>
+                                                    <property name="targetWindow">_blank</property>
+                                                    <property name="targetFileType">report-design</property>
+                                                    <list-property name="paramBindings">
+                                                        <structure>
+                                                            <property name="paramName">where</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>" asset.assetnum = '" + row["assetnum"] + "' and asset.siteid = '" + row["siteid"] + "' "</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                        <structure>
+                                                            <property name="paramName">appname</property>
+                                                            <simple-property-list name="expression">
+                                                                <value>params["appname"]</value>
+                                                            </simple-property-list>
+                                                        </structure>
+                                                    </list-property>
+                                                </structure>
+                                            </list-property>
+                                        </data>
+                                    </cell>
+                                    <cell id="470">
+                                        <property name="paddingLeft">2px</property>
+                                    </cell>
+                                    <cell id="466">
+                                        <property name="paddingLeft">2px</property>
+                                        <label id="482">
+                                            <property name="style">reportheaderlabel</property>
+                                            <text-property name="text" key="serialnum"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="474">
+                                        <property name="paddingLeft">2px</property>
+                                        <data id="721">
+                                            <property name="resultSetColumn">serialnum</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="126">
+                                    <property name="height">0in</property>
+                                    <cell id="127">
+                                        <label id="478">
+                                            <text-property name="text" key="plusareg"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="128">
+                                        <property name="paddingLeft">2px</property>
+                                        <data id="719">
+                                            <property name="resultSetColumn">plusareg</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="471">
+                                        <property name="paddingLeft">2px</property>
+                                    </cell>
+                                    <cell id="467">
+                                        <property name="paddingLeft">2px</property>
+                                        <label id="484">
+                                            <property name="style">reportheaderlabel</property>
+                                            <text-property name="text" key="description"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="475">
+                                        <property name="paddingLeft">2px</property>
+                                        <data id="722">
+                                            <property name="resultSetColumn">description</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="669">
+                                    <property name="height">0in</property>
+                                    <cell id="670">
+                                        <label id="675">
+                                            <text-property name="text" key="item"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="671">
+                                        <property name="paddingLeft">2px</property>
+                                        <data id="720">
+                                            <property name="resultSetColumn">item</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="672">
+                                        <property name="paddingLeft">2px</property>
+                                    </cell>
+                                    <cell id="673">
+                                        <property name="paddingLeft">2px</property>
+                                    </cell>
+                                    <cell id="674">
+                                        <property name="paddingLeft">2px</property>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="527">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="528">
+                            <label id="347">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="metername"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="529">
+                            <label id="349">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="extrapolatelife"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="530">
+                            <label id="387">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="measureunitid"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="531">
+                            <label id="389">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="lifetodate"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="532">
+                            <label id="391">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="sinceinstall"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="533">
+                            <label id="393">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="sincelastinspect"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="534">
+                            <label id="395">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="sincelastoverhaul"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="535">
+                            <label id="397">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="sincelastrepair"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="536">
+                            <label id="399">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="attributename"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="537">
+                            <label id="401">
+                                <property name="style">tableheaderlabel</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text" key="attributevalue"></text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="504">
+                        <property name="height">1.5625in</property>
+                        <cell id="505">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">medium</property>
+                            <extended-item extensionName="Chart" name="NewChart" id="463">
+                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Bar Chart</Type>
+  <SubType>Side-by-side</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>life_usage_chart_title=Total Flight Hours</Value>
+          <Font>
+            <Size>16.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>2.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Series</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+      <ShowValue>false</ShowValue>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>549.0</Width>
+      <Height>153.7500000024</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>false</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional_With_Depth</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>A, B, C</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity/>
+  <EmptyMessage>
+    <Caption>
+      <Value></Value>
+      <Font>
+        <Alignment/>
+      </Font>
+    </Caption>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>0</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+    </Outline>
+    <Insets>
+      <Top>0.0</Top>
+      <Left>2.0</Left>
+      <Bottom>0.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Visible>false</Visible>
+  </EmptyMessage>
+  <Axes>
+    <Type>Text</Type>
+    <Title>
+      <Caption>
+        <Value>X-Axis Title</Value>
+        <Font>
+          <Size>14.0</Size>
+          <Bold>true</Bold>
+          <Alignment>
+            <horizontalAlignment>Center</horizontalAlignment>
+            <verticalAlignment>Center</verticalAlignment>
+          </Alignment>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>false</Visible>
+    </Title>
+    <TitlePosition>Below</TitlePosition>
+    <AssociatedAxes>
+      <Type>Linear</Type>
+      <Title>
+        <Caption>
+          <Value>Y-Axis Title</Value>
+          <Font>
+            <Size>14.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+            <Rotation>90.0</Rotation>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Left</TitlePosition>
+      <SeriesDefinitions>
+        <Query>
+          <Definition>row[&quot;count_meter&quot;]</Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>80</Red>
+            <Green>166</Green>
+            <Blue>218</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>242</Red>
+            <Green>88</Green>
+            <Blue>106</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>232</Red>
+            <Green>172</Green>
+            <Blue>57</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>255</Green>
+            <Blue>128</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>64</Red>
+            <Green>128</Green>
+            <Blue>128</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>128</Green>
+            <Blue>192</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>170</Red>
+            <Green>85</Green>
+            <Blue>85</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>128</Green>
+            <Blue>0</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>true</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>row[&quot;count_meter&quot;]</Definition>
+          </DataDefinition>
+          <SeriesIdentifier></SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>false</Enabled>
+          <GroupingInterval>2.0</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+        <Sorting>Ascending</Sorting>
+      </SeriesDefinitions>
+      <Orientation>Vertical</Orientation>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+      <LabelPosition>Left</LabelPosition>
+      <MajorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </TickAttributes>
+      </MajorGrid>
+      <MinorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </TickAttributes>
+      </MinorGrid>
+      <Scale>
+        <Min xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Min>
+        <Max xsi:type="data:NumberDataElement">
+          <Value>10000.0</Value>
+        </Max>
+        <Step>2000.0</Step>
+        <MinorGridsPerUnit>5</MinorGridsPerUnit>
+      </Scale>
+      <Origin>
+        <Type>Min</Type>
+        <Value xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Value>
+      </Origin>
+      <PrimaryAxis>true</PrimaryAxis>
+      <Percent>false</Percent>
+    </AssociatedAxes>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>80</Red>
+          <Green>166</Green>
+          <Blue>218</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>242</Red>
+          <Green>88</Green>
+          <Blue>106</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>232</Red>
+          <Green>172</Green>
+          <Blue>57</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>128</Red>
+          <Green>255</Green>
+          <Blue>128</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>64</Red>
+          <Green>128</Green>
+          <Blue>128</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>128</Red>
+          <Green>128</Green>
+          <Blue>192</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>170</Red>
+          <Green>85</Green>
+          <Blue>85</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>128</Red>
+          <Green>128</Green>
+          <Blue>0</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series>
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>false</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;attributevalue&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Orthogonal_Value</Type>
+          </Components>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+      </Series>
+      <Grouping>
+        <Enabled>false</Enabled>
+        <GroupingInterval>2.0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+    </SeriesDefinitions>
+    <Orientation>Horizontal</Orientation>
+    <LineAttributes>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </LineAttributes>
+    <Label>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Alignment/>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>true</Visible>
+    </Label>
+    <LabelPosition>Below</LabelPosition>
+    <MajorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </TickAttributes>
+    </MajorGrid>
+    <MinorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </TickAttributes>
+    </MinorGrid>
+    <Scale>
+      <MinorGridsPerUnit>5</MinorGridsPerUnit>
+    </Scale>
+    <Origin>
+      <Type>Min</Type>
+      <Value xsi:type="data:NumberDataElement">
+        <Value>0.0</Value>
+      </Value>
+    </Origin>
+    <PrimaryAxis>true</PrimaryAxis>
+    <CategoryAxis>true</CategoryAxis>
+    <Percent>false</Percent>
+  </Axes>
+  <Orientation>Vertical</Orientation>
+  <UnitSpacing>50.0</UnitSpacing>
+  <Rotation/>
+</model:ChartWithAxes>
+]]></xml-property>
+                                <property name="outputFormat">SVG</property>
+                                <property name="dataSet">plusaassetlifeusagegraphSubDataSet</property>
+                                <property name="height">2.1354166667in</property>
+                                <property name="width">7.625in</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">attributename</property>
+                                        <expression name="expression">dataSetRow["attributename"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">attributevalue</property>
+                                        <expression name="expression">dataSetRow["attributevalue"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">count_reading</property>
+                                        <expression name="expression">dataSetRow["count_reading"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">count_meter</property>
+                                        <expression name="expression">dataSetRow["count_meter"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">count_initial</property>
+                                        <expression name="expression">dataSetRow["count_initial"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                </list-property>
+                                <property name="style">reportheaderlabel</property>
+                            </extended-item>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="708">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">metername</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="709">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">extrapolatelife</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="710">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">measureunitid</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="711">
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">lifetodate</property>
+                        </data>
+                    </cell>
+                    <cell id="382">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="712">
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">sinceinstall</property>
+                        </data>
+                    </cell>
+                    <cell id="373">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="713">
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">sincelastinspect</property>
+                        </data>
+                    </cell>
+                    <cell id="364">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="714">
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">sincelastoverhaul</property>
+                        </data>
+                    </cell>
+                    <cell id="355">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="715">
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">sincelastrepair</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="716">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">attributename</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="717">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">attributevalue</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

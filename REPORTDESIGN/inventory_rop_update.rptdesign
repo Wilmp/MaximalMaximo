@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.6" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.1.1.v20060922-1058 Build &lt;20060926-0959></property>
+    <property name="units">in</property>
+    <property name="includeResource">inventory</property>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogFile("C:/temp/inventory_rop_update.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+var status = new String("unverifiable");
+
+if(params["paramstring"].value && params["paramdelimiter"].value) {
+	
+	var paramlist=params["paramstring"].split(params["paramdelimiter"]);
+	
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(" >>> paramlist array : " + paramlist.join());
+	}
+	
+	if(paramlist.length == 2) {
+		var attkey=paramlist[0];
+		var dskey=paramlist[1];
+		
+		try{
+		
+			var updStmtList =  mxReportScriptContext.getHttpSessionAttribute(attkey);
+			var dsName =  mxReportScriptContext.getHttpSessionAttribute(dskey);
+			
+			if (scriptLogger.isDebugEnabled()) {
+				scriptLogger.debug(" >>> updStmtList : " + updStmtList.length);
+			}
+			
+			if(updStmtList!=null){
+				var updTxn = MXReportTxnProvider.create(dsName);
+				for(var i=0; i < updStmtList.length; i++) {
+					var updStmt = updTxn.createStatement();
+					updStmt.setQuery(updStmtList[i]);
+					if (scriptLogger.isDebugEnabled()) {
+						scriptLogger.debug(" >>> updStmt #" + (i+1) + " of " + updStmtList.length);
+					}
+				}
+				if (scriptLogger.isInfoEnabled()) {
+					scriptLogger.info(" >>> updTxn ready to be saved");
+				}
+				
+				updTxn.save();
+				status = "update_success";
+				if (scriptLogger.isInfoEnabled()) {
+					scriptLogger.info(" >>> updTxn success");
+				}
+			}
+		}
+		catch( e ){
+			status = "update_error";
+			if (scriptLogger.isInfoEnabled()) {
+				scriptLogger.info(" >>> updTxn failed");
+			}
+		}
+		finally{
+			updTxn = null;
+			mxReportScriptContext.removeHttpSessionAttribute(params["paramstring"]);	
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="location" id="341">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Storeroom</text-property>
+            <property name="allowBlank">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="site" id="342">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Site</text-property>
+            <property name="allowBlank">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="343">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">Start Date</text-property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="afterClose"><![CDATA[//if(params["update"]== true){
+
+//myTxn = MXReportTxnProvider.create("maximoDataSource");
+//myStmt = myTxn.createStatement();
+//myStmt.setQuery("update inventory set sstock = " + sstock + " and minlevel = " + newlevel + ";" );
+//myStmt.setQuery("update inventory set sstock = 20" );
+//myTxn.save();
+//}]]></method>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+rowcount = 0;]]></method>
+            <method name="fetch"><![CDATA[if (rowcount > 0)
+	return (false);
+
+rowcount = 1;
+
+return (true);
+
+maximoDataSet.close();]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2"/>
+                <ref-entry baseId="340" name="NewImage1"/>
+                <ref-entry baseId="310" name="NewImage"/>
+                <ref-entry baseId="322" name="NewGrid"/>
+                <ref-entry baseId="328" name="NewText"/>
+                <ref-entry baseId="329" name="NewGrid1"/>
+                <ref-entry baseId="335" name="NewAutoText"/>
+                <ref-entry baseId="337" name="NewText1"/>
+                <ref-entry baseId="339" name="NewAutoText1"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <column id="83">
+                <property name="width">1in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <label id="344">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="inventory_rop.reportdesign">Inventory ROP Analysis</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="storeroom_colon">Storeroom:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="349">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">location</property>
+                                                <expression name="expression">params["location"].replace(/[=!,]/,"")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="site_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="350">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">site</property>
+                                                <expression name="expression">params["site"].replace(/[=!,]/,"")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">site</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="345">
+                                <cell id="346">
+                                    <label id="348">
+                                        <text-property name="text" key="startdate_colon">Start Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="347">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="351">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="498">
+                    <property name="height">0in</property>
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="499">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="625">
+                    <property name="height">0.12in</property>
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="626">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">summarylabel</property>
+                        <text id="650">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage(status, reportContext.getLocale())</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="207">
+                    <property name="height">0.1in</property>
+                    <cell id="208">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

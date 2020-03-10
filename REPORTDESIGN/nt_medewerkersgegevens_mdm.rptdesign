@@ -1,0 +1,1319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">userid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">loginid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">userstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">personid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">displayname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">personstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">jobcode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">desc1</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">employeetype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">werkplek</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">lodesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">department</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">pluspcustvendor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">pluspcustvndtype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">hiredate</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">terminationdate</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">nextevaldate</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">resourcecode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">ntresourcetype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">labourstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">arbeidslocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">wolocdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">crewid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">phonenum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">emailaddress</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">groupname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">groupdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">userid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">loginid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">userstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">personid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">displayname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">personstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jobcode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">desc1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">employeetype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">werkplek</property>
+                </structure>
+                <structure>
+                    <property name="columnName">lodesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">department</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pluspcustvendor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pluspcustvndtype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">hiredate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">terminationdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nextevaldate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">resourcecode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntresourcetype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">labourstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">arbeidslocatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wolocdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">crewid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">phonenum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">emailaddress</property>
+                </structure>
+                <structure>
+                    <property name="columnName">groupname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">groupdesc</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">userid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">loginid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">userstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">personid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">displayname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">personstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">jobcode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">desc1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">employeetype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">werkplek</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">lodesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">department</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">pluspcustvendor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">pluspcustvndtype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">hiredate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">terminationdate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">nextevaldate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">resourcecode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">ntresourcetype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">labourstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">arbeidslocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">wolocdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">crewid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">phonenum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">emailaddress</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">groupname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">groupdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// 07-02-2017 MPI: S50.RAP05 Rapport medewerkergegevens tbv MDM
+
+var sqlText = new String();
+
+sqlText = " "
++ " select" 
++ "   u.userid, u.loginid,u.status as userstatus,"
++ "   p.personid,p.displayname,p.status as personstatus,p.jobcode,d.description as desc1 ,p.employeetype,p.location as werkplek,lo.description as lodesc,"
++ "   p.department,p.pluspcustvendor, p.pluspcustvndtype,p.hiredate,p.terminationdate,p.nextevaldate, l.laborcode as resourcecode,"
++ "   l.ntresourcetype,l.status as labourstatus,l.worklocation as arbeidslocatie,ll.description as wolocdesc,l.crewid, f.phonenum, m.emailaddress," 
++ "   gu.groupname, mg.description as groupdesc"
++ " from person p"
++ "   left outer join maxuser u    on (p.personid=u.personid)" 
++ "   left outer join labor l      on (p.personid=l.personid)"
++ "   left outer join email m      on (p.personid=m.personid and m.isprimary=1)"
++ "   left outer join phone f      on (p.personid=f.personid and f.isprimary=1)"
++ "   left outer join alndomain d  on (d.domainid='JOBCODE' and p.jobcode=d.value)"
++ "   left outer join locations lo on (p.location=lo.location)"
++ "   left outer join locations ll on (l.worklocation=ll.location)"
++ "   left outer join groupuser gu on (u.userid=gu.userid)"
++ "   left outer join maxgroup mg  on (gu.groupname=mg.groupname)"
++ " where p.employeetype='PERSOON'"
++ "  order by p.personid, gu.groupname"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["userid"] = maximoDataSet.getString("userid");	
+row["loginid"] = maximoDataSet.getString("loginid");	
+row["userstatus"] = maximoDataSet.getString("userstatus");	
+row["personid"] = maximoDataSet.getString("personid");	
+row["displayname"] = maximoDataSet.getString("displayname");	
+row["personstatus"] = maximoDataSet.getString("personstatus");	
+row["jobcode"] = maximoDataSet.getString("jobcode");	
+row["desc1"] = maximoDataSet.getString("desc1");	
+row["employeetype"] = maximoDataSet.getString("employeetype");	
+row["werkplek"] = maximoDataSet.getString("werkplek");	
+row["lodesc"] = maximoDataSet.getString("lodesc");	
+row["department"] = maximoDataSet.getString("department");	
+row["pluspcustvendor"] = maximoDataSet.getString("pluspcustvendor");	
+row["pluspcustvndtype"] = maximoDataSet.getString("pluspcustvndtype");	
+row["hiredate"] = maximoDataSet.getDate("hiredate");	
+row["terminationdate"] = maximoDataSet.getDate("terminationdate");	
+row["nextevaldate"] = maximoDataSet.getDate("nextevaldate");	
+row["resourcecode"] = maximoDataSet.getString("resourcecode");	
+row["ntresourcetype"] = maximoDataSet.getString("ntresourcetype");	
+row["labourstatus"] = maximoDataSet.getString("labourstatus");	
+row["arbeidslocatie"] = maximoDataSet.getString("arbeidslocatie");	
+row["wolocdesc"] = maximoDataSet.getString("wolocdesc");	
+row["crewid"] = maximoDataSet.getString("crewid");	
+row["phonenum"] = maximoDataSet.getString("phonenum");	
+row["emailaddress"] = maximoDataSet.getString("emailaddress");	
+row["groupname"] = maximoDataSet.getString("groupname");
+row["groupdesc"] = maximoDataSet.getString("groupdesc");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                </ref-entry>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+            <property name="showHeaderOnFirst">false</property>
+            <property name="showFooterOnLast">false</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">userid</property>
+                    <text-property name="displayName">userid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["userid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">loginid</property>
+                    <text-property name="displayName">loginid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["loginid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">userstatus</property>
+                    <text-property name="displayName">userstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["userstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">personid</property>
+                    <text-property name="displayName">personid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["personid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">displayname</property>
+                    <text-property name="displayName">displayname</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displayname"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">personstatus</property>
+                    <text-property name="displayName">personstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["personstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jobcode</property>
+                    <text-property name="displayName">jobcode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jobcode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">desc1</property>
+                    <text-property name="displayName">desc1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["desc1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">employeetype</property>
+                    <text-property name="displayName">employeetype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["employeetype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werkplek</property>
+                    <text-property name="displayName">werkplek</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werkplek"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">lodesc</property>
+                    <text-property name="displayName">lodesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["lodesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">department</property>
+                    <text-property name="displayName">department</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["department"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pluspcustvendor</property>
+                    <text-property name="displayName">pluspcustvendor</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pluspcustvendor"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pluspcustvndtype</property>
+                    <text-property name="displayName">pluspcustvndtype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pluspcustvndtype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">hiredate</property>
+                    <text-property name="displayName">hiredate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["hiredate"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">terminationdate</property>
+                    <text-property name="displayName">terminationdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["terminationdate"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nextevaldate</property>
+                    <text-property name="displayName">nextevaldate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nextevaldate"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">resourcecode</property>
+                    <text-property name="displayName">resourcecode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["resourcecode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntresourcetype</property>
+                    <text-property name="displayName">ntresourcetype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntresourcetype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">labourstatus</property>
+                    <text-property name="displayName">labourstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["labourstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">arbeidslocatie</property>
+                    <text-property name="displayName">arbeidslocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["arbeidslocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wolocdesc</property>
+                    <text-property name="displayName">wolocdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wolocdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">crewid</property>
+                    <text-property name="displayName">crewid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["crewid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">phonenum</property>
+                    <text-property name="displayName">phonenum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["phonenum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">emailaddress</property>
+                    <text-property name="displayName">emailaddress</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["emailaddress"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">groupname</property>
+                    <text-property name="displayName">groupname</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["groupname"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">groupdesc</property>
+                    <text-property name="displayName">groupdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["groupdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="356"/>
+            <column id="353"/>
+            <column id="350"/>
+            <column id="347"/>
+            <column id="380"/>
+            <column id="377"/>
+            <column id="374"/>
+            <column id="371"/>
+            <column id="404"/>
+            <column id="401"/>
+            <column id="398"/>
+            <column id="395"/>
+            <column id="392"/>
+            <column id="389"/>
+            <column id="386"/>
+            <column id="383"/>
+            <column id="368"/>
+            <column id="365"/>
+            <column id="362"/>
+            <column id="359"/>
+            <column id="18"/>
+            <column id="500"/>
+            <header>
+                <row id="405">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="406">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="432">
+                            <text-property name="text">userid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="407">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="482">
+                            <text-property name="text">loginid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="408">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="481">
+                            <text-property name="text">userstatus</text-property>
+                        </label>
+                    </cell>
+                    <cell id="409">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="480">
+                            <text-property name="text">personid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="410">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="479">
+                            <text-property name="text">displayname</text-property>
+                        </label>
+                    </cell>
+                    <cell id="411">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="478">
+                            <text-property name="text">personstatus</text-property>
+                        </label>
+                    </cell>
+                    <cell id="412">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="477">
+                            <text-property name="text">jobcode</text-property>
+                        </label>
+                    </cell>
+                    <cell id="413">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="476">
+                            <text-property name="text">desc1</text-property>
+                        </label>
+                    </cell>
+                    <cell id="414">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="475">
+                            <text-property name="text">employeetype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="415">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="474">
+                            <text-property name="text">werkplek</text-property>
+                        </label>
+                    </cell>
+                    <cell id="416">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="473">
+                            <text-property name="text">lodesc</text-property>
+                        </label>
+                    </cell>
+                    <cell id="417">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="472">
+                            <text-property name="text">department</text-property>
+                        </label>
+                    </cell>
+                    <cell id="418">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="471">
+                            <text-property name="text">pluspcustvendor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="419">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="470">
+                            <text-property name="text">pluspcustvndtype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="420">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="469">
+                            <text-property name="text">hiredate</text-property>
+                        </label>
+                    </cell>
+                    <cell id="421">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="468">
+                            <text-property name="text">terminationdate</text-property>
+                        </label>
+                    </cell>
+                    <cell id="422">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="467">
+                            <text-property name="text">nexevaldate</text-property>
+                        </label>
+                    </cell>
+                    <cell id="423">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="466">
+                            <text-property name="text">resourcecode</text-property>
+                        </label>
+                    </cell>
+                    <cell id="424">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="465">
+                            <text-property name="text">ntresourcetype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="425">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="464">
+                            <text-property name="text">labourstatus</text-property>
+                        </label>
+                    </cell>
+                    <cell id="426">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="463">
+                            <text-property name="text">arbeidslocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="427">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="462">
+                            <text-property name="text">wolocdesc</text-property>
+                        </label>
+                    </cell>
+                    <cell id="428">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="461">
+                            <text-property name="text">crewid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="429">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="460">
+                            <text-property name="text">phonenum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="430">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="459">
+                            <text-property name="text">email</text-property>
+                        </label>
+                    </cell>
+                    <cell id="431">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="458">
+                            <text-property name="text">groupname</text-property>
+                        </label>
+                    </cell>
+                    <cell id="497">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="512">
+                            <text-property name="text">groupdesc</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <text-property name="text">Gebruiker</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="433">
+                            <text-property name="text">Login</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="434">
+                            <text-property name="text">Status gebruiker</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="435">
+                            <text-property name="text">Persoon/medewerker</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="436">
+                            <text-property name="text">Naam</text-property>
+                        </label>
+                    </cell>
+                    <cell id="354">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="437">
+                            <text-property name="text">Status persoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="351">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="438">
+                            <text-property name="text">Functiecode</text-property>
+                        </label>
+                    </cell>
+                    <cell id="348">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="439">
+                            <text-property name="text">Functie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="345">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="440">
+                            <text-property name="text">Medewerkertype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="378">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="441">
+                            <text-property name="text">Locatiecode</text-property>
+                        </label>
+                    </cell>
+                    <cell id="375">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="442">
+                            <text-property name="text">Locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="372">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="443">
+                            <text-property name="text">Afdeling</text-property>
+                        </label>
+                    </cell>
+                    <cell id="369">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="444">
+                            <text-property name="text">Leverancier/klant</text-property>
+                        </label>
+                    </cell>
+                    <cell id="402">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="445">
+                            <text-property name="text">Type lev/klant</text-property>
+                        </label>
+                    </cell>
+                    <cell id="399">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="446">
+                            <text-property name="text">Datum in dienst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="396">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="447">
+                            <text-property name="text">Datum uit dienst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="393">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="448">
+                            <text-property name="text">Datum laatste functiewijziging</text-property>
+                        </label>
+                    </cell>
+                    <cell id="390">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="449">
+                            <text-property name="text">Arbeidscode</text-property>
+                        </label>
+                    </cell>
+                    <cell id="387">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="450">
+                            <text-property name="text">Type arbeid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="384">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="451">
+                            <text-property name="text">Status Arbeid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="381">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="452">
+                            <text-property name="text">Standplaats</text-property>
+                        </label>
+                    </cell>
+                    <cell id="366">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="453">
+                            <text-property name="text">Arbeidslocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="363">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="454">
+                            <text-property name="text">Ploeg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="360">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="455">
+                            <text-property name="text">Telefoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="357">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="456">
+                            <text-property name="text">E-mail</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="457">
+                            <text-property name="text">Beveiligingsgroep</text-property>
+                        </label>
+                    </cell>
+                    <cell id="498">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="515">
+                            <text-property name="text">Beveiligingsgroep</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="483">
+                            <property name="resultSetColumn">userid</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="484">
+                            <property name="resultSetColumn">loginid</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="485">
+                            <property name="resultSetColumn">userstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="486">
+                            <property name="resultSetColumn">personid</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="487">
+                            <property name="resultSetColumn">displayname</property>
+                        </data>
+                    </cell>
+                    <cell id="355">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="488">
+                            <property name="resultSetColumn">personstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="352">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="489">
+                            <property name="resultSetColumn">jobcode</property>
+                        </data>
+                    </cell>
+                    <cell id="349">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="490">
+                            <property name="resultSetColumn">desc1</property>
+                        </data>
+                    </cell>
+                    <cell id="346">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="496">
+                            <property name="resultSetColumn">employeetype</property>
+                        </data>
+                    </cell>
+                    <cell id="379">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="491">
+                            <property name="resultSetColumn">werkplek</property>
+                        </data>
+                    </cell>
+                    <cell id="376">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="492">
+                            <property name="resultSetColumn">lodesc</property>
+                        </data>
+                    </cell>
+                    <cell id="373">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="493">
+                            <property name="resultSetColumn">department</property>
+                        </data>
+                    </cell>
+                    <cell id="370">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="494">
+                            <property name="resultSetColumn">pluspcustvendor</property>
+                        </data>
+                    </cell>
+                    <cell id="403">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="495">
+                            <property name="resultSetColumn">pluspcustvndtype</property>
+                        </data>
+                    </cell>
+                    <cell id="400">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="514">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="resultSetColumn">hiredate</property>
+                        </data>
+                    </cell>
+                    <cell id="397">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="501">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="resultSetColumn">terminationdate</property>
+                        </data>
+                    </cell>
+                    <cell id="394">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="502">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="resultSetColumn">nextevaldate</property>
+                        </data>
+                    </cell>
+                    <cell id="391">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="503">
+                            <property name="resultSetColumn">resourcecode</property>
+                        </data>
+                    </cell>
+                    <cell id="388">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="504">
+                            <property name="resultSetColumn">ntresourcetype</property>
+                        </data>
+                    </cell>
+                    <cell id="385">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="505">
+                            <property name="resultSetColumn">labourstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="382">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="506">
+                            <property name="resultSetColumn">arbeidslocatie</property>
+                        </data>
+                    </cell>
+                    <cell id="367">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="507">
+                            <property name="resultSetColumn">wolocdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="364">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="508">
+                            <property name="resultSetColumn">crewid</property>
+                        </data>
+                    </cell>
+                    <cell id="361">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="509">
+                            <property name="resultSetColumn">phonenum</property>
+                        </data>
+                    </cell>
+                    <cell id="358">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="510">
+                            <property name="resultSetColumn">emailaddress</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="511">
+                            <property name="resultSetColumn">groupname</property>
+                        </data>
+                    </cell>
+                    <cell id="499">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="513">
+                            <property name="resultSetColumn">groupdesc</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

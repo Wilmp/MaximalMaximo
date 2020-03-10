@@ -1,0 +1,1360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <simple-property-list name="includeResource">
+        <value>workman</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+//importPackage(Packages.java.util.Locale);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("c:/temp/ammonthly_format.txt");
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+function isAvail(labor, date){
+	availDataSet = MXReportDataSetProvider.create("maximoDataSource", "availDataSet");
+	availDataSet.open();
+	
+	sqlText = "  select 1 as a from modavail where workhours = 0 "
+	+ " and workdate = " + MXReportSqlFormat.getDateFunction(date)
+	+ " and personid in ( select personid from labor where laborcode = '" + labor + "' ) ";
+
+	availDataSet.setQuery(sqlText);
+	
+	scriptLogger.debug("UM");	
+
+	//	scriptLogger.debug("A" + availDataSet.getInteger("a"));
+
+		scriptLogger.debug("B");
+
+
+	
+	if(availDataSet.fetch() &amp;&amp; availDataSet.getInteger("a") == 1)
+		return 0;
+	return 1;
+}
+
+
+function getDescription(date, labor, dataSource){
+	var description = new String(" ");
+	descDataSet = MXReportDataSetProvider.create(dataSource, "descDataSet");
+	descDataSet.open();
+	query = "select distinct wmassignment.scheduledate, workorder.wonum, "
+		+ " workorder.description "
+		+ " from workorder, wmassignment " 
+		+ " where workorder.wonum = wmassignment.wonum "
+		+ " and workorder.siteid = wmassignment.siteid "
+		+ " and wmassignment.scheduledate >= " 
+		+ MXReportSqlFormat.getStartDayTimestampFunction(date)
+		+ " and wmassignment.scheduledate <= " 
+		+ MXReportSqlFormat.getEndDayTimestampFunction(date)
+		+ " and wmassignment.assignstatus in (select value from synonymdomain where domainid = 'ASSTAT' and maxvalue = 'ASSIGNED') "
+		+ " and " 
+		+ MXReportSqlFormat.createParamWhereClause("wmassignment.laborcode",labor.toUpperCase());
+		
+	descDataSet.setQuery(query);
+	while(descDataSet.fetch()){
+		description += MXReportDataFormatter.timeToString(descDataSet.getTimestamp("scheduledate"), mxReportScriptContext.getLocale(), mxReportScriptContext.getTimeZone()) 
+		+ " " + descDataSet.getString("wonum") 
+		+ " " + descDataSet.getString("description") + "\n";
+	
+	}
+	descDataSet.close();
+	return description;
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="laborcode" id="371">
+            <text-property name="promptText">Labor</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="month" id="516">
+            <text-property name="promptText">Month</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="year" id="517">
+            <text-property name="promptText">Year</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">integer</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">1_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">1_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">1_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">2_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">2_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">2_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">3_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">3_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">3_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">4_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">4_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">4_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">5_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">5_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">5_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">6_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">6_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">6_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">6_time</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">7_day</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">7_description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">7_avail</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">1_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">1_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">1_avail</property>
+                </structure>
+                <structure>
+                    <property name="columnName">2_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">2_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">2_avail</property>
+                </structure>
+                <structure>
+                    <property name="columnName">3_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">3_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">3_avail</property>
+                </structure>
+                <structure>
+                    <property name="columnName">4_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">4_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">4_avail</property>
+                </structure>
+                <structure>
+                    <property name="columnName">5_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">5_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">5_avail</property>
+                </structure>
+                <structure>
+                    <property name="columnName">6_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">6_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">6_avail</property>
+                </structure>
+                <structure>
+                    <property name="columnName">6_time</property>
+                </structure>
+                <structure>
+                    <property name="columnName">7_day</property>
+                </structure>
+                <structure>
+                    <property name="columnName">7_description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">7_avail</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">1_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">1_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">1_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">2_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">2_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">2_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">3_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">3_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">3_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">4_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">4_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">4_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">5_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">5_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">5_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">6_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">6_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">6_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">6_time</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">7_day</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">7_description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">7_avail</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+startdate = new Date(params["year"], rows[0]["mainMonth"] - 1, 1, 0, 0);]]></method>
+            <method name="fetch"><![CDATA[if(startdate.getMonth() != (rows[0]["mainMonth"] - 1)) return (false);
+
+for(i = startdate.getDay(); i < 7 &amp;&amp; startdate.getMonth() == (rows[0]["mainMonth"] - 1); i++){
+	switch(startdate.getDay()){
+		
+		case 0:
+			row["1_day"] = startdate.getDate();
+			row["1_avail"] = isAvail(rows[0]["laborCode"], startdate);
+			row["1_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+		break;
+		case 1:
+			row["2_day"] = startdate.getDate();
+			row["2_avail"] = isAvail(rows[0]["laborCode"], startdate);
+			row["2_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+		break;
+		case 2:
+			row["3_day"] = startdate.getDate();
+			row["3_avail"] = isAvail(rows[0]["laborCode"], startdate);
+			row["3_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+		break;
+		case 3:
+			row["4_day"] = startdate.getDate();
+			row["4_avail"] = isAvail(rows[0]["laborCode"], startdate);
+			row["4_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+		break;
+		case 4:
+			row["5_day"] = startdate.getDate();
+			row["5_avail"] = isAvail(rows[0]["laborCode"], startdate);
+			row["5_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+		break;
+		case 5:
+			row["6_day"] = startdate.getDate();
+			row["6_avail"] = isAvail(rows[0]["laborCode"], startdate);
+			row["6_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+		break;
+		case 6:
+		row["7_day"] = startdate.getDate();
+		row["7_avail"] = isAvail(rows[0]["laborCode"], startdate);
+		row["7_description"] = getDescription(startdate, rows[0]["laborCode"], this.getDataSource().getName());
+			
+		break;
+		
+	}
+	startdate = DateTimeSpan.addDate(startdate, 0, 0, 1 );
+}
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="mainDataSet" id="632">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">mainMonth</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">mainMonthString</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">laborCode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">mainYear</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">mainMonth</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mainMonthString</property>
+                </structure>
+                <structure>
+                    <property name="columnName">laborCode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mainYear</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">mainMonth</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">mainMonthString</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">laborCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">mainYear</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[mainDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+mainDataSet.open();
+
+sqlText = " select maxvalue,value from synonymdomain where ";
+if (BirtComp.notEqual(params["month"],null)) {
+sqlText = sqlText + MXReportSqlFormat.createParamWhereClause("synonymdomain.value", params["month"].toUpperCase());
+} else {
+sqlText = sqlText + MXReportSqlFormat.createParamWhereClause("synonymdomain.value", "");
+}
+sqlText = sqlText + " and domainid = 'MONTH'";
+mainDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!mainDataSet.fetch())
+	return (false);
+	
+row["mainMonth"] = mainDataSet.getInteger("maxvalue");
+row["mainMonthString"] = mainDataSet.getString("value");
+row["mainYear"] = params["year"].value;
+
+laborDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "laborDataSet");
+laborDataSet.open();
+
+sqlTextLabor = " select laborcode from labor where ";
+if (BirtComp.notEqual(params["laborcode"],null)) {
+sqlTextLabor = sqlTextLabor + MXReportSqlFormat.createParamWhereClause("labor.laborcode",params["laborcode"].toUpperCase());
+} else {
+sqlTextLabor = sqlTextLabor + MXReportSqlFormat.createParamWhereClause("labor.laborcode","");
+}
+laborDataSet.setQuery(sqlTextLabor);
+
+if (laborDataSet.fetch()){
+	row["laborCode"] = laborDataSet.getString("laborCode"); 
+}
+return true;]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">mainDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">mainMonth</property>
+                    <expression name="expression">dataSetRow["mainMonth"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">mainMonthString</property>
+                    <expression name="expression">dataSetRow["mainMonthString"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">laborCode</property>
+                    <expression name="expression">dataSetRow["laborCode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mainYear</property>
+                    <text-property name="displayName">mainYear</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mainYear"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="528">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="539">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="563">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="571">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="579">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="587">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="83">
+                <property name="width">1.3in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="521">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <label id="412">
+                            <text-property name="text" key="monthly_view_of_workorder">Report Title</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="524"/>
+                    <cell id="535"/>
+                    <cell id="559"/>
+                    <cell id="567"/>
+                    <cell id="575"/>
+                    <cell id="583"/>
+                    <cell id="145">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="633">
+                    <property name="height">0.6in</property>
+                    <property name="textAlign">center</property>
+                    <cell id="634">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <table id="691">
+                            <property name="width">100%</property>
+                            <property name="dataSet">dataSet</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">1_day</property>
+                                    <expression name="expression">dataSetRow["1_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">1_description</property>
+                                    <expression name="expression">dataSetRow["1_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">1_avail</property>
+                                    <expression name="expression">dataSetRow["1_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">2_day</property>
+                                    <expression name="expression">dataSetRow["2_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">2_description</property>
+                                    <expression name="expression">dataSetRow["2_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">2_avail</property>
+                                    <expression name="expression">dataSetRow["2_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">3_day</property>
+                                    <expression name="expression">dataSetRow["3_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">3_description</property>
+                                    <expression name="expression">dataSetRow["3_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">3_avail</property>
+                                    <expression name="expression">dataSetRow["3_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">4_day</property>
+                                    <expression name="expression">dataSetRow["4_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">4_description</property>
+                                    <expression name="expression">dataSetRow["4_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">4_avail</property>
+                                    <expression name="expression">dataSetRow["4_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">5_day</property>
+                                    <expression name="expression">dataSetRow["5_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">5_description</property>
+                                    <expression name="expression">dataSetRow["5_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">5_avail</property>
+                                    <expression name="expression">dataSetRow["5_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">6_day</property>
+                                    <expression name="expression">dataSetRow["6_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">6_description</property>
+                                    <expression name="expression">dataSetRow["6_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">6_avail</property>
+                                    <expression name="expression">dataSetRow["6_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">6_time</property>
+                                    <expression name="expression">dataSetRow["6_time"]</expression>
+                                    <property name="dataType">date-time</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">7_day</property>
+                                    <expression name="expression">dataSetRow["7_day"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">7_description</property>
+                                    <expression name="expression">dataSetRow["7_description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">7_avail</property>
+                                    <expression name="expression">dataSetRow["7_avail"]</expression>
+                                    <property name="dataType">integer</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">_mainMonthString</property>
+                                    <expression name="expression">row._outer["mainMonthString"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">_laborCode</property>
+                                    <expression name="expression">row._outer["laborCode"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">Column Binding</property>
+                                    <text-property name="displayName">_mainYear</text-property>
+                                    <expression name="expression" type="javascript">row._outer["mainYear"]</expression>
+                                    <property name="dataType">integer</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="778">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <column id="779">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <column id="780">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <column id="781">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <column id="782">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <column id="783">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <column id="784">
+                                <property name="width">1.3in</property>
+                            </column>
+                            <header>
+                                <row id="703">
+                                    <cell id="704">
+                                        <property name="colSpan">7</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <grid id="705">
+                                            <property name="width">100%</property>
+                                            <column id="706">
+                                                <property name="width">0.8in</property>
+                                                <property name="style">reportheaderlabel</property>
+                                            </column>
+                                            <column id="707">
+                                                <property name="width">9.2in</property>
+                                                <property name="style">reportheaderdata</property>
+                                            </column>
+                                            <row id="708">
+                                                <cell id="709">
+                                                    <label id="710">
+                                                        <text-property name="text" key="labor_colon">Parameter 1:</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="711">
+                                                    <data id="790">
+                                                        <property name="resultSetColumn">_laborCode</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="713">
+                                                <cell id="714">
+                                                    <label id="715">
+                                                        <text-property name="text" key="month_colon">Parameter 1:</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="716">
+                                                    <data id="787">
+                                                        <property name="resultSetColumn">_mainMonthString</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                            <row id="718">
+                                                <cell id="719">
+                                                    <label id="720">
+                                                        <text-property name="text" key="year_colon:">Parameter 1:</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="721">
+                                                    <data id="789">
+                                                        <structure name="dateTimeFormat">
+                                                            <property name="category">Custom</property>
+                                                            <property name="pattern">yyyy</property>
+                                                        </structure>
+                                                        <structure name="numberFormat">
+                                                            <property name="category">Fixed</property>
+                                                            <property name="pattern">###0{RoundingMode=HALF_UP}</property>
+                                                        </structure>
+                                                        <property name="resultSetColumn">Column Binding</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                                <row id="723">
+                                    <property name="height">0.06in</property>
+                                    <cell id="724"/>
+                                    <cell id="725"/>
+                                    <cell id="726"/>
+                                    <cell id="727"/>
+                                    <cell id="728"/>
+                                    <cell id="729"/>
+                                    <cell id="730">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                    </cell>
+                                </row>
+                                <row id="731">
+                                    <property name="style">reportheaderlabel</property>
+                                    <property name="textAlign">center</property>
+                                    <cell id="732">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#000000</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="745">
+                                            <text-property name="text" key="sunday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="734">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="733">
+                                            <text-property name="text" key="monday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="736">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="735">
+                                            <text-property name="text" key="tuesday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="738">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="737">
+                                            <text-property name="text" key="wednesday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="740">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="739">
+                                            <text-property name="text" key="thursday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="742">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="741">
+                                            <text-property name="text" key="friday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="744">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <label id="743">
+                                            <text-property name="text" key="saturday">Monday</text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="746">
+                                    <property name="textAlign">center</property>
+                                    <cell id="747">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#000000</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["1_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="748">
+                                            <property name="resultSetColumn">1_day</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="749">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["2_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="750">
+                                            <property name="resultSetColumn">2_day</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="751">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["3_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="752">
+                                            <property name="resultSetColumn">3_day</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="753">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["4_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="754">
+                                            <property name="resultSetColumn">4_day</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="755">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["5_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="756">
+                                            <property name="resultSetColumn">5_day</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="757">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["6_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="758">
+                                            <property name="resultSetColumn">6_day</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="759">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-not-null</property>
+                                                <property name="backgroundColor">#7E90BF</property>
+                                                <expression name="testExpr">row["7_day"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="760">
+                                            <property name="resultSetColumn">7_day</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="761">
+                                    <property name="height">0.6in</property>
+                                    <property name="textAlign">center</property>
+                                    <cell id="762">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftColor">#000000</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopColor">#000000</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-true</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["1_avail"] == 0</expression>
+                                                <simple-property-list name="value1">
+                                                    <value>0</value>
+                                                </simple-property-list>
+                                            </structure>
+                                        </list-property>
+                                        <data id="763">
+                                            <structure name="stringFormat">
+                                                <property name="category">Unformatted</property>
+                                            </structure>
+                                            <property name="resultSetColumn">1_description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="764">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">eq</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["2_avail"]</expression>
+                                                <simple-property-list name="value1">
+                                                    <value>0</value>
+                                                </simple-property-list>
+                                            </structure>
+                                        </list-property>
+                                        <data id="765">
+                                            <property name="resultSetColumn">2_description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="766">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-true</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["3_avail"] == 0</expression>
+                                                <simple-property-list name="value1">
+                                                    <value>0</value>
+                                                </simple-property-list>
+                                            </structure>
+                                        </list-property>
+                                        <data id="767">
+                                            <property name="resultSetColumn">3_description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="768">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-true</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["4_avail"] == 0</expression>
+                                                <simple-property-list name="value1">
+                                                    <value>0</value>
+                                                </simple-property-list>
+                                            </structure>
+                                        </list-property>
+                                        <data id="769">
+                                            <property name="resultSetColumn">4_description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="770">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-true</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["5_avail"] == 0</expression>
+                                                <simple-property-list name="value1">
+                                                    <value>0</value>
+                                                </simple-property-list>
+                                            </structure>
+                                        </list-property>
+                                        <data id="771">
+                                            <property name="resultSetColumn">5_description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="772">
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-true</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["6_avail"] == 0</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="773">
+                                            <property name="resultSetColumn">6_description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="774">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="borderBottomColor">#000000</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderRightColor">#000000</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <list-property name="highlightRules">
+                                            <structure>
+                                                <property name="operator">is-true</property>
+                                                <property name="backgroundColor">#000000</property>
+                                                <expression name="testExpr">row["7_avail"] == 0</expression>
+                                            </structure>
+                                        </list-property>
+                                        <data id="775">
+                                            <property name="resultSetColumn">7_description</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

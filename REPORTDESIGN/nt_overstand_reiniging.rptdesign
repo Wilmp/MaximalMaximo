@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_overstand_reiniging.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ntmaintarrdate</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntmaintarrtime</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">nttrainnr</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ntarrtrack</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">activum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">nttraindep</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ntdepttrack</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ntmaintdepdate</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ntmaintdeptime</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaintarrdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaintarrtime</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nttrainnr</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntarrtrack</property>
+                </structure>
+                <structure>
+                    <property name="columnName">activum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nttraindep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntdepttrack</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaintdepdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaintdeptime</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ntmaintarrdate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntmaintarrtime</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">nttrainnr</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ntarrtrack</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">activum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">nttraindep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ntdepttrack</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ntmaintdepdate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">ntmaintdeptime</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//20170117 MPI: S49.SU006 Nieuw rapport overstanden tbv (interne) reiniging
+
+var sqlText = new String();
+
+sqlText = " "
++ " select"
++ "    ntplanbase.location||' - '||locations.description as location,"
++ "    to_char(ntplanarrival.ntmaintarrdate,'dd-mm-yyyy') as ntmaintarrdate,"
++ "    to_char(ntplanarrival.ntmaintarrtime,'HH24:MI') as ntmaintarrtime,"
+//+ "    to_char(ntplanarrival.ntmaintarrdt,'dd-mm-yyyy HH24:MI') as datumtijd,"
++ "    ntplanarrival.nttrainnr,"
++ "    ntplanarrival.ntarrtrack,"
++ "    (select description from asset where serialnum = ntplanarrival.serialnum) as activum,"
++ "    (select status from asset where serialnum = ntplanarrival.serialnum) as status,"
++ "    ntplanarrival.serialnum,"
++ "    ntplanarrival.nttraindep,"
++ "    ntplanarrival.ntdeptrack as ntdepttrack,"   
++ "    to_char(ntplanarrival.ntmaintdepdate,'dd-mm-yyyy') as ntmaintdepdate,"
++ "    to_char(ntplanarrival.ntmaintdeptime,'HH24:MI') as ntmaintdeptime"
++ "  from ntplanarrival"
++ "    join ntplanbase on"
++ "         ntplanarrival.location=ntplanbase.location and ntplanarrival.ntmaintarrtime is not null and ntplanarrival.ntmaintarrdate is not null and ntplanarrival.ntassign = 1" 
++ "        and" 
++ "        ("
++ "          ("
++ "            to_date( to_char(ntplanarrival.ntmaintarrdate, 'YYYY-MM-DD') || ' ' || to_char(ntplanarrival.ntmaintarrtime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI') between to_date( to_char(ntplanbase.ntplandate, 'YYYY-MM-DD') || ' ' || to_char(ntplanbase.ntstarttime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI') and to_date( to_char(ntplanbase.ntplandate+1, 'YYYY-MM-DD') || ' ' || to_char(ntplanbase.ntstarttime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI')"
++ "          )"
++ "          or"
++ "          ("
++ "            to_date( to_char(ntplanarrival.ntmaintdepdate, 'YYYY-MM-DD') || ' ' || to_char(ntplanarrival.ntmaintdeptime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI') between to_date( to_char(ntplanbase.ntplandate, 'YYYY-MM-DD') || ' ' || to_char(ntplanbase.ntstarttime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI') and to_date( to_char(ntplanbase.ntplandate+1, 'YYYY-MM-DD') || ' ' || to_char(ntplanbase.ntstarttime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI')"
++ "          )"
++ "          or"
++ "          ("
++ "            to_date( to_char(ntplanarrival.ntmaintarrdate, 'YYYY-MM-DD') || ' ' || to_char(ntplanarrival.ntmaintarrtime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI') < to_date( to_char(ntplanbase.ntplandate, 'YYYY-MM-DD') || ' ' || to_char(ntplanbase.ntstarttime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI')" 
++ "            and"  
++ "            to_date( to_char(ntplanarrival.ntmaintdepdate, 'YYYY-MM-DD') || ' ' || to_char(ntplanarrival.ntmaintdepdate, 'HH24:MI'), 'YYYY-MM-DD HH24:MI') > to_date( to_char(ntplanbase.ntplandate, 'YYYY-MM-DD') || ' ' || to_char(ntplanbase.ntstarttime, 'HH24:MI'), 'YYYY-MM-DD HH24:MI')"
++ "          )"
++ "        )"
++ "      join locations on ntplanbase.location = locations.location"
++ " where ntplanarrival.ntmaintarrdt between (trunc(sysdate) + 18/24) and  (trunc(sysdate) + 32/24)"  
++ " order by ntplanbase.location, ntplanarrival.ntmaintarrdt"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["location"] = maximoDataSet.getString("location");	
+row["ntmaintarrdate"] = maximoDataSet.getString("ntmaintarrdate");	
+row["ntmaintarrtime"] = maximoDataSet.getString("ntmaintarrtime");	
+//row["datumtijd"] = maximoDataSet.getTimestamp("datumtijd");	
+row["nttrainnr"] = maximoDataSet.getString("nttrainnr");	
+row["ntarrtrack"] = maximoDataSet.getString("ntarrtrack");	
+row["activum"] = maximoDataSet.getString("activum");	
+row["status"] = maximoDataSet.getString("status");	
+row["serialnum"] = maximoDataSet.getString("serialnum");	
+row["nttraindep"] = maximoDataSet.getString("nttraindep");	
+row["ntdepttrack"] = maximoDataSet.getString("ntdepttrack");	
+row["ntmaintdepdate"] = maximoDataSet.getString("ntmaintdepdate");	
+row["ntmaintdeptime"] = maximoDataSet.getString("ntmaintdeptime");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                </ref-entry>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">location</property>
+                    <text-property name="displayName">location</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmaintarrdate</property>
+                    <text-property name="displayName">ntmaintarrdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmaintarrdate"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmaintarrtime</property>
+                    <text-property name="displayName">ntmaintarrtime</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmaintarrtime"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nttrainnr</property>
+                    <text-property name="displayName">nttrainnr</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nttrainnr"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntarrtrack</property>
+                    <text-property name="displayName">ntarrtrack</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntarrtrack"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">activum</property>
+                    <text-property name="displayName">activum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["activum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">serialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nttraindep</property>
+                    <text-property name="displayName">nttraindep</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nttraindep"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntdepttrack</property>
+                    <text-property name="displayName">ntdepttrack</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntdepttrack"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmaintdepdate</property>
+                    <text-property name="displayName">ntmaintdepdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmaintdepdate"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmaintdeptime</property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmaintdeptime"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="360"/>
+            <column id="356"/>
+            <column id="352"/>
+            <column id="348"/>
+            <column id="79"/>
+            <column id="368"/>
+            <column id="364"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="357">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="370">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Aankomstdatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="353">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="392">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Geplande aankomst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="349">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="374">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Treinnummer aankomst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="345">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="376">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Aankomstspoor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="378">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="365">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="380">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="361">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="382">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serienummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="384">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Treinnummer vertrek</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="386">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vertrekspoor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="388">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vertrekdatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="390">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Geplande vertrek</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="369">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">location</property>
+                        </data>
+                    </cell>
+                    <cell id="358">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="371">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntmaintarrdate</property>
+                        </data>
+                    </cell>
+                    <cell id="354">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="373">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntmaintarrtime</property>
+                        </data>
+                    </cell>
+                    <cell id="350">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="375">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">nttrainnr</property>
+                        </data>
+                    </cell>
+                    <cell id="346">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="377">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntarrtrack</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="379">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">activum</property>
+                        </data>
+                    </cell>
+                    <cell id="366">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="381">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="362">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="383">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">serialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="385">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">nttraindep</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="387">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntdepttrack</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="389">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntmaintdepdate</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="391">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntmaintdeptime</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

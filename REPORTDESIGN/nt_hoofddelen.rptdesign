@@ -1,0 +1,1785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_hoofddelen.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="location" id="345">
+            <text-property name="promptText">Locatie</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntserie" id="346">
+            <text-property name="promptText">Serie</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ingebouwd</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">assettype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ingebouwd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assettype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ingebouwd</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">assettype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// 13-05-2015 MPI: S26.RAP04 - Aanpassen Rapport (Activa) "Hoofddelen overzicht per locatie / serie" - harde planning aanpassing in tijdelijke planning
+//                 Join with invreserve instead of wpmaterial
+
+var sqlText = new String();
+var vSerie  = new String();
+var vLoc    = new String();
+ 
+if (params["ntserie"].value) {
+	params["ntserie"]=params["ntserie"].replace("=","");
+	vSerie += " and asset.ntserie like '" + params["ntserie"] + "'"
+}
+else {
+   	vSerie = " and  1=1 ";
+}
+
+	params["location"]=params["location"].replace("=","");
+	vLoc += " where NTASSOCOPLOC = '" + params["location"] + "'"
+
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select asset.assetnum, asset.serialnum, asset.description, st2.serialnum as ingebouwd, asset.assettype, asset.status, asset.location, "
++ "        asset.ntserie, invreserve.wonum "
++ " from   asset"
++ "   left join asset st2 on asset.parent = st2.assetnum "
++ "   left join invreserve on asset.assetnum = invreserve.assetnum " 
++ " where  asset.location in "
++ "        (select location "
++ "         from locations "
++           vLoc  
++ "         and ntstoreroomtype = 'S'"
++ "         )"
++   vSerie
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["assetnum"] = maximoDataSet.getString("assetnum");	
+row["serialnum"] = maximoDataSet.getString("serialnum");	
+row["description"] = maximoDataSet.getString("description");	
+row["ingebouwd"] = maximoDataSet.getString("ingebouwd");	
+row["assettype"] = maximoDataSet.getString("assettype");	
+row["status"] = maximoDataSet.getString("status");	
+row["location"] = maximoDataSet.getString("location");	
+row["ntserie"] = maximoDataSet.getString("ntserie");	
+row["wonum"] = maximoDataSet.getString("wonum");	
+
+//row["datefield"] = maximoDataSet.getTimestamp("datefield");	
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetVuil" id="581">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ingebouwd</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">assettype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ingebouwd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assettype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ingebouwd</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">assettype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSetVuil = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSetVuil.open();
+
+var sqlText = new String();
+var vSerie  = new String();
+var vLoc    = new String();
+ 
+if (params["ntserie"].value) {
+	params["ntserie"]=params["ntserie"].replace("=","");
+	vSerie += " and asset.ntserie like '" + params["ntserie"] + "'"
+}
+else {
+   	vSerie = " and  1=1 ";
+}
+
+	params["location"]=params["location"].replace("=","");
+	vLoc += " where NTASSOCOPLOC = '" + params["location"] + "'"
+
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select asset.assetnum, asset.serialnum, asset.description, st2.serialnum as ingebouwd, asset.assettype, asset.status, asset.location, "
++ "        asset.ntserie" 
++ " from   asset"
++ "   left join asset st2 on asset.parent = st2.assetnum "
++ " where  asset.location in "
++ "        (select location "
++ "         from locations "
++           vLoc  
++ "         and ntstoreroomtype = 'V'"
++ "         )"
++   vSerie
+;
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+
+
+maximoDataSetVuil.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSetVuil.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["assetnum"] = maximoDataSetVuil.getString("assetnum");	
+row["serialnum"] = maximoDataSetVuil.getString("serialnum");	
+row["description"] = maximoDataSetVuil.getString("description");	
+row["ingebouwd"] = maximoDataSetVuil.getString("ingebouwd");	
+row["assettype"] = maximoDataSetVuil.getString("assettype");	
+row["status"] = maximoDataSetVuil.getString("status");	
+row["location"] = maximoDataSetVuil.getString("location");	
+row["ntserie"] = maximoDataSetVuil.getString("ntserie");	
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetOHW" id="665">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">assettype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assettype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">assettype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSetOHW = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSetOHW.open();
+
+var sqlText = new String();
+var vSerie  = new String();
+var vLoc    = new String();
+ 
+if (params["ntserie"].value) {
+	params["ntserie"]=params["ntserie"].replace("=","");
+	vSerie += " and asset.ntserie like '" + params["ntserie"] + "'"
+}
+else {
+   	vSerie = " and  1=1 ";
+}
+
+	params["location"]=params["location"].replace("=","");
+	vLoc += " where locancestor.ancestor = '" + params["location"] + "'"
+
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select asset.assetnum, asset.serialnum, asset.description, asset.assettype, "
++ "        asset.status, asset.location, asset.ntserie "
++ " from   asset " 
++ " where  asset.location in " 
++ "        ( "
++ "         select location " 
++ "         from locations "
++ "         where locations.ntwontloctype = 'OHW' "
++ "         and location in "
++ "         ( "
++ "           select location " 
++ "           from locancestor "
++             vLoc
++ "         ) "
++   vSerie         
++ " ) "
+; 
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+
+
+maximoDataSetOHW.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSetOHW.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["assetnum"] = maximoDataSetOHW.getString("assetnum");	
+row["serialnum"] = maximoDataSetOHW.getString("serialnum");	
+row["description"] = maximoDataSetOHW.getString("description");	
+row["assettype"] = maximoDataSetOHW.getString("assettype");	
+row["status"] = maximoDataSetOHW.getString("status");	
+row["location"] = maximoDataSetOHW.getString("location");	
+row["ntserie"] = maximoDataSetOHW.getString("ntserie");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="742">
+                    <property name="style">title</property>
+                    <cell id="743">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="465">
+                            <property name="fontSize">7pt</property>
+                            <property name="color">black</property>
+                            <property name="textAlign">left</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">nt_hoofddelen v20150513</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="576">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Hoofddelen overzicht</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Locatie: </text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="579">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">location</property>
+                                                <expression name="expression" type="javascript">params["location"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text">Serie: </text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="580">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">ntserie</property>
+                                                <expression name="expression" type="javascript">params["ntserie"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">ntserie</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+        </table>
+        <grid id="530">
+            <column id="531"/>
+            <row id="532">
+                <cell id="533">
+                    <table id="354">
+                        <property name="dataSet">dataSet</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">assetnum</property>
+                                <text-property name="displayName">assetnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">serialnum</property>
+                                <text-property name="displayName">serialnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ingebouwd</property>
+                                <text-property name="displayName">ingebouwd</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ingebouwd"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">assettype</property>
+                                <text-property name="displayName">assettype</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assettype"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">status</property>
+                                <text-property name="displayName">status</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">location</property>
+                                <text-property name="displayName">location</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ntserie</property>
+                                <text-property name="displayName">ntserie</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">wonum</property>
+                                <text-property name="displayName">wonum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="405"/>
+                        <column id="406"/>
+                        <column id="407"/>
+                        <column id="408"/>
+                        <column id="409"/>
+                        <column id="410"/>
+                        <column id="411"/>
+                        <column id="412"/>
+                        <column id="413"/>
+                        <header>
+                            <row id="564">
+                                <cell id="565">
+                                    <property name="colSpan">9</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="574">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="color">#005D57</property>
+                                        <text-property name="text">Schone hoofddelen (gereserveerd of vrij) </text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="355">
+                                <cell id="356">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="414">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Activum</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="357">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="416">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Serienummer</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="358">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="418">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Omschrijving</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="359">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="420">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Ingebouwd ?</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="360">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="422">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Type hoofddeel</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="361">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="424">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Status</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="362">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="426">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Magazijn</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="363">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="428">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Materieelserie</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="364">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="430">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Gereserveerd op WO</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <group id="542">
+                            <property name="groupName">NewTableGroup1</property>
+                            <expression name="keyExpr" type="javascript">row["assettype"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue" type="javascript">row["assettype"]</expression>
+                            </structure>
+                            <property name="hideDetail">false</property>
+                            <list-property name="sort">
+                                <structure>
+                                    <expression name="key" type="javascript">row["ntserie"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                                <structure>
+                                    <expression name="key" type="javascript">row["location"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                            </list-property>
+                            <header>
+                                <row id="543">
+                                    <property name="backgroundColor">#005D57</property>
+                                    <cell id="544">
+                                        <data id="563">
+                                            <property name="fontSize">9pt</property>
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#FFFFFF</property>
+                                            <property name="resultSetColumn">assettype</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="545"/>
+                                    <cell id="546"/>
+                                    <cell id="547"/>
+                                    <cell id="548"/>
+                                    <cell id="549"/>
+                                    <cell id="550"/>
+                                    <cell id="551"/>
+                                    <cell id="552"/>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="553">
+                                    <cell id="554"/>
+                                    <cell id="555"/>
+                                    <cell id="556"/>
+                                    <cell id="557"/>
+                                    <cell id="558"/>
+                                    <cell id="559"/>
+                                    <cell id="560"/>
+                                    <cell id="561"/>
+                                    <cell id="562"/>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="365">
+                                <cell id="366">
+                                    <data id="415">
+                                        <property name="resultSetColumn">assetnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="367">
+                                    <data id="417">
+                                        <property name="resultSetColumn">serialnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="368">
+                                    <data id="419">
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                                <cell id="369">
+                                    <data id="421">
+                                        <property name="resultSetColumn">ingebouwd</property>
+                                    </data>
+                                </cell>
+                                <cell id="370">
+                                    <data id="423">
+                                        <property name="resultSetColumn">assettype</property>
+                                    </data>
+                                </cell>
+                                <cell id="371">
+                                    <data id="425">
+                                        <property name="resultSetColumn">status</property>
+                                    </data>
+                                </cell>
+                                <cell id="372">
+                                    <data id="427">
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                                <cell id="373">
+                                    <data id="429">
+                                        <property name="resultSetColumn">ntserie</property>
+                                    </data>
+                                </cell>
+                                <cell id="374">
+                                    <data id="431">
+                                        <property name="resultSetColumn">wonum</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="395">
+                                <cell id="396"/>
+                                <cell id="397"/>
+                                <cell id="398"/>
+                                <cell id="399"/>
+                                <cell id="400"/>
+                                <cell id="401"/>
+                                <cell id="402"/>
+                                <cell id="403"/>
+                                <cell id="404"/>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+            <row id="534">
+                <cell id="535">
+                    <label id="575">
+                        <property name="fontSize">12pt</property>
+                        <property name="color">white</property>
+                        <text-property name="text">Spacer</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="536">
+                <cell id="537">
+                    <table id="582">
+                        <property name="dataSet">dataSetVuil</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">assetnum</property>
+                                <text-property name="displayName">assetnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">serialnum</property>
+                                <text-property name="displayName">serialnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ingebouwd</property>
+                                <text-property name="displayName">ingebouwd</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ingebouwd"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">assettype</property>
+                                <text-property name="displayName">assettype</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assettype"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">status</property>
+                                <text-property name="displayName">status</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">location</property>
+                                <text-property name="displayName">location</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ntserie</property>
+                                <text-property name="displayName">ntserie</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="656"/>
+                        <column id="657"/>
+                        <column id="658"/>
+                        <column id="659"/>
+                        <column id="660"/>
+                        <column id="661"/>
+                        <column id="662"/>
+                        <column id="663"/>
+                        <header>
+                            <row id="583">
+                                <cell id="584">
+                                    <property name="colSpan">8</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="585">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="color">#005D57</property>
+                                        <text-property name="text">Vuile hoofddelen </text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="586">
+                                <cell id="587">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="588">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Activum</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="589">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="590">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Serienummer</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="591">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="592">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Omschrijving</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="593">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="594">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Ingebouwd ?</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="595">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="596">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Type hoofddeel</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="597">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="598">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Status</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="599">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="600">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Magazijn</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="601">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="602">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Materieelserie</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <group id="605">
+                            <property name="groupName">NewTableGroup1</property>
+                            <expression name="keyExpr" type="javascript">row["assettype"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue" type="javascript">row["assettype"]</expression>
+                            </structure>
+                            <property name="hideDetail">false</property>
+                            <list-property name="sort">
+                                <structure>
+                                    <expression name="key" type="javascript">row["ntserie"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                                <structure>
+                                    <expression name="key" type="javascript">row["location"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                            </list-property>
+                            <header>
+                                <row id="606">
+                                    <property name="backgroundColor">#005D57</property>
+                                    <cell id="607">
+                                        <data id="608">
+                                            <property name="fontSize">9pt</property>
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#FFFFFF</property>
+                                            <property name="resultSetColumn">assettype</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="609"/>
+                                    <cell id="610"/>
+                                    <cell id="611"/>
+                                    <cell id="612"/>
+                                    <cell id="613"/>
+                                    <cell id="614"/>
+                                    <cell id="615"/>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="617">
+                                    <cell id="618"/>
+                                    <cell id="619"/>
+                                    <cell id="620"/>
+                                    <cell id="621"/>
+                                    <cell id="622"/>
+                                    <cell id="623"/>
+                                    <cell id="624"/>
+                                    <cell id="625"/>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="627">
+                                <cell id="628">
+                                    <data id="629">
+                                        <property name="resultSetColumn">assetnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="630">
+                                    <data id="631">
+                                        <property name="resultSetColumn">serialnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="632">
+                                    <data id="633">
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                                <cell id="634">
+                                    <data id="635">
+                                        <property name="resultSetColumn">ingebouwd</property>
+                                    </data>
+                                </cell>
+                                <cell id="636">
+                                    <data id="637">
+                                        <property name="resultSetColumn">assettype</property>
+                                    </data>
+                                </cell>
+                                <cell id="638">
+                                    <data id="639">
+                                        <property name="resultSetColumn">status</property>
+                                    </data>
+                                </cell>
+                                <cell id="640">
+                                    <data id="641">
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                                <cell id="642">
+                                    <data id="643">
+                                        <property name="resultSetColumn">ntserie</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="646">
+                                <cell id="647"/>
+                                <cell id="648"/>
+                                <cell id="649"/>
+                                <cell id="650"/>
+                                <cell id="651"/>
+                                <cell id="652"/>
+                                <cell id="653"/>
+                                <cell id="654"/>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+            <row id="538">
+                <cell id="539">
+                    <label id="666">
+                        <property name="fontSize">12pt</property>
+                        <property name="color">white</property>
+                        <text-property name="text">Spacer</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="540">
+                <cell id="541">
+                    <table id="667">
+                        <property name="dataSet">dataSetOHW</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">assetnum</property>
+                                <text-property name="displayName">assetnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">serialnum</property>
+                                <text-property name="displayName">serialnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">assettype</property>
+                                <text-property name="displayName">assettype</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assettype"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">status</property>
+                                <text-property name="displayName">status</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">location</property>
+                                <text-property name="displayName">location</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ntserie</property>
+                                <text-property name="displayName">ntserie</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="734"/>
+                        <column id="735"/>
+                        <column id="736"/>
+                        <column id="738"/>
+                        <column id="739"/>
+                        <column id="740"/>
+                        <column id="741"/>
+                        <header>
+                            <row id="668">
+                                <cell id="669">
+                                    <property name="colSpan">7</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="670">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="color">#005D57</property>
+                                        <text-property name="text">Hoofddelen OHW</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="671">
+                                <cell id="672">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="673">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Activum</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="674">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="675">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Serienummer</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="676">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="677">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Omschrijving</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="680">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="681">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Type hoofddeel</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="682">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="683">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Status</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="684">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="685">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Magazijn</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="686">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="687">
+                                        <property name="fontSize">9pt</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Materieelserie</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <group id="688">
+                            <property name="groupName">NewTableGroup1</property>
+                            <expression name="keyExpr" type="javascript">row["assettype"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue" type="javascript">row["assettype"]</expression>
+                            </structure>
+                            <property name="hideDetail">false</property>
+                            <list-property name="sort">
+                                <structure>
+                                    <expression name="key" type="javascript">row["ntserie"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                                <structure>
+                                    <expression name="key" type="javascript">row["location"]</expression>
+                                    <property name="direction">asc</property>
+                                    <property name="strength">-1</property>
+                                </structure>
+                            </list-property>
+                            <header>
+                                <row id="689">
+                                    <property name="backgroundColor">#005D57</property>
+                                    <cell id="690">
+                                        <data id="691">
+                                            <property name="fontSize">9pt</property>
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">#FFFFFF</property>
+                                            <property name="resultSetColumn">assettype</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="692"/>
+                                    <cell id="693"/>
+                                    <cell id="695"/>
+                                    <cell id="696"/>
+                                    <cell id="697"/>
+                                    <cell id="698"/>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="699">
+                                    <cell id="700"/>
+                                    <cell id="701"/>
+                                    <cell id="702"/>
+                                    <cell id="704"/>
+                                    <cell id="705"/>
+                                    <cell id="706"/>
+                                    <cell id="707"/>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="708">
+                                <cell id="709">
+                                    <data id="710">
+                                        <property name="resultSetColumn">assetnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="711">
+                                    <data id="712">
+                                        <property name="resultSetColumn">serialnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="713">
+                                    <data id="714">
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                                <cell id="717">
+                                    <data id="718">
+                                        <property name="resultSetColumn">assettype</property>
+                                    </data>
+                                </cell>
+                                <cell id="719">
+                                    <data id="720">
+                                        <property name="resultSetColumn">status</property>
+                                    </data>
+                                </cell>
+                                <cell id="721">
+                                    <data id="722">
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                                <cell id="723">
+                                    <data id="724">
+                                        <property name="resultSetColumn">ntserie</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="725">
+                                <cell id="726"/>
+                                <cell id="727"/>
+                                <cell id="728"/>
+                                <cell id="730"/>
+                                <cell id="731"/>
+                                <cell id="732"/>
+                                <cell id="733"/>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

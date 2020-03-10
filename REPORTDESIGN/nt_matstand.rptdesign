@@ -1,0 +1,1629 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2008 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_matstand.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ntshortloc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ntrsnmaint</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">statusdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ntdioob</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ntdiosb</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">targstartdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">targcompdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">schedfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">ticketid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">ntqenddate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">ntltstwo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">srstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">ntmbnurgentie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">ntgeoloc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">ntloctype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">ntkenm1</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">worklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">ntexparrivaldate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">schedfinishwosa</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">locdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">ntclassificationid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">ntqprofiel</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">worktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">ntprognosis</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntshortloc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntrsnmaint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">statusdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntdioob</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntdiosb</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targstartdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targcompdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">schedfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ticketid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntqenddate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntltstwo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">srstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmbnurgentie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntgeoloc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntloctype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntkenm1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worklocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntexparrivaldate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">schedfinishwosa</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntclassificationid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntqprofiel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntprognosis</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ntshortloc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ntrsnmaint</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">statusdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ntdioob</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ntdiosb</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">targstartdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">targcompdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">schedfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">ticketid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">ntqenddate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">ntltstwo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">srstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">ntmbnurgentie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">ntgeoloc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">ntloctype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">ntkenm1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">worklocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">ntexparrivaldate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">schedfinishwosa</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">locdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">ntclassificationid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">ntqprofiel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">worktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">ntprognosis</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//MPI 27-01-2016: S36.RAP05 Added columns worklocation and ntexparrivaldate
+//MPI 12-12-2016: S49.RAP04 Added column workorder.schedfinish
+//MPI 01-03-2017: S51.RAP03 veld "Q-profiel" en "SDM-code" van sa en "asset.locationdescription" toevoegen. Ook in view van dit rapport dit veld toevoegen
+//MPI 23-03-2017: S52.SU07 Added column workorder.worktype and ntbdiopenwo.ntprognosis
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ "    asset.serialnum,"
++ "    asset.assetnum,"
++ "    asset.ntserie,"
++ "    asset.status,"
++ "    asset.location,"
++ "    locations.ntshortloc,"
++ "    locations.description as locdesc,"
++ "    asset.ntrsnmaint,"
++ "    asset.statusdate,"
++ "    ntbdiopenwo.ntdioob,"
++ "    ntbdiopenwo.ntdiosb,"
++ "    wo.wonum,"
++ "    wo.targstartdate," 
++ "    wo.targcompdate," 
++ "    wo.schedfinish,"
++ "    sr.ticketid," 
++ "    sr.ntqenddate,"
++ "    sr.ntltstwo,"
++ "    sr.status as srstatus,"
++ "    sr.ntmbnurgentie,"
++ "    workorder.ntgeoloc,"
++ "    workorder.ntloctype,"
++ "    workorder.ntkenm1,"
++ "    workorder.description,"
+// S36.RAP05
++ "    workorder.worklocation,"
++ "    workorder.ntexparrivaldate,"
++ "    workorder.schedfinish as schedfinishwosa,"
++ "    sr.ntclassificationid,"
++ "    sr.ntqprofiel,"
++ "    workorder.worktype,"
++ "    ntbdiopenwo.ntprognosis"
++ " from asset"
++ "   left outer join locations on asset.location = locations.location and asset.siteid = locations.siteid"
++ "   left outer join ntbdiopenwo on asset.assetnum = ntbdiopenwo.assetnum and asset.siteid = ntbdiopenwo.siteid"
++ "   left outer join"
++ "     ("
++ "       select  asset.serialnum, asset.assetnum, ntsr.ticketid, ntsr.ntqenddate, ntsr.ntltstwo, ntsr.status, ntsr.ntmbnurgentie,"
++ "               ntsr.ntclassificationid, ntsr.ntqprofiel"
++ "       from    asset"
++ "         join  ntsr on ntsr.assetnum in (select assetnum from assetancestor where ancestor = asset.assetnum)" 
++ "                                     and ntsr.status = 'INUITV'"
++ "                                     and ntsr.ntmbnurgentie = 1"
++ "       where asset.siteid = '9030'"
++ "         and asset.status in ('BVD','NBVD','OVERSTAND')"
++ "         and asset.assettype = 'EENHEID'"
++ "     ) sr on sr.serialnum = asset.serialnum"
++ "   left outer join"
++ "     ("
++ "       select first_value(workorderid) over (order by SCHEDFINISH asc), assetnum, wonum, targstartdate, targcompdate, schedfinish"
++ "       from   workorder"
++ "       where  woclass='WORKORDER'"
++ "         and  istask =0"
++ "         and  historyflag =0"
++ "         and  worktype ='BWO'" 
++ "         and  status in ('GGK', 'WOM','INUITV')" 
++ "         and  schedfinish is not null"
++ "      ) wo on wo.assetnum = asset.assetnum"
++ "    left outer join workorder on sr.ntltstwo = workorder.wonum"
++ " where 1=1"
++ "   and asset.siteid = '9030'"
++ "   and asset.status in ('BVD','NBVD','OVERSTAND')"
++ "   and asset.assettype = 'EENHEID'"
++ " order by asset.serialnum"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["serialnum"] = maximoDataSet.getString("serialnum");
+row["assetnum"] = maximoDataSet.getString("assetnum");	
+row["ntserie"] = maximoDataSet.getString("ntserie");	
+row["status"] = maximoDataSet.getString("status");	
+row["location"] = maximoDataSet.getString("location");	
+row["ntshortloc"] = maximoDataSet.getString("ntshortloc");	
+row["ntrsnmaint"] = maximoDataSet.getString("ntrsnmaint");	
+row["statusdate"] = maximoDataSet.getTimestamp("statusdate");	
+row["ntdioob"] = maximoDataSet.getString("ntdioob");	
+row["ntdiosb"] = maximoDataSet.getString("ntdiosb");	
+row["wonum"] = maximoDataSet.getString("wonum");	
+row["targstartdate"] = maximoDataSet.getTimestamp("targstartdate");	
+row["targcompdate"] = maximoDataSet.getTimestamp("targcompdate");	
+row["schedfinish"] = maximoDataSet.getTimestamp("schedfinish");	
+row["ticketid"] = maximoDataSet.getString("ticketid");	
+row["ntqenddate"] = maximoDataSet.getTimestamp("ntqenddate");	
+row["ntltstwo"] = maximoDataSet.getString("ntltstwo");	
+row["srstatus"] = maximoDataSet.getString("srstatus");	
+row["ntmbnurgentie"] = maximoDataSet.getString("ntmbnurgentie");	
+row["ntgeoloc"] = maximoDataSet.getString("ntgeoloc");	
+row["ntloctype"] = maximoDataSet.getString("ntloctype");	
+row["ntkenm1"] = maximoDataSet.getString("ntkenm1");	
+row["description"] = maximoDataSet.getString("description");	
+row["worklocation"] = maximoDataSet.getString("worklocation");
+row["ntexparrivaldate"] = maximoDataSet.getTimestamp("ntexparrivaldate");
+row["schedfinishwosa"] = maximoDataSet.getTimestamp("schedfinishwosa");	
+row["locdesc"] = maximoDataSet.getString("locdesc");	
+row["ntclassificationid"] = maximoDataSet.getString("ntclassificationid");	
+row["ntqprofiel"] = maximoDataSet.getString("ntqprofiel");
+row["worktype"] = maximoDataSet.getString("worktype");	
+row["ntprognosis"] = maximoDataSet.getTimestamp("ntprognosis");	
+	
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">serialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">location</property>
+                    <text-property name="displayName">location</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntshortloc</property>
+                    <text-property name="displayName">ntshortloc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntshortloc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntrsnmaint</property>
+                    <text-property name="displayName">ntrsnmaint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntrsnmaint"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntdioob</property>
+                    <text-property name="displayName">ntdioob</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntdioob"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntdiosb</property>
+                    <text-property name="displayName">ntdiosb</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntdiosb"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">statusdate</property>
+                    <text-property name="displayName">statusdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["statusdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">targstartdate</property>
+                    <text-property name="displayName">targstartdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["targstartdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">targcompdate</property>
+                    <text-property name="displayName">targcompdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["targcompdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">schedfinish</property>
+                    <text-property name="displayName">schedfinish</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["schedfinish"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <text-property name="displayName">wonum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ticketid</property>
+                    <text-property name="displayName">ticketid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ticketid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmbnurgentie</property>
+                    <text-property name="displayName">ntmbnurgentie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmbnurgentie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntqenddate</property>
+                    <text-property name="displayName">ntqenddate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntqenddate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">ntltstwo</property>
+                    <text-property name="displayName">ntltstwo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntltstwo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntgeoloc</property>
+                    <text-property name="displayName">ntgeoloc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntgeoloc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntloctype</property>
+                    <text-property name="displayName">ntloctype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntloctype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntkenm1</property>
+                    <text-property name="displayName">ntkenm1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntkenm1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worklocation</property>
+                    <text-property name="displayName">worklocation</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worklocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntexparrivaldate</property>
+                    <text-property name="displayName">ntexparrivaldate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntexparrivaldate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">schedfinishwosa</property>
+                    <text-property name="displayName">schedfinishwosa</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["schedfinishwosa"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">locdesc</property>
+                    <text-property name="displayName">locdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntclassificationid</property>
+                    <text-property name="displayName">ntclassificationid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntclassificationid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntqprofiel</property>
+                    <text-property name="displayName">ntqprofiel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntqprofiel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntprognosis</property>
+                    <text-property name="displayName">ntprognosis</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntprognosis"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">worktype</property>
+                    <text-property name="displayName">worktype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worktype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="1967"/>
+            <column id="1957"/>
+            <column id="1947"/>
+            <column id="1937"/>
+            <column id="1927"/>
+            <column id="1917"/>
+            <column id="1907"/>
+            <column id="1897"/>
+            <column id="79"/>
+            <column id="2037"/>
+            <column id="2027"/>
+            <column id="2017"/>
+            <column id="2007"/>
+            <column id="1997"/>
+            <column id="1987"/>
+            <column id="1977"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="1887"/>
+            <column id="2089"/>
+            <column id="2114"/>
+            <column id="2099"/>
+            <column id="2147"/>
+            <column id="2137"/>
+            <column id="2127"/>
+            <column id="2177"/>
+            <column id="2167"/>
+            <header>
+                <row id="345">
+                    <property name="style">title</property>
+                    <cell id="346">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1847">
+                            <property name="fontSize">7pt</property>
+                            <property name="color">black</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">nt_matstand v20170324</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2080"/>
+                    <cell id="2105"/>
+                    <cell id="2090"/>
+                    <cell id="2138"/>
+                    <cell id="2128"/>
+                    <cell id="2118"/>
+                    <cell id="2168"/>
+                    <cell id="2158"/>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                        <label id="2038">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Input matstandrapportage</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2081"/>
+                    <cell id="2106"/>
+                    <cell id="2091"/>
+                    <cell id="2139"/>
+                    <cell id="2129"/>
+                    <cell id="2119"/>
+                    <cell id="2169"/>
+                    <cell id="2159"/>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2082">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2107">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2092">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2140">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2130">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2120">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2170">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2160">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">8.875in</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                    <cell id="2083"/>
+                    <cell id="2108"/>
+                    <cell id="2093"/>
+                    <cell id="2141"/>
+                    <cell id="2131"/>
+                    <cell id="2121"/>
+                    <cell id="2171"/>
+                    <cell id="2161"/>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="2084"/>
+                    <cell id="2109"/>
+                    <cell id="2094"/>
+                    <cell id="2142"/>
+                    <cell id="2132"/>
+                    <cell id="2122"/>
+                    <cell id="2172"/>
+                    <cell id="2162"/>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Mat/Serie nummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1963">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2042">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1953">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2043">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1943">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2046">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1933">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2047">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Verkorte code</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1923">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2052">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Reden binnenkomst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1913">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2053">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">DIO-OB</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1903">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2054">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">DIO-SB</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1893">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2055">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Laatst gewijzigd</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2060">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Streefdatum start</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2033">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2061">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Streefdatum einde</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2023">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2062">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Gepland einde</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2013">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2063">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkorder</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2003">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2067">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SA</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1993">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2068">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">MBN urgentie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1983">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2069">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Q-datum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1973">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2075">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkorder</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2076">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2077">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Defect op locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2078">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Klustype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1883">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2079">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Kenmerk 1</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2085">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2101">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werklocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2110">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2102">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Binnenkomst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2095">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2115">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Gepland einde WO - SA</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2143">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2155">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Asset locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2133">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2156">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SDM code</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2123">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2157">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Q profiel</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2173">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2182">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werktype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2163">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="2183">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Klant prognose</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2039">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">serialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="1964">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2040">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="1954">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2041">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="1944">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2044">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">location</property>
+                        </data>
+                    </cell>
+                    <cell id="1934">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2045">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntshortloc</property>
+                        </data>
+                    </cell>
+                    <cell id="1924">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2048">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntrsnmaint</property>
+                        </data>
+                    </cell>
+                    <cell id="1914">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2049">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntdioob</property>
+                        </data>
+                    </cell>
+                    <cell id="1904">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2050">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntdiosb</property>
+                        </data>
+                    </cell>
+                    <cell id="1894">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2051">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">statusdate</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2056">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">targstartdate</property>
+                        </data>
+                    </cell>
+                    <cell id="2034">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2057">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">targcompdate</property>
+                        </data>
+                    </cell>
+                    <cell id="2024">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2058">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">schedfinish</property>
+                        </data>
+                    </cell>
+                    <cell id="2014">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2059">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="2004">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2064">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ticketid</property>
+                        </data>
+                    </cell>
+                    <cell id="1994">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2065">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntmbnurgentie</property>
+                        </data>
+                    </cell>
+                    <cell id="1984">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2066">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntqenddate</property>
+                        </data>
+                    </cell>
+                    <cell id="1974">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2070">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntltstwo</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2074">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2071">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntgeoloc</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2072">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntloctype</property>
+                        </data>
+                    </cell>
+                    <cell id="1884">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2073">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntkenm1</property>
+                        </data>
+                    </cell>
+                    <cell id="2086">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2100">
+                            <property name="resultSetColumn">worklocation</property>
+                        </data>
+                    </cell>
+                    <cell id="2111">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2104">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="resultSetColumn">ntexparrivaldate</property>
+                        </data>
+                    </cell>
+                    <cell id="2096">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2117">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="resultSetColumn">schedfinishwosa</property>
+                        </data>
+                    </cell>
+                    <cell id="2144">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2149">
+                            <property name="resultSetColumn">locdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="2134">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2152">
+                            <property name="resultSetColumn">ntclassificationid</property>
+                        </data>
+                    </cell>
+                    <cell id="2124">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2154">
+                            <property name="resultSetColumn">ntqprofiel</property>
+                        </data>
+                    </cell>
+                    <cell id="2174">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2181">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">worktype</property>
+                        </data>
+                    </cell>
+                    <cell id="2164">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2179">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntprognosis</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="2087"/>
+                    <cell id="2112"/>
+                    <cell id="2097"/>
+                    <cell id="2145"/>
+                    <cell id="2135"/>
+                    <cell id="2125"/>
+                    <cell id="2175"/>
+                    <cell id="2165"/>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">21</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                    <cell id="2088">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2113">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2098">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2146">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2136">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2126">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2176">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2166">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+        <data id="2150">
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ntclassificationid</property>
+                    <text-property name="displayName">ntclassificationid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntclassificationid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">ntclassificationid</property>
+        </data>
+    </body>
+</report>

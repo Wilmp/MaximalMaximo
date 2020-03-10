@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.6" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.1.1.v20060922-1058 Build &lt;20060926-0959></property>
+    <property name="units">in</property>
+    <property name="includeResource">plustwo</property>
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.</property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="repairLocation" id="395">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Repair Location</text-property>
+            <property name="allowNull">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startDate" id="393">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">Start Date</text-property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="endDate" id="394">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">End Date</text-property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="siteid" id="396">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Site</text-property>
+            <property name="allowNull">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">worklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">reportdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">plustrepairlmtamt</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">plustassetvalue</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">totalplanned</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">totalactual</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worklocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustrepairlmtamt</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plustassetvalue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalplanned</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalactual</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">worklocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">reportdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">plustrepairlmtamt</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">plustassetvalue</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">totalplanned</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">totalactual</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var where = new String();
+
+where = params["where"];
+
+if (params["repairLocation"].value) {
+	where += " and " + MXReportSqlFormat.createParamWhereClause("workorder.worklocation",params["repairLocation"]);
+}
+
+if (reportContext.getParameterValue("startDate")!=null) {
+	where += " and workorder.reportdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startDate"]);
+}
+
+if (reportContext.getParameterValue("endDate")!=null) {
+	where += " and workorder.reportdate <= " + MXReportSqlFormat.getStartDayTimestampFunction(params["endDate"]);
+}
+
+if (params["siteid"].value) {
+	where += " and " + MXReportSqlFormat.createParamWhereClause("workorder.siteid", params["siteid"]);
+}
+	
+var sqlText = new String();
+
+
+// Add query to sqlText variable.
+sqlText = "select workorder.wonum   , workorder.description      , workorder.worklocation   , workorder.status, workorder.reportdate, "
+        + "       workorder.assetnum, workorder.plustrepairlmtamt, workorder.plustassetvalue, "
+        + "       (workorder.estlabcost + workorder.estmatcost + workorder.estservcost + workorder.esttoolcost) as totalplanned, "
+        + "       (workorder.actlabcost + workorder.actmatcost + workorder.actservcost + workorder.acttoolcost) as totalactual, "
+        + "       siteid "
+        + "  from workorder "
+        + " where " + where
+        + " order by workorder.siteid, workorder.wonum "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["wonum"]             = maximoDataSet.getString("wonum");
+row["description"]       = maximoDataSet.getString("description");
+row["worklocation"]      = maximoDataSet.getString("worklocation");
+row["status"]            = maximoDataSet.getString("status");
+row["reportdate"]        = maximoDataSet.getTimestamp("reportdate");	
+row["assetnum"]          = maximoDataSet.getString("assetnum");
+row["plustrepairlmtamt"] = maximoDataSet.getDouble("plustrepairlmtamt");
+row["plustassetvalue"]   = maximoDataSet.getDouble("plustassetvalue");
+row["totalplanned"]      = maximoDataSet.getDouble("totalplanned");
+row["totalactual"]       = maximoDataSet.getDouble("totalactual");
+row["siteid"]            = maximoDataSet.getString("siteid");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2"/>
+                <ref-entry baseId="340" name="NewImage1"/>
+                <ref-entry baseId="310" name="NewImage"/>
+                <ref-entry baseId="322" name="NewGrid"/>
+                <ref-entry baseId="328" name="NewText"/>
+                <ref-entry baseId="329" name="NewGrid1"/>
+                <ref-entry baseId="335" name="NewAutoText"/>
+                <ref-entry baseId="337" name="NewText1"/>
+                <ref-entry baseId="339" name="NewAutoText1"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">siteid</property>
+                    <expression name="expression">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <expression name="expression">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worklocation</property>
+                    <expression name="expression">dataSetRow["worklocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <expression name="expression">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reportdate</property>
+                    <expression name="expression">dataSetRow["reportdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <expression name="expression">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">totalplanned</property>
+                    <expression name="expression">dataSetRow["totalplanned"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalactual</property>
+                    <expression name="expression">dataSetRow["totalactual"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plustrepairlmtamt</property>
+                    <expression name="expression">dataSetRow["plustrepairlmtamt"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plustassetvalue</property>
+                    <expression name="expression">dataSetRow["plustassetvalue"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <column id="83">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="79">
+                <property name="width">2in</property>
+            </column>
+            <column id="91">
+                <property name="width">1in</property>
+            </column>
+            <column id="87">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="17">
+                <property name="width">1in</property>
+            </column>
+            <column id="357">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="367">
+                <property name="width">1in</property>
+            </column>
+            <column id="418">
+                <property name="width">0.9in</property>
+            </column>
+            <column id="428">
+                <property name="width">0.9in</property>
+            </column>
+            <column id="18">
+                <property name="width">0.8in</property>
+            </column>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <label id="341">
+                            <text-property name="text" key="repairLimitExceeded_tittle">Repair Limit Exceeded (Tr)</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="343">
+                    <cell id="203">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="191">
+                                <property name="height">0.06in</property>
+                                <cell id="192"/>
+                                <cell id="193">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="repairLocation_colon">Parameter 1:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="397">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">repairLocation</property>
+                                                <expression name="expression">params["repairLocation"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">repairLocation</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="startDate_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="398">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startDate</property>
+                                                <expression name="expression">params["startDate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startDate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="388">
+                                <cell id="389">
+                                    <label id="391">
+                                        <text-property name="text" key="endDate_colon"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="390">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="399">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">endDate</property>
+                                                <expression name="expression">params["endDate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">endDate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="385">
+                                <cell id="386">
+                                    <label id="392">
+                                        <text-property name="text" key="siteid_colon"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="387">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="400">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">siteid</property>
+                                                <expression name="expression">params["siteid"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">siteid</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="138">
+                <property name="groupName">siteid_group</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["siteid"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always-excluding-last</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="287">
+                        <property name="height">0.08in</property>
+                        <cell id="288">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="139">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="140">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tableheaderlabel</property>
+                            <grid id="255">
+                                <property name="width">100%</property>
+                                <column id="256">
+                                    <property name="width">1in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="257">
+                                    <property name="width">9in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <row id="260">
+                                    <cell id="261">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="180">
+                                            <text-property name="text" key="siteid_colon"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="262">
+                                        <property name="style">tableheaderdata</property>
+                                        <data id="401">
+                                            <property name="resultSetColumn">siteid</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="280">
+                        <property name="height">0.06in</property>
+                        <cell id="281">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="160">
+                        <property name="style">tabledetailslabel</property>
+                        <cell id="161">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="96">
+                                <text-property name="text" key="workorder"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="162">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="371">
+                                <text-property name="text" key="description"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="163">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="372">
+                                <text-property name="text" key="workLocation"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="164">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="373">
+                                <text-property name="text" key="status"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="165">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="374">
+                                <text-property name="text" key="reportedDate"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="354">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="375">
+                                <text-property name="text" key="asset"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="364">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="376">
+                                <text-property name="text" key="totalPlanned"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="415">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="433">
+                                <text-property name="text" key="totalActual"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="425">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="432">
+                                <text-property name="text" key="repairLimit"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="166">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="377">
+                                <text-property name="text" key="assetValue"></text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="146">
+                        <property name="height">0.1in</property>
+                        <cell id="147">
+                            <property name="colSpan">10</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="402">
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="403">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="404">
+                            <property name="resultSetColumn">worklocation</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="405">
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="406">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Date</property>
+                                <property name="pattern">Short Date</property>
+                            </structure>
+                            <property name="resultSetColumn">reportdate</property>
+                        </data>
+                    </cell>
+                    <cell id="355">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="407">
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="365">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="429">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">totalplanned</property>
+                        </data>
+                    </cell>
+                    <cell id="416">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="430">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">totalactual</property>
+                        </data>
+                    </cell>
+                    <cell id="426">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="408">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">plustrepairlmtamt</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="431">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">plustassetvalue</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

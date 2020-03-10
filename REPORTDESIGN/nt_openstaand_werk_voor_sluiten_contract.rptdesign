@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <text-property name="promptText">workorder</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="contractnummer" id="3169">
+            <text-property name="promptText">Contractnummer</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="Dienstgroep" id="3180">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="dienst" id="3181">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="355">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ntcontractnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ntvervoerder</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">nttopserialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">asdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">commoditygroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">commodity</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">worklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ntcontractnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntvervoerder</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nttopserialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">asdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commoditygroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commodity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worklocation</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ntcontractnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ntvervoerder</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">nttopserialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">asdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">commoditygroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">commodity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">worklocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//TWI 07-11-2019: S92.2001 Nieuw rapport Openstaand werk voor Sluiten Contract
+//TWI 29-11-2019; S92.2001 toegevoegd parameters Dienstgroep en dienst
+//TWI 05-12-2019; S92.2001 toegevoegd kolom contractnummer en WO taak vinkje uit.
+
+
+var sqlText = new String();
+var contractnummer = new String();
+var Dienstgroep = new String ();
+var dienst = new String ();
+
+if(params["contractnummer"].value) 
+{
+    contractnummer +=   MXReportSqlFormat.createParamWhereClause("ntextmxref.ntcontractnum", params["contractnummer"] );
+}
+
+if(params["Dienstgroep"].value) 
+{
+    Dienstgroep +=   MXReportSqlFormat.createParamWhereClause("workorder.commoditygroup", params["Dienstgroep"] );
+}
+if(params["dienst"].value) 
+{
+    dienst +=   MXReportSqlFormat.createParamWhereClause("workorder.commodity", params["dienst"] );
+}
+sqlText = " "
++ " select " 
++ " ntextmxref.ntcontractnum, "
++ " ntextmxref.ntvervoerder, "
++ " workorder.wonum, "
++ " workorder.ntserie, " 
++ " workorder.nttopserialnum, "
++ " asset.description as asdesc, "
++ " workorder.description, "
++ " workorder.commoditygroup, " 
++ " workorder.commodity, "
++ " workorder.worklocation " 
++ " from workorder "
++ " join ASSET on ASSET.ASSETNUM = workorder.assetnum and asset.siteid=workorder.siteid "
++ " join ntextmxref on ntextmxref.ntvervoerder = asset.ntvervoerder and workorder.commoditygroup = ntextmxref.COMMODITYGROUP" 
++ " and workorder.commodity = ntextmxref.COMMODITY and workorder.ntserie = ntextmxref.ntserie"
++ " where workorder.status = 'WGK' "
++ " and workorder.istask = 0"
++ " and " + contractnummer
++ " and " + dienst
++ " and " + Dienstgroep
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+//row["agreement"] = maximoDataSet.getString("agreement");
+//row["name"] = maximoDataSet.getString("name");
+row["ntcontractnum"] = maximoDataSet.getString("ntcontractnum");	
+row["ntvervoerder"] = maximoDataSet.getString("ntvervoerder");
+row["wonum"] = maximoDataSet.getString("wonum");	
+row["ntserie"] = maximoDataSet.getString("ntserie");	
+row["nttopserialnum"] = maximoDataSet.getString("nttopserialnum");
+row["description"] = maximoDataSet.getString("description");		
+row["asdesc"] = maximoDataSet.getString("asdesc");	
+row["commoditygroup"] = maximoDataSet.getString("commoditygroup");	
+row["commodity"] = maximoDataSet.getString("commodity");	
+row["worklocation"] = maximoDataSet.getString("worklocation");	
+
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ntcontractnum</property>
+                    <text-property name="displayName">ntcontractnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntcontractnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntvervoerder</property>
+                    <text-property name="displayName">ntvervoerder</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntvervoerder"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <text-property name="displayName">wonum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nttopserialnum</property>
+                    <text-property name="displayName">nttopserialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nttopserialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">asdesc</property>
+                    <text-property name="displayName">asdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["asdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commoditygroup</property>
+                    <text-property name="displayName">commoditygroup</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["commoditygroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity</property>
+                    <text-property name="displayName">commodity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["commodity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worklocation</property>
+                    <text-property name="displayName">worklocation</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worklocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression" type="javascript">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">3.3541666666666665in</property>
+            </column>
+            <column id="79">
+                <property name="width">1.65625in</property>
+            </column>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="3154"/>
+            <column id="3161"/>
+            <column id="3168"/>
+            <column id="3147"/>
+            <column id="18">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <header>
+                <row id="346">
+                    <property name="style">title</property>
+                    <cell id="347">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <text id="354">
+                            <property name="fontSize">7pt</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[nt_openst_werk_voor_sluiten_contract_v20191205]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <label id="345">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Openstaand werk voor Sluiten Contract</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">12.927083333333334in</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">11.927083333333334in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Contractnummer</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="3170">
+                                        <property name="resultSetColumn">ntcontractnum</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="3182">
+                                <cell id="3183">
+                                    <label id="3188">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Dienstgroep</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3184">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="3190">
+                                        <property name="resultSetColumn">commoditygroup</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="3185">
+                                <cell id="3186">
+                                    <label id="3189">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Dienst</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3187">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="3191">
+                                        <property name="resultSetColumn">commodity</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="3206">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Contractnummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="356">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Vervoerder]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="357">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Werkorder]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="358">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Materieelserie]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="359">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Serienummer]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="3151">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="360">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Activum omschrijving]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="3158">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="389">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Werkorder omschrijving]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="3165">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="390">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Dienstgroep]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="3144">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="391">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Dienst]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="392">
+                            <property name="textAlign">left</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Werklocatie]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3207">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntcontractnum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3171">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntvervoerder</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3172">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3173">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3174">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">nttopserialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="3152">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3176">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">asdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="3159">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3175">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="3166">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3177">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">commoditygroup</property>
+                        </data>
+                    </cell>
+                    <cell id="3145">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3178">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">commodity</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="3179">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">worklocation</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

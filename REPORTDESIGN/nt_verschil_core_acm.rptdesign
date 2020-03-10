@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_verschil_core_acm.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">pserialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ctopserial</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ctopstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ctoplocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">aserialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">atopserial</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">atopstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">atoplocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pserialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ctopserial</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ctopstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ctoplocatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">aserialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">atopserial</property>
+                </structure>
+                <structure>
+                    <property name="columnName">atopstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">atoplocatie</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">pserialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ctopserial</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ctopstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ctoplocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">aserialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">atopserial</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">atopstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">atoplocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// MPI 05-03-2015 S23.SU05 created
+// MPI 06-03-2015 S23.SU05 Added top asset details (core and ACM) on request Michael Vink
+// MPI 25-06-2015 S28.RAP01 On request Michael Vink change join to left join
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = ""
++ " select" 
++ "   a.ntserie,"
++ "   a.serialnum,"
++ "   a.status,"
++ "   a.location,"
++ "   pa.serialnum pserialnum,"
++ "   qcore.topserial ctopserial,"
++ "   qcore.topstatus ctopstatus,"
++ "   qcore.toplocation ctoplocatie,"
++ "   acmpa.serialnum aserialnum,"
++ "   qacm.topserial atopserial,"
++ "   qacm.topstatus atopstatus,"
++ "   qacm.toplocation atoplocatie"
++ " from asset a"
++ "   left join asset pa on a.parent = pa.assetnum"
++ "   left join plusasaonoff p on a.assetid = p.assetid and p.offtime is null"
++ "   left join asset acmpa on p.parentassetid = acmpa.assetid"
++ "  left outer join"
++ "    ("
++ "       select x.assetnum, x.serialnum, x.description, x.status, x.location,"
++ "              nvl(y.assetnum,x.assetnum) topasset, nvl(y.serialnum,x.serialnum) topserial,"
++ "              nvl(y.description,x.description) topdesc, nvl(y.status,x.status) topstatus,"
++ "              nvl(y.location,x.location) toplocation"
++ "        from asset x"
++ "        left join asset y on x.ancestor = y.assetnum"
++ "    ) qacm on qacm.assetnum = acmpa.assetnum"
++ "   left outer join"
++ "    ("
++ "       select x.assetnum, x.serialnum, x.description, x.status, x.location,"
++ "              nvl(y.assetnum,x.assetnum) topasset, nvl(y.serialnum,x.serialnum) topserial,"
++ "              nvl(y.description,x.description) topdesc, nvl(y.status,x.status) topstatus,"
++ "              nvl(y.location,x.location) toplocation"
++ "        from asset x"
++ "        left join asset y on x.ancestor = y.assetnum"
++ "    ) qcore on qcore.assetnum = a.parent"
+
++ " where"
++ " ("
++ "   (p.plusasaonoffid is null" 
++ "    and a.plusacatid is not null"
++ "   )"
++ "    or nvl(p.parentassetid,1) != nvl(pa.assetid,1)"
++ " )"
+
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["ntserie"] = maximoDataSet.getString("ntserie");	
+row["serialnum"] = maximoDataSet.getString("serialnum");	
+row["status"] = maximoDataSet.getString("status");	
+row["location"] = maximoDataSet.getString("location");	
+row["pserialnum"] = maximoDataSet.getString("pserialnum");	
+row["ctopserial"] = maximoDataSet.getString("ctopserial");
+row["ctopstatus"] = maximoDataSet.getString("ctopstatus");
+row["ctoplocatie"] = maximoDataSet.getString("ctoplocatie");	
+row["aserialnum"] = maximoDataSet.getString("aserialnum");	
+row["atopserial"] = maximoDataSet.getString("atopserial");	
+row["atopstatus"] = maximoDataSet.getString("atopstatus");	
+row["atoplocatie"] = maximoDataSet.getString("atoplocatie");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">serialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">location</property>
+                    <text-property name="displayName">location</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">aserialnum</property>
+                    <text-property name="displayName">aserialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["aserialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pserialnum</property>
+                    <text-property name="displayName">pserialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pserialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ctopserial</property>
+                    <text-property name="displayName">ctopserial</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ctopserial"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ctopstatus</property>
+                    <text-property name="displayName">ctopstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ctopstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ctoplocatie</property>
+                    <text-property name="displayName">ctoplocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ctoplocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">atopserial</property>
+                    <text-property name="displayName">atopserial</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["atopserial"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">atopstatus</property>
+                    <text-property name="displayName">atopstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["atopstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">atoplocatie</property>
+                    <text-property name="displayName">atoplocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["atoplocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="391"/>
+            <column id="381"/>
+            <column id="371"/>
+            <column id="361"/>
+            <column id="495"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="505"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="345">
+                    <property name="style">title</property>
+                    <cell id="346">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <label id="464">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <text-property name="text">nt_verschil_core_acm v20150625</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113"/>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="485">
+                                        <property name="fontSize">150%</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                                        <text-property name="text">Verschil ACM en Core op bovenliggende assets</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116"/>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="387">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="476">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Materieel serienummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="377">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="477">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="367">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="478">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Huidige Activumlocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="357">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="479">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Parent (core)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="491">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="506">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top Serial (core)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="480">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top Status (core)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="481">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top Locatie (core)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="482">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Parent (acm)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="501">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="507">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top Serial (acm)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="508">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top Status (acm)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="509">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top Locatie (acm)</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="466">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="388">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="467">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">serialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="378">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="468">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="368">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="469">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">location</property>
+                        </data>
+                    </cell>
+                    <cell id="358">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="510">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pserialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="492">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="511">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ctopserial</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="512">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ctopstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="513">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ctoplocatie</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="514">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">aserialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="502">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="515">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">atopserial</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="516">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">atopstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="517">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">atoplocatie</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="width">1.4in</property>
+                                <property name="style">summarylabel</property>
+                            </column>
+                            <column id="218">
+                                <property name="width">8.4895833333in</property>
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

@@ -1,0 +1,3912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_AVG_basis_persoonsgegevens.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="PERSONID" id="460">
+            <text-property name="promptText">Persoon</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSONID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">EXTERNALREFID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DISPLAYNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">FIRSTNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">LASTNAME</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">NTVOORNAMEN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">STATUS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">STATUSDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">LANGCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">LANGUAGE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">HIREDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">TERMINATIONDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">NEXTEVALDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">NTEXTERN</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">PLUSPCUSTVENDOR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">PLUSPCUSTVNDTYPE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">SUPERVISOR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">NTISSUPERVISOR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">NTMAXCERT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">JOBCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">jobdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">DEPARTMENT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">ADDRESSLINE1</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">REGIONDISTRICT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">ADDRESSLINE2</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">COUNTY</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">ADDRESSLINE3</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">LOCATION</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">locdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSONID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">EXTERNALREFID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DISPLAYNAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">FIRSTNAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LASTNAME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NTVOORNAMEN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUSDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LANGCODE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LANGUAGE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">HIREDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TERMINATIONDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NEXTEVALDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NTEXTERN</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PLUSPCUSTVENDOR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PLUSPCUSTVNDTYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SUPERVISOR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NTISSUPERVISOR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NTMAXCERT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">JOBCODE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jobdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DEPARTMENT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ADDRESSLINE1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">REGIONDISTRICT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ADDRESSLINE2</property>
+                </structure>
+                <structure>
+                    <property name="columnName">COUNTY</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ADDRESSLINE3</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LOCATION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locdesc</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSONID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">EXTERNALREFID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DISPLAYNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">FIRSTNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">LASTNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">NTVOORNAMEN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">STATUS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">STATUSDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">LANGCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">LANGUAGE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">HIREDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">TERMINATIONDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">NEXTEVALDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">NTEXTERN</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">PLUSPCUSTVENDOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">PLUSPCUSTVNDTYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">SUPERVISOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">NTISSUPERVISOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">NTMAXCERT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">JOBCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">jobdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">DEPARTMENT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">ADDRESSLINE1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">REGIONDISTRICT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">ADDRESSLINE2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">COUNTY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">ADDRESSLINE3</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">LOCATION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">locdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// RYZ 20180420: S68.516 Nieuw rapport; AVG Basisrapport voor opvragen persoonsgegevens
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " PERSON.PERSONID, "
++ " PERSON.EXTERNALREFID, "
++ " PERSON.DISPLAYNAME, "
++ " PERSON.FIRSTNAME, "
++ " PERSON.LASTNAME, "
++ " PERSON.NTVOORNAMEN, "
++ " PERSON.STATUS, "
++ " PERSON.STATUSDATE, "
++ " PERSON.LANGCODE, "
++ " PERSON.LANGUAGE, "
++ " PERSON.HIREDATE, "
++ " PERSON.TERMINATIONDATE, "
++ " PERSON.NEXTEVALDATE, "
++ " PERSON.NTEXTERN, "
++ " PERSON.PLUSPCUSTVENDOR, "
+//+ " --PERSON.PLUSPCUSTVNDNAME, "
++ " PERSON.PLUSPCUSTVNDTYPE, "
++ " PERSON.SUPERVISOR, "
++ " PERSON.NTISSUPERVISOR, "
++ " PERSON.NTMAXCERT, "
++ " PERSON.JOBCODE, "
++ " ALNDOMAIN.DESCRIPTION jobdesc, "
++ " PERSON.DEPARTMENT, "
++ " PERSON.ADDRESSLINE1, "
++ " PERSON.REGIONDISTRICT, "
++ " PERSON.ADDRESSLINE2, "
++ " PERSON.COUNTY, "
++ " PERSON.ADDRESSLINE3, "
++ " PERSON.LOCATION, "
++ " LOCATIONS.DESCRIPTION locdesc "
++ " from PERSON "
++ " left outer join locations on locations.LOCATION=PERSON.LOCATION "
++ " left outer join alndomain on alndomain.value=person.jobcode and alndomain.domainid='JOBCODE' "
++ " where PERSON.PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["PERSONID"] = maximoDataSet.getString("PERSONID");
+row["EXTERNALREFID"] = maximoDataSet.getString("EXTERNALREFID");
+row["DISPLAYNAME"] = maximoDataSet.getString("DISPLAYNAME");
+row["FIRSTNAME"] = maximoDataSet.getString("FIRSTNAME");
+row["LASTNAME"] = maximoDataSet.getString("LASTNAME");
+row["NTVOORNAMEN"] = maximoDataSet.getString("NTVOORNAMEN");
+row["STATUS"] = maximoDataSet.getString("STATUS");
+row["STATUSDATE"] = maximoDataSet.getTimestamp("STATUSDATE");	
+row["LANGCODE"] = maximoDataSet.getString("LANGCODE");
+row["LANGUAGE"] = maximoDataSet.getString("LANGUAGE");
+row["HIREDATE"] = maximoDataSet.getTimestamp("HIREDATE");	
+row["TERMINATIONDATE"] = maximoDataSet.getTimestamp("TERMINATIONDATE");	
+row["NEXTEVALDATE"] = maximoDataSet.getTimestamp("NEXTEVALDATE");	
+row["NTEXTERN"] = maximoDataSet.getString("NTEXTERN");
+row["PLUSPCUSTVENDOR"] = maximoDataSet.getString("PLUSPCUSTVENDOR");
+row["PLUSPCUSTVNDTYPE"] = maximoDataSet.getString("PLUSPCUSTVNDTYPE");
+row["SUPERVISOR"] = maximoDataSet.getString("SUPERVISOR");
+row["NTISSUPERVISOR"] = maximoDataSet.getString("NTISSUPERVISOR");
+row["NTMAXCERT"] = maximoDataSet.getString("NTMAXCERT");
+row["JOBCODE"] = maximoDataSet.getString("JOBCODE");
+row["jobdesc"] = maximoDataSet.getString("jobdesc");
+row["DEPARTMENT"] = maximoDataSet.getString("DEPARTMENT");
+row["ADDRESSLINE1"] = maximoDataSet.getString("ADDRESSLINE1");
+row["REGIONDISTRICT"] = maximoDataSet.getString("REGIONDISTRICT");
+row["ADDRESSLINE2"] = maximoDataSet.getString("ADDRESSLINE2");
+row["COUNTY"] = maximoDataSet.getString("COUNTY");
+row["ADDRESSLINE3"] = maximoDataSet.getString("ADDRESSLINE3");
+row["LOCATION"] = maximoDataSet.getString("LOCATION");
+row["locdesc"] = maximoDataSet.getString("locdesc");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetTelefoon" id="670">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSONID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">PHONENUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TYPE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ISPRIMARY</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSONID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PHONENUM</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ISPRIMARY</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSONID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">PHONENUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ISPRIMARY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetTelefoon = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetTelefoon.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " PERSONID, "
++ " PHONENUM, "
++ " TYPE, "
++ " ISPRIMARY "
++ " from PHONE "
++ " where PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetTelefoon.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetTelefoon.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["PERSONID"] = dataSetTelefoon.getString("PERSONID");
+row["PHONENUM"] = dataSetTelefoon.getString("PHONENUM");
+row["TYPE"] = dataSetTelefoon.getString("TYPE");
+row["ISPRIMARY"] = dataSetTelefoon.getString("ISPRIMARY");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetEmail" id="688">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSONID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">EMAILADDRESS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TYPE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ISPRIMARY</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSONID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">EMAILADDRESS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ISPRIMARY</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSONID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">EMAILADDRESS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ISPRIMARY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetEmail = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetEmail.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " PERSONID, "
++ " EMAILADDRESS, "
++ " TYPE, "
++ " ISPRIMARY "
++ " from EMAIL "
++ " where PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetEmail.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetEmail.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["PERSONID"] = dataSetEmail.getString("PERSONID");
+row["EMAILADDRESS"] = dataSetEmail.getString("EMAILADDRESS");
+row["TYPE"] = dataSetEmail.getString("TYPE");
+row["ISPRIMARY"] = dataSetEmail.getString("ISPRIMARY");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetArbeid" id="689">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSONID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">LABORCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">NTRESOURCETYPE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">STATUS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">WORKLOCATION</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">CREWID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">AVAILFACTOR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">REPORTEDHRS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">YTDOTHRS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">YTDHRSREFUSED</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSONID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LABORCODE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NTRESOURCETYPE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">WORKLOCATION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CREWID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">AVAILFACTOR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">REPORTEDHRS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">YTDOTHRS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">YTDHRSREFUSED</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSONID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">LABORCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">NTRESOURCETYPE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">STATUS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">WORKLOCATION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">CREWID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">AVAILFACTOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">REPORTEDHRS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">YTDOTHRS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">YTDHRSREFUSED</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetArbeid = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetArbeid.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " LABOR.PERSONID, "
++ " LABOR.LABORCODE, "
++ " LABOR.NTRESOURCETYPE, "
++ " LABOR.STATUS, "
++ " LABOR.WORKLOCATION, "
++ " LOCATIONS.DESCRIPTION, "
++ " LABOR.CREWID, "
++ " LABOR.AVAILFACTOR, "
++ " LABOR.REPORTEDHRS, "
++ " LABOR.YTDOTHRS, "
++ " LABOR.YTDHRSREFUSED "
++ " from labor "
++ " left outer join person on person.personid=labor.personid "
++ " left outer join locations on locations.LOCATION=labor.WORKLOCATION "
++ " where LABOR.PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetArbeid.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetArbeid.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["PERSONID"] = dataSetArbeid.getString("PERSONID");
+row["LABORCODE"] = dataSetArbeid.getString("LABORCODE");
+row["NTRESOURCETYPE"] = dataSetArbeid.getString("NTRESOURCETYPE");
+row["STATUS"] = dataSetArbeid.getString("STATUS");
+row["WORKLOCATION"] = dataSetArbeid.getString("WORKLOCATION");
+row["DESCRIPTION"] = dataSetArbeid.getString("DESCRIPTION");
+row["CREWID"] = dataSetArbeid.getString("CREWID");
+row["AVAILFACTOR"] = dataSetArbeid.getString("AVAILFACTOR");
+row["REPORTEDHRS"] = dataSetArbeid.getDuration("REPORTEDHRS");
+row["YTDOTHRS"] = dataSetArbeid.getDuration("YTDOTHRS");
+row["YTDHRSREFUSED"] = dataSetArbeid.getDuration("YTDHRSREFUSED");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetVakgroep" id="690">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">LABORCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">CRAFT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">SKILLLEVEL</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">DEFAULTCRAFT</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">LABORCODE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CRAFT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SKILLLEVEL</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DEFAULTCRAFT</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">LABORCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">CRAFT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">SKILLLEVEL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">DEFAULTCRAFT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetVakgroep = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetVakgroep.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " LABORCODE, "
++ " CRAFT, "
++ " SKILLLEVEL, "
++ " DEFAULTCRAFT "
++ " from LABORCRAFTRATE "
++ " left outer join person on person.personid=LABORCRAFTRATE.laborcode "
++ " where PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetVakgroep.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetVakgroep.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["LABORCODE"] = dataSetVakgroep.getString("LABORCODE");
+row["CRAFT"] = dataSetVakgroep.getString("CRAFT");
+row["SKILLLEVEL"] = dataSetVakgroep.getString("SKILLLEVEL");
+row["DEFAULTCRAFT"] = dataSetVakgroep.getString("DEFAULTCRAFT");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetPloeg" id="691">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">LABORCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">CREWID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">NTACTIVE</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">LABORCODE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CREWID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NTACTIVE</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">LABORCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">CREWID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">NTACTIVE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetPloeg = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetPloeg.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " LABORCODE, "
++ " CREWID, "
++ " NTACTIVE "
++ " from NTLABORCREW "
++ " left outer join person on person.personid=ntlaborcrew.laborcode "
++ " where PERSON.PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetPloeg.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetPloeg.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["LABORCODE"] = dataSetPloeg.getString("LABORCODE");
+row["CREWID"] = dataSetPloeg.getString("CREWID");
+row["NTACTIVE"] = dataSetPloeg.getString("NTACTIVE");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetKwalificaties" id="692">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">LABORCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">QUALIFICATIONID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">CERTIFICATENUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">STATUS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">STATUSDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">STATUSMEMO</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ORIGINALYEAR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">EFFDATE</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ENDDATE</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">VALIDATIONDATE</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">LASTREPORTEDUSE</property>
+                    <property name="dataType">date</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">LABORCODE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">QUALIFICATIONID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CERTIFICATENUM</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUSDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STATUSMEMO</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ORIGINALYEAR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">EFFDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENDDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">VALIDATIONDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LASTREPORTEDUSE</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">LABORCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">QUALIFICATIONID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">CERTIFICATENUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">STATUS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">STATUSDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">STATUSMEMO</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ORIGINALYEAR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">EFFDATE</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ENDDATE</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">VALIDATIONDATE</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">LASTREPORTEDUSE</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetKwalificaties = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetKwalificaties.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " laborqual.LABORCODE, "
++ " laborqual.QUALIFICATIONID, "
++ " qualification.DESCRIPTION, "
++ " laborqual.CERTIFICATENUM, "
++ " laborqual.STATUS, "
++ " laborqual.STATUSDATE, "
++ " laborqual.STATUSMEMO, "
++ " laborqual.ORIGINALYEAR, "
++ " laborqual.EFFDATE, "
++ " laborqual.ENDDATE, "
++ " laborqual.VALIDATIONDATE, "
++ " laborqual.LASTREPORTEDUSE "
++ " from LABORQUAL "
++ " left outer join person on  laborqual.laborcode=person.personid "
++ " left outer join qualification on qualification.qualificationid=laborqual.qualificationid "
++ " where PERSON.PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetKwalificaties.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetKwalificaties.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["LABORCODE"] = dataSetKwalificaties.getString("LABORCODE");
+row["QUALIFICATIONID"] = dataSetKwalificaties.getString("QUALIFICATIONID");
+row["DESCRIPTION"] = dataSetKwalificaties.getString("DESCRIPTION");
+row["CERTIFICATENUM"] = dataSetKwalificaties.getString("CERTIFICATENUM");
+row["STATUS"] = dataSetKwalificaties.getString("STATUS");
+row["STATUSDATE"] = dataSetKwalificaties.getTimestamp("STATUSDATE");
+row["STATUSMEMO"] = dataSetKwalificaties.getString("STATUSMEMO");
+row["ORIGINALYEAR"] = dataSetKwalificaties.getString("ORIGINALYEAR");
+row["EFFDATE"] = dataSetKwalificaties.getTimestamp("EFFDATE");
+row["ENDDATE"] = dataSetKwalificaties.getTimestamp("ENDDATE");
+row["VALIDATIONDATE"] = dataSetKwalificaties.getTimestamp("VALIDATIONDATE");
+row["LASTREPORTEDUSE"] = dataSetKwalificaties.getTimestamp("LASTREPORTEDUSE");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetBeschik" id="693">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PERSONID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">WORKDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">STARTTIME</property>
+                    <property name="dataType">time</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ENDTIME</property>
+                    <property name="dataType">time</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">WORKHOURS</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">REASONCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">PERSONID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">WORKDATE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">STARTTIME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ENDTIME</property>
+                </structure>
+                <structure>
+                    <property name="columnName">WORKHOURS</property>
+                </structure>
+                <structure>
+                    <property name="columnName">REASONCODE</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PERSONID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">WORKDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">STARTTIME</property>
+                        <property name="dataType">time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ENDTIME</property>
+                        <property name="dataType">time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">WORKHOURS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">REASONCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetBeschik = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetBeschik.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ " PERSONID, "
++ " WORKDATE, "
++ " STARTTIME, "
++ " ENDTIME, "
++ " WORKHOURS, "
++ " REASONCODE "
++ " from MODAVAIL "
++ " where PERSONID='" + params["PERSONID"] + "'"
+
+// Include the Maximo where clause
+//+ " where " + params["where"]
+;
+
+dataSetBeschik.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetBeschik.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["PERSONID"] = dataSetBeschik.getString("PERSONID");
+row["WORKDATE"] = dataSetBeschik.getTimestamp("WORKDATE");
+row["STARTTIME"] = dataSetBeschik.getString("STARTTIME");
+row["ENDTIME"] = dataSetBeschik.getString("ENDTIME");
+row["WORKHOURS"] = dataSetBeschik.getDuration("WORKHOURS");
+row["REASONCODE"] = dataSetBeschik.getString("REASONCODE");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">PERSONID</property>
+                    <text-property name="displayName">PERSONID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PERSONID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DISPLAYNAME</property>
+                    <text-property name="displayName">DISPLAYNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DISPLAYNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">EXTERNALREFID</property>
+                    <text-property name="displayName">EXTERNALREFID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["EXTERNALREFID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FIRSTNAME</property>
+                    <text-property name="displayName">FIRSTNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["FIRSTNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LASTNAME</property>
+                    <text-property name="displayName">LASTNAME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LASTNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">NTVOORNAMEN</property>
+                    <text-property name="displayName">NTVOORNAMEN</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["NTVOORNAMEN"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUS</property>
+                    <text-property name="displayName">STATUS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUSDATE</property>
+                    <text-property name="displayName">STATUSDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUSDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">LANGCODE</property>
+                    <text-property name="displayName">LANGCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LANGCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LANGUAGE</property>
+                    <text-property name="displayName">LANGUAGE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LANGUAGE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">HIREDATE</property>
+                    <text-property name="displayName">HIREDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["HIREDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">TERMINATIONDATE</property>
+                    <text-property name="displayName">TERMINATIONDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TERMINATIONDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">NEXTEVALDATE</property>
+                    <text-property name="displayName">NEXTEVALDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["NEXTEVALDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">NTEXTERN</property>
+                    <text-property name="displayName">NTEXTERN</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["NTEXTERN"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">PLUSPCUSTVENDOR</property>
+                    <text-property name="displayName">PLUSPCUSTVENDOR</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PLUSPCUSTVENDOR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">PLUSPCUSTVNDTYPE</property>
+                    <text-property name="displayName">PLUSPCUSTVNDTYPE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PLUSPCUSTVNDTYPE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SUPERVISOR</property>
+                    <text-property name="displayName">SUPERVISOR</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["SUPERVISOR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">NTISSUPERVISOR</property>
+                    <text-property name="displayName">NTISSUPERVISOR</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["NTISSUPERVISOR"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">NTMAXCERT</property>
+                    <text-property name="displayName">NTMAXCERT</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["NTMAXCERT"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">JOBCODE</property>
+                    <text-property name="displayName">JOBCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["JOBCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jobdesc</property>
+                    <text-property name="displayName">jobdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jobdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEPARTMENT</property>
+                    <text-property name="displayName">DEPARTMENT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DEPARTMENT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ADDRESSLINE1</property>
+                    <text-property name="displayName">ADDRESSLINE1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ADDRESSLINE1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">REGIONDISTRICT</property>
+                    <text-property name="displayName">REGIONDISTRICT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["REGIONDISTRICT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ADDRESSLINE2</property>
+                    <text-property name="displayName">ADDRESSLINE2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ADDRESSLINE2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COUNTY</property>
+                    <text-property name="displayName">COUNTY</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["COUNTY"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ADDRESSLINE3</property>
+                    <text-property name="displayName">ADDRESSLINE3</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ADDRESSLINE3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LOCATION</property>
+                    <text-property name="displayName">LOCATION</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LOCATION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locdesc</property>
+                    <text-property name="displayName">locdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="466"/>
+            <column id="472"/>
+            <column id="478"/>
+            <column id="492"/>
+            <column id="504"/>
+            <column id="516"/>
+            <column id="510"/>
+            <column id="498"/>
+            <column id="18"/>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <text id="447">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[AVG_basis_persoonsgegevens v20180420]]></text-property>
+                        </text>
+                        <label id="345">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text"> </text-property>
+                        </label>
+                        <label id="1247">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">AVG: Basisrapport voor opvragen persoonsgegevens</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="1231">
+                    <property name="style">title</property>
+                    <cell id="1232">
+                        <label id="1246"/>
+                    </cell>
+                    <cell id="1233"/>
+                    <cell id="1234"/>
+                    <cell id="1235"/>
+                    <cell id="1236"/>
+                    <cell id="1237"/>
+                    <cell id="1238"/>
+                    <cell id="1239"/>
+                    <cell id="1240"/>
+                    <cell id="1241"/>
+                    <cell id="1242"/>
+                    <cell id="1243"/>
+                    <cell id="1244"/>
+                    <cell id="1245"/>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="textAlign">left</property>
+                                <property name="width">1.5729166666666667in</property>
+                            </column>
+                            <column id="528">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">3.7083333333333335in</property>
+                            </column>
+                            <column id="533">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">1.5520833333333333in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">2.5833333333333335in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Persoon:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="524">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="458">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">PERSONID</property>
+                                    </data>
+                                </cell>
+                                <cell id="529">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="628">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Klant/leverancier:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="601">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">PLUSPCUSTVENDOR</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="616">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Medewerkernr (UUID):</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="525">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="589">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">EXTERNALREFID</property>
+                                    </data>
+                                </cell>
+                                <cell id="530">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="629">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Type klant/leverancier:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="602">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">PLUSPCUSTVNDTYPE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="518">
+                                <cell id="519">
+                                    <label id="119">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Naam:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="526">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="459">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">DISPLAYNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="531">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="630">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Supervisor:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="520">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="603">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">SUPERVISOR</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="534">
+                                <cell id="535">
+                                    <label id="617">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Roepnaam:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="536">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="590">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">FIRSTNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="537">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="631">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Is Supervisor:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="538">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="604">
+                                        <property name="color">#000000</property>
+                                        <structure name="stringFormat">
+                                            <property name="category">Unformatted</property>
+                                        </structure>
+                                        <property name="resultSetColumn">NTISSUPERVISOR</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="521">
+                                <cell id="522">
+                                    <label id="618">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Achternaam:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="527">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="591">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">LASTNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="532">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="632">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Heeft Maximo-certificaat:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="523">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="605">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">NTMAXCERT</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="539">
+                                <cell id="540">
+                                    <label id="619">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Voornamen:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="541">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="592">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">NTVOORNAMEN</property>
+                                    </data>
+                                </cell>
+                                <cell id="542">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="633">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Functie code SAP:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="543">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="606">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">JOBCODE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="544">
+                                <cell id="545">
+                                    <label id="620">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Status:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="546">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="593">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">STATUS</property>
+                                    </data>
+                                </cell>
+                                <cell id="547">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="634">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Beschrijving:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="548">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="607">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">jobdesc</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="549">
+                                <cell id="550">
+                                    <label id="622">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Statusdatum:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="551">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="594">
+                                        <property name="color">#000000</property>
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">dd-MM-yyyy HH:mm</property>
+                                        </structure>
+                                        <property name="resultSetColumn">STATUSDATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="552">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="635">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Afdeling SAP:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="553">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="608">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">DEPARTMENT</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="554">
+                                <cell id="555">
+                                    <label id="621">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Taalcode:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="556">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="595">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">LANGCODE</property>
+                                    </data>
+                                </cell>
+                                <cell id="557">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="636">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Naam afdeling:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="558">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="609">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">ADDRESSLINE1</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="559">
+                                <cell id="560">
+                                    <label id="623">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Taal:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="561">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="596">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">LANGUAGE</property>
+                                    </data>
+                                </cell>
+                                <cell id="562">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="637">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Subafdeling SAP:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="563">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="610">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">REGIONDISTRICT</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="564">
+                                <cell id="565">
+                                    <label id="624">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Datum in dienst:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="566">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="597">
+                                        <property name="color">#000000</property>
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">dd-MM-yyyy</property>
+                                        </structure>
+                                        <property name="resultSetColumn">HIREDATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="567">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="638">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Naam subafdeling:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="568">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="611">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">ADDRESSLINE2</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="569">
+                                <cell id="570">
+                                    <label id="625">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Datum uit dienst:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="571">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="598">
+                                        <property name="color">#000000</property>
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">dd-MM-yyyy</property>
+                                        </structure>
+                                        <property name="resultSetColumn">TERMINATIONDATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="572">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="639">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Team SAP:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="573">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="612">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">COUNTY</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="574">
+                                <cell id="575">
+                                    <label id="626">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Datum functiewijziging:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="576">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="599">
+                                        <property name="color">#000000</property>
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">dd-MM-yyyy</property>
+                                        </structure>
+                                        <property name="resultSetColumn">NEXTEVALDATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="577">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="640">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Team: </text-property>
+                                    </label>
+                                </cell>
+                                <cell id="578">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="613">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">ADDRESSLINE3</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="579">
+                                <cell id="580">
+                                    <label id="627">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Extern:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="581">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="600">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">NTEXTERN</property>
+                                    </data>
+                                </cell>
+                                <cell id="582">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="641">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Werkplek:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="583">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="614">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">LOCATION</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="584">
+                                <cell id="585"/>
+                                <cell id="586">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                                <cell id="587">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="642">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Beschrijving:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="588">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="615">
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">locdesc</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="463">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="469">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="475">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="489">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="501">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="513">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="507">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="495">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="464">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="470">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="476">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="490">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="502">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="514">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="508">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="496">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="207">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="208">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+        <table name="Telefoon" id="643">
+            <property name="dataSet">dataSetTelefoon</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">PERSONID</property>
+                    <text-property name="displayName">PERSONID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PERSONID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">PHONENUM</property>
+                    <text-property name="displayName">PHONENUM</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PHONENUM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">TYPE</property>
+                    <text-property name="displayName">TYPE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TYPE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ISPRIMARY</property>
+                    <text-property name="displayName">ISPRIMARY</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["ISPRIMARY"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="659"/>
+            <column id="660"/>
+            <column id="661"/>
+            <column id="662"/>
+            <header>
+                <row id="663">
+                    <cell id="664">
+                        <label id="683"/>
+                    </cell>
+                    <cell id="665"/>
+                    <cell id="666"/>
+                    <cell id="667"/>
+                </row>
+                <row id="678">
+                    <cell id="679">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="669">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Telefoonnummers</text-property>
+                        </label>
+                    </cell>
+                    <cell id="680">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="681">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="682">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="644">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="645">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="684">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Persoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="646">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="685">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Telefoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="647">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="686">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="648">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="687">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Primair</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="649">
+                    <cell id="650">
+                        <data id="671">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">PERSONID</property>
+                        </data>
+                    </cell>
+                    <cell id="651">
+                        <data id="673">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">PHONENUM</property>
+                        </data>
+                    </cell>
+                    <cell id="652">
+                        <data id="675">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">TYPE</property>
+                        </data>
+                    </cell>
+                    <cell id="653">
+                        <data id="677">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ISPRIMARY</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="654">
+                    <cell id="655"/>
+                    <cell id="656"/>
+                    <cell id="657"/>
+                    <cell id="658"/>
+                </row>
+            </footer>
+        </table>
+        <table name="Email" id="790">
+            <property name="dataSet">dataSetEmail</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">PERSONID</property>
+                    <text-property name="displayName">PERSONID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PERSONID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">EMAILADDRESS</property>
+                    <text-property name="displayName">EMAILADDRESS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["EMAILADDRESS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">TYPE</property>
+                    <text-property name="displayName">TYPE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["TYPE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ISPRIMARY</property>
+                    <text-property name="displayName">ISPRIMARY</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["ISPRIMARY"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="826"/>
+            <column id="827"/>
+            <column id="828"/>
+            <column id="829"/>
+            <header>
+                <row id="791">
+                    <cell id="792">
+                        <label id="793"/>
+                    </cell>
+                    <cell id="794"/>
+                    <cell id="795"/>
+                    <cell id="796"/>
+                </row>
+                <row id="797">
+                    <cell id="798">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="799">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Email-adressen</text-property>
+                        </label>
+                    </cell>
+                    <cell id="800">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="801">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="802">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="803">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="804">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="805">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Persoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="806">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="807">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">E-mail</text-property>
+                        </label>
+                    </cell>
+                    <cell id="808">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="809">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="810">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="811">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Primair</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="812">
+                    <cell id="813">
+                        <data id="1033">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">PERSONID</property>
+                        </data>
+                    </cell>
+                    <cell id="815">
+                        <data id="1034">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">EMAILADDRESS</property>
+                        </data>
+                    </cell>
+                    <cell id="817">
+                        <data id="1035">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">TYPE</property>
+                        </data>
+                    </cell>
+                    <cell id="819">
+                        <data id="1036">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ISPRIMARY</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="821">
+                    <cell id="822"/>
+                    <cell id="823"/>
+                    <cell id="824"/>
+                    <cell id="825"/>
+                </row>
+            </footer>
+        </table>
+        <table name="Arbeid" id="830">
+            <property name="dataSet">dataSetArbeid</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">PERSONID</property>
+                    <text-property name="displayName">PERSONID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PERSONID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LABORCODE</property>
+                    <text-property name="displayName">LABORCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LABORCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">NTRESOURCETYPE</property>
+                    <text-property name="displayName">NTRESOURCETYPE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["NTRESOURCETYPE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUS</property>
+                    <text-property name="displayName">STATUS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">WORKLOCATION</property>
+                    <text-property name="displayName">WORKLOCATION</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["WORKLOCATION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DESCRIPTION</property>
+                    <text-property name="displayName">DESCRIPTION</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DESCRIPTION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CREWID</property>
+                    <text-property name="displayName">CREWID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CREWID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">AVAILFACTOR</property>
+                    <text-property name="displayName">AVAILFACTOR</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["AVAILFACTOR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">REPORTEDHRS</property>
+                    <text-property name="displayName">REPORTEDHRS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["REPORTEDHRS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">YTDOTHRS</property>
+                    <text-property name="displayName">YTDOTHRS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["YTDOTHRS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">YTDHRSREFUSED</property>
+                    <text-property name="displayName">YTDHRSREFUSED</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["YTDHRSREFUSED"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="866"/>
+            <column id="867"/>
+            <column id="868"/>
+            <column id="1042"/>
+            <column id="1048"/>
+            <column id="1054"/>
+            <column id="1060"/>
+            <column id="1066"/>
+            <column id="1072"/>
+            <column id="1078"/>
+            <column id="869"/>
+            <header>
+                <row id="831">
+                    <cell id="832">
+                        <label id="833"/>
+                    </cell>
+                    <cell id="834"/>
+                    <cell id="835"/>
+                    <cell id="1037"/>
+                    <cell id="1043"/>
+                    <cell id="1049"/>
+                    <cell id="1055"/>
+                    <cell id="1061"/>
+                    <cell id="1067"/>
+                    <cell id="1073"/>
+                    <cell id="836"/>
+                </row>
+                <row id="837">
+                    <cell id="838">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="839">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Arbeid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="840">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="841">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1038">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1044">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1050">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1056">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1062">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1068">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1074">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="842">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="843">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="844">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="845">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Persoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="846">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="847">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Resource</text-property>
+                        </label>
+                    </cell>
+                    <cell id="848">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="849">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Resource Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1039">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1079">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1045">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1080">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Standplaats</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1051">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1081">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1057">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1082">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Standaard ploeg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1063">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1083">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschikbaarheidsfactor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1069">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1084">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Normale uren</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1075">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1085">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Bonusuren</text-property>
+                        </label>
+                    </cell>
+                    <cell id="850">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1086">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Geweigerde overuren</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="852">
+                    <cell id="853">
+                        <data id="1087">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">PERSONID</property>
+                        </data>
+                    </cell>
+                    <cell id="855">
+                        <data id="1089">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">LABORCODE</property>
+                        </data>
+                    </cell>
+                    <cell id="857">
+                        <data id="1091">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">NTRESOURCETYPE</property>
+                        </data>
+                    </cell>
+                    <cell id="1040">
+                        <data id="1093">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">STATUS</property>
+                        </data>
+                    </cell>
+                    <cell id="1046">
+                        <data id="1095">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">WORKLOCATION</property>
+                        </data>
+                    </cell>
+                    <cell id="1052">
+                        <data id="1097">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">DESCRIPTION</property>
+                        </data>
+                    </cell>
+                    <cell id="1058">
+                        <data id="1099">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">CREWID</property>
+                        </data>
+                    </cell>
+                    <cell id="1064">
+                        <data id="1101">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">AVAILFACTOR</property>
+                        </data>
+                    </cell>
+                    <cell id="1070">
+                        <data id="1103">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">REPORTEDHRS</property>
+                        </data>
+                    </cell>
+                    <cell id="1076">
+                        <data id="1105">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">YTDOTHRS</property>
+                        </data>
+                    </cell>
+                    <cell id="859">
+                        <data id="1107">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">YTDHRSREFUSED</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="861">
+                    <cell id="862"/>
+                    <cell id="863"/>
+                    <cell id="864"/>
+                    <cell id="1041"/>
+                    <cell id="1047"/>
+                    <cell id="1053"/>
+                    <cell id="1059"/>
+                    <cell id="1065"/>
+                    <cell id="1071"/>
+                    <cell id="1077"/>
+                    <cell id="865"/>
+                </row>
+            </footer>
+        </table>
+        <table name="Vakgroep" id="870">
+            <property name="dataSet">dataSetVakgroep</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">LABORCODE</property>
+                    <text-property name="displayName">LABORCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LABORCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CRAFT</property>
+                    <text-property name="displayName">CRAFT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CRAFT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SKILLLEVEL</property>
+                    <text-property name="displayName">SKILLLEVEL</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["SKILLLEVEL"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DEFAULTCRAFT</property>
+                    <text-property name="displayName">DEFAULTCRAFT</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["DEFAULTCRAFT"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="906"/>
+            <column id="907"/>
+            <column id="908"/>
+            <column id="909"/>
+            <header>
+                <row id="871">
+                    <cell id="872">
+                        <label id="873"/>
+                    </cell>
+                    <cell id="874"/>
+                    <cell id="875"/>
+                    <cell id="876"/>
+                </row>
+                <row id="877">
+                    <cell id="878">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="879">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vakgroepen en vaardigheden</text-property>
+                        </label>
+                    </cell>
+                    <cell id="880">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="881">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="882">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="883">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="884">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="885">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Resource</text-property>
+                        </label>
+                    </cell>
+                    <cell id="886">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="887">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vakgroep</text-property>
+                        </label>
+                    </cell>
+                    <cell id="888">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="889">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vaardigheidsniveau</text-property>
+                        </label>
+                    </cell>
+                    <cell id="890">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="891">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Standaardvakgroep voor arbeid</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="892">
+                    <cell id="893">
+                        <data id="1224">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">LABORCODE</property>
+                        </data>
+                    </cell>
+                    <cell id="895">
+                        <data id="1226">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">CRAFT</property>
+                        </data>
+                    </cell>
+                    <cell id="897">
+                        <data id="1228">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">SKILLLEVEL</property>
+                        </data>
+                    </cell>
+                    <cell id="899">
+                        <data id="1230">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">DEFAULTCRAFT</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="901">
+                    <cell id="902"/>
+                    <cell id="903"/>
+                    <cell id="904"/>
+                    <cell id="905"/>
+                </row>
+            </footer>
+        </table>
+        <table name="Ploeg" id="910">
+            <property name="dataSet">dataSetPloeg</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">LABORCODE</property>
+                    <text-property name="displayName">LABORCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LABORCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CREWID</property>
+                    <text-property name="displayName">CREWID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CREWID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">NTACTIVE</property>
+                    <text-property name="displayName">NTACTIVE</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["NTACTIVE"] == 1)&#13;
+{&#13;
+'Ja'&#13;
+}&#13;
+else&#13;
+{&#13;
+'Nee'&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <column id="946"/>
+            <column id="947"/>
+            <column id="949"/>
+            <header>
+                <row id="911">
+                    <cell id="912">
+                        <label id="913"/>
+                    </cell>
+                    <cell id="914"/>
+                    <cell id="916"/>
+                </row>
+                <row id="917">
+                    <cell id="918">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="919">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Ploegen</text-property>
+                        </label>
+                    </cell>
+                    <cell id="920">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="922">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="923">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="924">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="925">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Arbeid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="926">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="927">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Ploeg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="930">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="931">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Actief</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="932">
+                    <cell id="933">
+                        <data id="1137">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">LABORCODE</property>
+                        </data>
+                    </cell>
+                    <cell id="935">
+                        <data id="1139">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">CREWID</property>
+                        </data>
+                    </cell>
+                    <cell id="939">
+                        <data id="1141">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">NTACTIVE</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="941">
+                    <cell id="942"/>
+                    <cell id="943"/>
+                    <cell id="945"/>
+                </row>
+            </footer>
+        </table>
+        <table name="Kwalificaties" id="950">
+            <property name="dataSet">dataSetKwalificaties</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">LABORCODE</property>
+                    <text-property name="displayName">LABORCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LABORCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">QUALIFICATIONID</property>
+                    <text-property name="displayName">QUALIFICATIONID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["QUALIFICATIONID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DESCRIPTION</property>
+                    <text-property name="displayName">DESCRIPTION</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["DESCRIPTION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CERTIFICATENUM</property>
+                    <text-property name="displayName">CERTIFICATENUM</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["CERTIFICATENUM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUS</property>
+                    <text-property name="displayName">STATUS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUSDATE</property>
+                    <text-property name="displayName">STATUSDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUSDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUSMEMO</property>
+                    <text-property name="displayName">STATUSMEMO</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STATUSMEMO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ORIGINALYEAR</property>
+                    <text-property name="displayName">ORIGINALYEAR</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ORIGINALYEAR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">EFFDATE</property>
+                    <text-property name="displayName">EFFDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["EFFDATE"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">ENDDATE</property>
+                    <text-property name="displayName">ENDDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ENDDATE"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">VALIDATIONDATE</property>
+                    <text-property name="displayName">VALIDATIONDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["VALIDATIONDATE"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">LASTREPORTEDUSE</property>
+                    <text-property name="displayName">LASTREPORTEDUSE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["LASTREPORTEDUSE"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+            </list-property>
+            <column id="986"/>
+            <column id="987"/>
+            <column id="988"/>
+            <column id="1150"/>
+            <column id="1156"/>
+            <column id="1162"/>
+            <column id="1168"/>
+            <column id="1174">
+                <property name="width">1in</property>
+            </column>
+            <column id="1180">
+                <property name="width">0.9270833333333334in</property>
+            </column>
+            <column id="1186"/>
+            <column id="1192"/>
+            <column id="989"/>
+            <header>
+                <row id="951">
+                    <cell id="952">
+                        <label id="953"/>
+                    </cell>
+                    <cell id="954"/>
+                    <cell id="955"/>
+                    <cell id="1145"/>
+                    <cell id="1151"/>
+                    <cell id="1157"/>
+                    <cell id="1163"/>
+                    <cell id="1169"/>
+                    <cell id="1175"/>
+                    <cell id="1181"/>
+                    <cell id="1187"/>
+                    <cell id="956"/>
+                </row>
+                <row id="957">
+                    <cell id="958">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="959">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Kwalificaties</text-property>
+                        </label>
+                    </cell>
+                    <cell id="960">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="961">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1146">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1152">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1158">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1164">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1170">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1176">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1182">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1188">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="962">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="963">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="964">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="965">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Resource</text-property>
+                        </label>
+                    </cell>
+                    <cell id="966">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="967">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Kwalificatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="968">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="969">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1147">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1193">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Certificaatnr.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1153">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1194">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1159">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1195">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Statusdatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1165">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1196">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Statusmemo</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1171">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1197">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Oorspronkelijk jaar</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1177">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1198">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Ingangsdatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1183">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1199">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vervaldatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1189">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1200">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Validatiedatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="970">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="971">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Laatst gemelde gebruik</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="972">
+                    <cell id="973">
+                        <data id="1201">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">LABORCODE</property>
+                        </data>
+                    </cell>
+                    <cell id="975">
+                        <data id="1203">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">QUALIFICATIONID</property>
+                        </data>
+                    </cell>
+                    <cell id="977">
+                        <data id="1205">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">DESCRIPTION</property>
+                        </data>
+                    </cell>
+                    <cell id="1148">
+                        <data id="1207">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">CERTIFICATENUM</property>
+                        </data>
+                    </cell>
+                    <cell id="1154">
+                        <data id="1209">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">STATUS</property>
+                        </data>
+                    </cell>
+                    <cell id="1160">
+                        <data id="1211">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">STATUSDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1166">
+                        <data id="1213">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">STATUSMEMO</property>
+                        </data>
+                    </cell>
+                    <cell id="1172">
+                        <data id="1215">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ORIGINALYEAR</property>
+                        </data>
+                    </cell>
+                    <cell id="1178">
+                        <data id="1217">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">EFFDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1184">
+                        <data id="1219">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ENDDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1190">
+                        <data id="1221">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">VALIDATIONDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="979">
+                        <data id="1223">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">LASTREPORTEDUSE</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="981">
+                    <cell id="982"/>
+                    <cell id="983"/>
+                    <cell id="984"/>
+                    <cell id="1149"/>
+                    <cell id="1155"/>
+                    <cell id="1161"/>
+                    <cell id="1167"/>
+                    <cell id="1173"/>
+                    <cell id="1179"/>
+                    <cell id="1185"/>
+                    <cell id="1191"/>
+                    <cell id="985"/>
+                </row>
+            </footer>
+        </table>
+        <table name="Beschikbaarheid" id="990">
+            <property name="dataSet">dataSetBeschik</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">PERSONID</property>
+                    <text-property name="displayName">PERSONID</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["PERSONID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">WORKDATE</property>
+                    <text-property name="displayName">WORKDATE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["WORKDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">WORKHOURS</property>
+                    <text-property name="displayName">WORKHOURS</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["WORKHOURS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">REASONCODE</property>
+                    <text-property name="displayName">REASONCODE</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["REASONCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STARTTIME</property>
+                    <text-property name="displayName">STARTTIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["STARTTIME"]</expression>
+                    <property name="dataType">time</property>
+                </structure>
+                <structure>
+                    <property name="name">ENDTIME</property>
+                    <text-property name="displayName">ENDTIME</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ENDTIME"]</expression>
+                    <property name="dataType">time</property>
+                </structure>
+            </list-property>
+            <column id="1022"/>
+            <column id="1023"/>
+            <column id="1024"/>
+            <column id="1113"/>
+            <column id="1119"/>
+            <column id="1025"/>
+            <header>
+                <row id="991">
+                    <cell id="992">
+                        <label id="993"/>
+                    </cell>
+                    <cell id="994"/>
+                    <cell id="995"/>
+                    <cell id="1108"/>
+                    <cell id="1114"/>
+                    <cell id="996"/>
+                </row>
+                <row id="997">
+                    <cell id="998">
+                        <property name="backgroundColor">#408080</property>
+                        <label id="999">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschikbaarheid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1000">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1001">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1109">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1115">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                    <cell id="1002">
+                        <property name="backgroundColor">#408080</property>
+                    </cell>
+                </row>
+                <row id="1003">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="1004">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1005">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Persoon</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1006">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1007">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkdatum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1008">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1009">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Starttijd</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1110">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1131">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Eindtijd</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1116">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1132">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Uren</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1010">
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <label id="1011">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Redencode</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="1012">
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <cell id="1013">
+                        <data id="1120">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">PERSONID</property>
+                        </data>
+                    </cell>
+                    <cell id="1014">
+                        <data id="1122">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">WORKDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1015">
+                        <data id="1134">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">STARTTIME</property>
+                        </data>
+                    </cell>
+                    <cell id="1111">
+                        <data id="1136">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ENDTIME</property>
+                        </data>
+                    </cell>
+                    <cell id="1117">
+                        <data id="1128">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">WORKHOURS</property>
+                        </data>
+                    </cell>
+                    <cell id="1016">
+                        <data id="1130">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">REASONCODE</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1017">
+                    <cell id="1018"/>
+                    <cell id="1019"/>
+                    <cell id="1020"/>
+                    <cell id="1112"/>
+                    <cell id="1118"/>
+                    <cell id="1021"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

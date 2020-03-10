@@ -1,0 +1,1073 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_hoofddelenoverzicht.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">materieelserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">stel_stam</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">type_stam</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">bovenliggende</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">type_bovenliggende</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">train</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">serienummer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">type</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">activum_status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">SAP_artikel</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">activum_omschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">locatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">locatiecode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">locatietype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">locatieomschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">reden_binnenkomst</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">standaard_onderhoudslocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">omschrijving_OB_locatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">conditiecode</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">materieelserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">stel_stam</property>
+                </structure>
+                <structure>
+                    <property name="columnName">type_stam</property>
+                </structure>
+                <structure>
+                    <property name="columnName">bovenliggende</property>
+                </structure>
+                <structure>
+                    <property name="columnName">type_bovenliggende</property>
+                </structure>
+                <structure>
+                    <property name="columnName">train</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serienummer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">type</property>
+                </structure>
+                <structure>
+                    <property name="columnName">activum_status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SAP_artikel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">activum_omschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locatiecode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locatietype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locatieomschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reden_binnenkomst</property>
+                </structure>
+                <structure>
+                    <property name="columnName">standaard_onderhoudslocatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">omschrijving_OB_locatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">conditiecode</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">materieelserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">stel_stam</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">type_stam</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">bovenliggende</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">type_bovenliggende</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">train</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">serienummer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">type</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">activum_status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">SAP_artikel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">activum_omschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">locatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">locatiecode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">locatietype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">locatieomschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">reden_binnenkomst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">standaard_onderhoudslocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">omschrijving_OB_locatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">conditiecode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// MPI 28-02-2017: S51.RAP01 Uncommented join on plusaanbdistatus to prevent duplicate rows
+
+var sqlText = new String();
+
+sqlText = " "
++ " select " 
++ "   ast.ntserie as materieelserie, anc.serialnum as stel_stam, anc.assettype as type_stam, par.serialnum as bovenliggende, " 
++ "   par.assettype as type_bovenliggende, ast.nttopserialnum as train, ast.serialnum as serienummer, ast.assettype as type, " 
++ "   ast.status as activum_status, ast.itemnum as SAP_artikel, ast.description as activum_omschrijving, ast.location as locatie, " 
++ "   loc.ntwontloctype as locatiecode, loc.type as locatietype, loc.description as locatieomschrijving,  " 
++ "   ast.ntrsnmaint as reden_binnenkomst, ast.ntmoederob as standaard_onderhoudslocatie, ntm.description as omschrijving_OB_locatie, ast.conditioncode as conditiecode " 
++ " from asset ast " 
++ "   left join locations loc on ast.location = loc.location "  
+//+ "   left join plusaanbdistatus bdi on ast.assetid = bdi.assetid and bdi.currentconfig = 1 " 
++ "   left join locations ntm on ast.ntmoederob = ntm.location "
++ "   left join asset par on ast.parent = par.assetnum " 
++ "   left join asset anc on ast.ancestor = anc.assetnum " 
++ " where ast.assettype not in ('EENHEID') "  
++ "  and (anc.assettype not in ('EENHEID') or anc.serialnum is null) " 
++ "  and ast.assettype in ('DRAAISTEL','WIELSTEL','BATTERIJ','COMPRESSOR','TRACTIEMOTOR', 'GENERATOR','TRC-CONVERTER','AUX-CONVERTOR') " 
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["materieelserie"] = maximoDataSet.getString("materieelserie");	
+row["stel_stam"] = maximoDataSet.getString("stel_stam");	
+row["type_stam"] = maximoDataSet.getString("type_stam");	
+row["bovenliggende"] = maximoDataSet.getString("bovenliggende");	
+row["type_bovenliggende"] = maximoDataSet.getString("type_bovenliggende");	
+row["train"] = maximoDataSet.getString("train");	
+row["serienummer"] = maximoDataSet.getString("serienummer");	
+row["type"] = maximoDataSet.getString("type");	
+row["activum_status"] = maximoDataSet.getString("activum_status");	
+row["SAP_artikel"] = maximoDataSet.getString("SAP_artikel");	
+row["activum_omschrijving"] = maximoDataSet.getString("activum_omschrijving");	
+row["locatie"] = maximoDataSet.getString("locatie");	
+row["locatiecode"] = maximoDataSet.getString("locatiecode");	
+row["locatietype"] = maximoDataSet.getString("locatietype");	
+row["locatieomschrijving"] = maximoDataSet.getString("locatieomschrijving");	
+row["reden_binnenkomst"] = maximoDataSet.getString("reden_binnenkomst");	
+row["standaard_onderhoudslocatie"] = maximoDataSet.getString("standaard_onderhoudslocatie");	
+row["omschrijving_OB_locatie"] = maximoDataSet.getString("omschrijving_OB_locatie");	
+row["conditiecode"] = maximoDataSet.getString("conditiecode");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">materieelserie</property>
+                    <text-property name="displayName">materieelserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["materieelserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">stel_stam</property>
+                    <text-property name="displayName">stel_stam</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["stel_stam"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">type_stam</property>
+                    <text-property name="displayName">type_stam</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["type_stam"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">bovenliggende</property>
+                    <text-property name="displayName">bovenliggende</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["bovenliggende"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">type_bovenliggende</property>
+                    <text-property name="displayName">type_bovenliggende</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["type_bovenliggende"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">train</property>
+                    <text-property name="displayName">train</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["train"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">serienummer</property>
+                    <text-property name="displayName">serienummer</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serienummer"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">type</property>
+                    <text-property name="displayName">type</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["type"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">activum_status</property>
+                    <text-property name="displayName">activum_status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["activum_status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SAP_artikel</property>
+                    <text-property name="displayName">SAP_artikel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["SAP_artikel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">activum_omschrijving</property>
+                    <text-property name="displayName">activum_omschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["activum_omschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locatie</property>
+                    <text-property name="displayName">locatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locatieomschrijving</property>
+                    <text-property name="displayName">locatieomschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locatieomschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locatiecode</property>
+                    <text-property name="displayName">locatiecode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locatiecode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locatietype</property>
+                    <text-property name="displayName">locatietype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locatietype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reden_binnenkomst</property>
+                    <text-property name="displayName">reden_binnenkomst</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reden_binnenkomst"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">standaard_onderhoudslocatie</property>
+                    <text-property name="displayName">standaard_onderhoudslocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["standaard_onderhoudslocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">omschrijving_OB_locatie</property>
+                    <text-property name="displayName">omschrijving_OB_locatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["omschrijving_OB_locatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">conditiecode</property>
+                    <text-property name="displayName">conditiecode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["conditiecode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key" type="javascript">row["materieelserie"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["serienummer"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["locatie"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["type"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+            </list-property>
+            <column id="83"/>
+            <column id="476"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="596"/>
+            <column id="586"/>
+            <column id="576"/>
+            <column id="566"/>
+            <column id="556"/>
+            <column id="546"/>
+            <column id="536"/>
+            <column id="526"/>
+            <column id="516"/>
+            <column id="506"/>
+            <column id="496"/>
+            <column id="486"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="345">
+                    <property name="style">title</property>
+                    <cell id="346">
+                        <property name="colSpan">5</property>
+                        <property name="rowSpan">1</property>
+                        <label id="465">
+                            <property name="fontSize">7pt</property>
+                            <property name="color">black</property>
+                            <property name="textAlign">left</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">nt_hoofddelenoverzicht v20170227</text-property>
+                        </label>
+                    </cell>
+                    <cell id="587">
+                        <property name="colSpan">13</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="351"/>
+                </row>
+                <row id="647">
+                    <property name="style">title</property>
+                    <cell id="648">
+                        <label id="687"/>
+                    </cell>
+                    <cell id="649"/>
+                    <cell id="650"/>
+                    <cell id="651"/>
+                    <cell id="652"/>
+                    <cell id="653"/>
+                    <cell id="654"/>
+                    <cell id="655"/>
+                    <cell id="656"/>
+                    <cell id="657"/>
+                    <cell id="658"/>
+                    <cell id="659"/>
+                    <cell id="660"/>
+                    <cell id="661"/>
+                    <cell id="662"/>
+                    <cell id="663"/>
+                    <cell id="664"/>
+                    <cell id="665"/>
+                    <cell id="666"/>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">19</property>
+                        <property name="rowSpan">1</property>
+                        <label id="466">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Hoofddelenoverzicht</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="667">
+                    <property name="style">title</property>
+                    <cell id="668">
+                        <label id="580"/>
+                    </cell>
+                    <cell id="669"/>
+                    <cell id="670"/>
+                    <cell id="671"/>
+                    <cell id="672"/>
+                    <cell id="673"/>
+                    <cell id="674"/>
+                    <cell id="675"/>
+                    <cell id="676"/>
+                    <cell id="677"/>
+                    <cell id="678"/>
+                    <cell id="679"/>
+                    <cell id="680"/>
+                    <cell id="681"/>
+                    <cell id="682"/>
+                    <cell id="683"/>
+                    <cell id="684"/>
+                    <cell id="685"/>
+                    <cell id="686"/>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">19</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">19</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Materieel serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="472">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="597">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Stel / stam</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="598">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type stam</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="599">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Boven liggende </text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="600">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type bovenliggende</text-property>
+                        </label>
+                    </cell>
+                    <cell id="592">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="601">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Trein</text-property>
+                        </label>
+                    </cell>
+                    <cell id="582">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="602">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serie nummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="572">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="603">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="562">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="604">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="552">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="605">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SAP artikel</text-property>
+                        </label>
+                    </cell>
+                    <cell id="542">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="606">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="532">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="607">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="522">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="608">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="512">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="609">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie code</text-property>
+                        </label>
+                    </cell>
+                    <cell id="502">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="610">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="492">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="611">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Reden binnenkomst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="482">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="612">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Standaard OH locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="613">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving OB locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="614">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Conditie code</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="615">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">materieelserie</property>
+                        </data>
+                    </cell>
+                    <cell id="473">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="616">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">stel_stam</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="617">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">type_stam</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="618">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">bovenliggende</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="619">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">type_bovenliggende</property>
+                        </data>
+                    </cell>
+                    <cell id="593">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="621">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">train</property>
+                        </data>
+                    </cell>
+                    <cell id="583">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="623">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">serienummer</property>
+                        </data>
+                    </cell>
+                    <cell id="573">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="625">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">type</property>
+                        </data>
+                    </cell>
+                    <cell id="563">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="627">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">activum_status</property>
+                        </data>
+                    </cell>
+                    <cell id="553">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="629">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">SAP_artikel</property>
+                        </data>
+                    </cell>
+                    <cell id="543">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="631">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">activum_omschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="533">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="633">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">locatie</property>
+                        </data>
+                    </cell>
+                    <cell id="523">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="635">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">locatieomschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="513">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="637">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">locatiecode</property>
+                        </data>
+                    </cell>
+                    <cell id="503">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="639">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">locatietype</property>
+                        </data>
+                    </cell>
+                    <cell id="493">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="641">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">reden_binnenkomst</property>
+                        </data>
+                    </cell>
+                    <cell id="483">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="643">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">standaard_onderhoudslocatie</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="644">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">omschrijving_OB_locatie</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="646">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">conditiecode</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">19</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">19</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

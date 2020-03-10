@@ -1,0 +1,1471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+      mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+      mxReportScriptContext.setDefaultLogLevel("DEBUG");
+      mxReportScriptContext.setDefaultLogFile("c:/temp/nt_verbandscontrole.log");
+      scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntserie" id="577">
+            <text-property name="promptText">ntserie</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">masterpmnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntapproved</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ntprimpotype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ntsecpotype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ntpmloctype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">commoditygroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">comgrpdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">commodity</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">comdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ntvbtstrreq</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">pmnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">part</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">partdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">frequency</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">frequnit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">plusawarnint</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">plusaalertint</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">alertlead</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">metername</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">meterfrequency</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">meterplusaalertint</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">meterplusawarnint</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">initialreading</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">voorganger</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">jpnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">jpdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">alertint</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">warnint</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">cmitem</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">cmitemdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">masterpmnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntapproved</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntprimpotype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntsecpotype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntpmloctype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commoditygroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">comgrpdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commodity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">comdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntvbtstrreq</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pmnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">part</property>
+                </structure>
+                <structure>
+                    <property name="columnName">partdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">frequency</property>
+                </structure>
+                <structure>
+                    <property name="columnName">frequnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusawarnint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusaalertint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">alertlead</property>
+                </structure>
+                <structure>
+                    <property name="columnName">metername</property>
+                </structure>
+                <structure>
+                    <property name="columnName">meterfrequency</property>
+                </structure>
+                <structure>
+                    <property name="columnName">meterplusaalertint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">meterplusawarnint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">initialreading</property>
+                </structure>
+                <structure>
+                    <property name="columnName">voorganger</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jpnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jpdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">alertint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">warnint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cmitem</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cmitemdescription</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">masterpmnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntapproved</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ntprimpotype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ntsecpotype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ntpmloctype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">commoditygroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">comgrpdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">commodity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">comdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">ntvbtstrreq</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">pmnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">part</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">partdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">frequency</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">frequnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">plusawarnint</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">plusaalertint</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">alertlead</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">metername</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">meterfrequency</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">meterplusaalertint</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">meterplusawarnint</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">initialreading</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">voorganger</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">jpnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">jpdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">alertint</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">warnint</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">cmitem</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">cmitemdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// MPI 09-11-2013: Added  and    plusacacat.item is not null to prevent double rows
+//				   Added subselect to retrieve masterpm's from model as starting point
+//                 Removed dynamic where and created input parm NTSERIE instead
+// RST 28-10-2013: Removed masterpmid, primarypmid from the layout.
+//				   Added Commodity Description / Commodity Group Description / NTApproved / CM Item / CM Item Description to the layout
+//				   Functional change:  MASTERPM is selected based on CM Items for a specific NTSERIE	
+// 17-09-2013 MPI: Elementool # xxxx Toegevoegd dynamic where op verzoek Maurice Vuik 
+
+var sqlText = new String();
+
+params["ntserie"]=params["ntserie"].replace("=","");
+
+sqlText = " "
++ " select masterpm.masterpmid, "
++ "        masterpm.masterpmnum, "
++ "        masterpm.description, "
++ "        plusamasterpmtime.jpnum," 
++ "        jobplan.description as jpdescription, "
++ "        plusamasterpmtime.alertint, " 
++ "        plusamasterpmtime.warnint, "
++ "        decode(masterpm.ntapproved,0,'N',1,'J') as ntapproved, "
++ "        masterpm.ntserie, " 
++ "        masterpm.ntprimpotype, " 
++ "        masterpm.ntsecpotype, "
++ "        masterpm.ntpmloctype,  "
++ "        masterpm.commoditygroup, " 
++ "		   cmdgrp.description as comgrpdescription, "
++ "        masterpm.commodity, "
++ "		   com.description as comdescription, "
++ "        decode(masterpm.ntvbtstrreq,0,'N',1,'J') as ntvbtstrreq, "
++ "        masterpm.frequency, "
++ "        masterpm.frequnit, "
++ "        masterpm.plusawarnint, "
++ "        masterpm.plusaalertint, "
++ "        masterpm.alertlead, "
++ "        masterpmmeter.metername, "
++ "        masterpmmeter.frequency as meterfrequency, "
++ "        masterpmmeter.plusaalertint as meterplusaalertint, "
++ "        masterpmmeter.plusawarnint as meterplusawarnint, "
++ "        masterpmmeter.initialreading, "
++ "        plusalfpmaction.primarypmid ,(select masterpmnum from masterpm a where a.masterpmid = plusalfpmaction.primarypmid) as voorganger, "
++ "		   plusacacat.item as cmitem, "
++ "		   plusacacat.description as cmitemdescription "    
++ " from   masterpm "
++ "        left outer join plusacaxmasterpm on masterpm.masterpmid = plusacaxmasterpm.masterpmid "
++ "        left outer join plusacacat on plusacaxmasterpm.catid =  plusacacat.plusacacatid and masterpm.ntserie = plusacacat.ntserie "
++ "        left outer join masterpmmeter on masterpm.masterpmnum = masterpmmeter.masterpmnum "
++ "        left outer join plusamasterpmtime on masterpm.masterpmnum = plusamasterpmtime.masterpmnum " 
++ "        left outer join jobplan on plusamasterpmtime.jpnum = jobplan.jpnum "
++ "        left outer join commodities cmdgrp on masterpm.commoditygroup = cmdgrp.commodity "
++ "        left outer join commodities com on masterpm.commodity = com.commodity "
++ "        left outer join plusalfpmaction on masterpm.masterpmid = plusalfpmaction.secondarypmid and plusalfpmaction.actiontype = 'ACTIVATE' "
++ " where masterpm.masterpmnum in "
++ "        ( "
++ "        select e.masterpmnum "
++ "        from plusacmmodel a "
++ "          join plusacmbuilditem b on "
++ "            a.plusacmmodelid = b.modelid "
++ "          join plusacmxcat c on "
++ "            c.builditemid = b.plusacmbuilditemid "
++ "          join plusacaxmasterpm d on "
++ "            d.catid = c.catid "
++ "          join masterpm e on "
++ "            d.masterpmid = e.masterpmid "
++ "        where a.series = '" + params["ntserie"].toUpperCase() +"'"   
++ "        union "
++ "        select masterpmnum "
++ "        from masterpm "
++ "        where ntserie = '" + params["ntserie"].toUpperCase() +"'" 
++ "        and itemnum is not null "
++ "        ) "
++ " and    plusacacat.item is not null "
++ " order by masterpm.masterpmnum, jobplan.jpnum "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+// row["masterpmid"] = maximoDataSet.getInteger("masterpmid");
+row["masterpmnum"] = maximoDataSet.getString("masterpmnum");
+row["description"] = maximoDataSet.getString("description");
+row["jpnum"] = maximoDataSet.getString("jpnum");
+row["jpdescription"] = maximoDataSet.getString("jpdescription");
+row["alertint"] = maximoDataSet.getString("alertint");
+row["warnint"] = maximoDataSet.getString("warnint");
+row["ntapproved"] = maximoDataSet.getString("ntapproved");
+row["ntserie"] = maximoDataSet.getString("ntserie");
+row["ntprimpotype"] = maximoDataSet.getString("ntprimpotype");
+row["ntsecpotype"] = maximoDataSet.getString("ntsecpotype");
+row["ntpmloctype"] = maximoDataSet.getString("ntpmloctype");
+row["commoditygroup"] = maximoDataSet.getString("commoditygroup");
+row["comgrpdescription"] = maximoDataSet.getString("comgrpdescription");
+row["commodity"] = maximoDataSet.getString("commodity");
+row["comdescription"] = maximoDataSet.getString("comdescription");
+row["ntvbtstrreq"] = maximoDataSet.getString("ntvbtstrreq");
+//row["pmnum"] = maximoDataSet.getString("pmnum");
+//row["part"] = maximoDataSet.getString("part");
+//row["partdescription"] = maximoDataSet.getString("partdescription");
+row["frequency"] = maximoDataSet.getInteger("frequency");
+row["frequnit"] = maximoDataSet.getString("frequnit");
+row["plusawarnint"] = maximoDataSet.getDouble("plusawarnint");
+row["plusaalertint"] = maximoDataSet.getDouble("plusaalertint");
+row["alertlead"] = maximoDataSet.getInteger("alertlead");
+row["metername"] = maximoDataSet.getString("metername");
+row["meterfrequency"] = maximoDataSet.getInteger("meterfrequency");
+row["meterplusaalertint"] = maximoDataSet.getDouble("meterplusaalertint");
+row["meterplusawarnint"] = maximoDataSet.getDouble("meterplusawarnint");
+row["initialreading"] = maximoDataSet.getDouble("initialreading");
+row["primarypmid"] = maximoDataSet.getInteger("primarypmid");
+row["voorganger"] = maximoDataSet.getString("voorganger");
+row["cmitem"] = maximoDataSet.getString("cmitem");
+row["cmitemdescription"] = maximoDataSet.getString("cmitemdescription");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                </ref-entry>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">masterpmnum</property>
+                    <text-property name="displayName">masterpmnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["masterpmnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntprimpotype</property>
+                    <text-property name="displayName">ntprimpotype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntprimpotype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntsecpotype</property>
+                    <text-property name="displayName">ntsecpotype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntsecpotype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntpmloctype</property>
+                    <text-property name="displayName">ntpmloctype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntpmloctype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commoditygroup</property>
+                    <text-property name="displayName">commoditygroup</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["commoditygroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">comgrpdescription</property>
+                    <text-property name="displayName">comgrpdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["comgrpdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity</property>
+                    <text-property name="displayName">commodity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["commodity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">comdescription</property>
+                    <text-property name="displayName">comdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["comdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntvbtstrreq</property>
+                    <text-property name="displayName">ntvbtstrreq</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntvbtstrreq"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pmnum</property>
+                    <text-property name="displayName">pmnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pmnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">part</property>
+                    <text-property name="displayName">part</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["part"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">partdescription</property>
+                    <text-property name="displayName">partdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["partdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">frequency</property>
+                    <text-property name="displayName">frequency</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["frequency"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">frequnit</property>
+                    <text-property name="displayName">frequnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["frequnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusawarnint</property>
+                    <text-property name="displayName">plusawarnint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["plusawarnint"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plusaalertint</property>
+                    <text-property name="displayName">plusaalertint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["plusaalertint"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">alertlead</property>
+                    <text-property name="displayName">alertlead</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["alertlead"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">metername</property>
+                    <text-property name="displayName">metername</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["metername"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">meterfrequency</property>
+                    <text-property name="displayName">meterfrequency</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["meterfrequency"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">meterplusaalertint</property>
+                    <text-property name="displayName">meterplusaalertint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["meterplusaalertint"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">meterplusawarnint</property>
+                    <text-property name="displayName">meterplusawarnint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["meterplusawarnint"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">initialreading</property>
+                    <text-property name="displayName">initialreading</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["initialreading"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">voorganger</property>
+                    <text-property name="displayName">voorganger</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["voorganger"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jpnum</property>
+                    <text-property name="displayName">jpnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jpnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jpdescription</property>
+                    <text-property name="displayName">jpdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jpdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">alertint</property>
+                    <text-property name="displayName">alertint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["alertint"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">warnint</property>
+                    <text-property name="displayName">warnint</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["warnint"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntapproved</property>
+                    <text-property name="displayName">ntapproved</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntapproved"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">cmitem</property>
+                    <text-property name="displayName">cmitem</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["cmitem"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">cmitemdescription</property>
+                    <text-property name="displayName">cmitemdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["cmitemdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="79">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="91">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="492">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="495">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="498">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="501">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="557">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="87">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="17">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="384">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="379">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="374">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="546">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="369">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="541">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="349">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="429">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="424">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="419">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="414">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="409">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="404">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="399">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="394">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="389">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="364">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="18">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="563">
+                <property name="textAlign">left</property>
+            </column>
+            <column id="569">
+                <property name="textAlign">left</property>
+            </column>
+            <header>
+                <row id="510">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="511">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">tabledetailslabelcell</property>
+                        <text id="537">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[nt_verbandscontrole v20131028]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="514">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="515">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="516">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="517">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="554">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="518">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="519">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="520">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="521">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="522">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="543">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="523">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="538">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="524">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="525">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="526">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="527">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="528">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="529">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="530">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="531">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="532">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="533">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="534">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="536">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="560">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="566">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="466">
+                            <text-property name="text">masterpmnum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="467">
+                            <text-property name="text">description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="490">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="502">
+                            <text-property name="text">jpnum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="493">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="504">
+                            <text-property name="text">jpdescription</text-property>
+                        </label>
+                    </cell>
+                    <cell id="496">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="506">
+                            <text-property name="text">alertint</text-property>
+                        </label>
+                    </cell>
+                    <cell id="499">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="508">
+                            <text-property name="text">warnint</text-property>
+                        </label>
+                    </cell>
+                    <cell id="555">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="558">
+                            <text-property name="text">ntapproved</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="468">
+                            <text-property name="text">ntserie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="469">
+                            <text-property name="text">ntprimpotype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="381">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="470">
+                            <text-property name="text">ntsecpotype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="376">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="471">
+                            <text-property name="text">ntpmloctype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="371">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="472">
+                            <text-property name="text">commoditygroup</text-property>
+                        </label>
+                    </cell>
+                    <cell id="544">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="573">
+                            <text-property name="text">comgrpdescription</text-property>
+                        </label>
+                    </cell>
+                    <cell id="366">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="473">
+                            <text-property name="text">commodity</text-property>
+                        </label>
+                    </cell>
+                    <cell id="539">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="575">
+                            <text-property name="text">comdescription</text-property>
+                        </label>
+                    </cell>
+                    <cell id="346">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="474">
+                            <text-property name="text">ntvbtstrreq</text-property>
+                        </label>
+                    </cell>
+                    <cell id="426">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="478">
+                            <text-property name="text">frequency</text-property>
+                        </label>
+                    </cell>
+                    <cell id="421">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="479">
+                            <text-property name="text">frequnit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="416">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="480">
+                            <text-property name="text">plusawarnint</text-property>
+                        </label>
+                    </cell>
+                    <cell id="411">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="481">
+                            <text-property name="text">plusaalertint</text-property>
+                        </label>
+                    </cell>
+                    <cell id="406">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="482">
+                            <text-property name="text">alertlead</text-property>
+                        </label>
+                    </cell>
+                    <cell id="401">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="483">
+                            <text-property name="text">metername</text-property>
+                        </label>
+                    </cell>
+                    <cell id="396">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="484">
+                            <text-property name="text">meterfrequency</text-property>
+                        </label>
+                    </cell>
+                    <cell id="391">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="485">
+                            <text-property name="text">meterplusaalertint</text-property>
+                        </label>
+                    </cell>
+                    <cell id="386">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="486">
+                            <text-property name="text">meterplusawarnint</text-property>
+                        </label>
+                    </cell>
+                    <cell id="361">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="487">
+                            <text-property name="text">initialreading</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="489">
+                            <text-property name="text">voorganger</text-property>
+                        </label>
+                    </cell>
+                    <cell id="561">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="564">
+                            <text-property name="text">cmitem</text-property>
+                        </label>
+                    </cell>
+                    <cell id="567">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="571">
+                            <text-property name="text">cmitemdescription</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="442">
+                            <property name="resultSetColumn">masterpmnum</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="443">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="491">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="503">
+                            <property name="resultSetColumn">jpnum</property>
+                        </data>
+                    </cell>
+                    <cell id="494">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="505">
+                            <property name="resultSetColumn">jpdescription</property>
+                        </data>
+                    </cell>
+                    <cell id="497">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="507">
+                            <property name="resultSetColumn">alertint</property>
+                        </data>
+                    </cell>
+                    <cell id="500">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="509">
+                            <property name="resultSetColumn">warnint</property>
+                        </data>
+                    </cell>
+                    <cell id="556">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="559">
+                            <property name="resultSetColumn">ntapproved</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="444">
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="445">
+                            <property name="resultSetColumn">ntprimpotype</property>
+                        </data>
+                    </cell>
+                    <cell id="382">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="446">
+                            <property name="resultSetColumn">ntsecpotype</property>
+                        </data>
+                    </cell>
+                    <cell id="377">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="447">
+                            <property name="resultSetColumn">ntpmloctype</property>
+                        </data>
+                    </cell>
+                    <cell id="372">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="448">
+                            <property name="resultSetColumn">commoditygroup</property>
+                        </data>
+                    </cell>
+                    <cell id="545">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="574">
+                            <property name="resultSetColumn">comgrpdescription</property>
+                        </data>
+                    </cell>
+                    <cell id="367">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="449">
+                            <property name="resultSetColumn">commodity</property>
+                        </data>
+                    </cell>
+                    <cell id="540">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="576">
+                            <property name="resultSetColumn">comdescription</property>
+                        </data>
+                    </cell>
+                    <cell id="347">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="450">
+                            <property name="resultSetColumn">ntvbtstrreq</property>
+                        </data>
+                    </cell>
+                    <cell id="427">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="454">
+                            <property name="resultSetColumn">frequency</property>
+                        </data>
+                    </cell>
+                    <cell id="422">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="455">
+                            <property name="resultSetColumn">frequnit</property>
+                        </data>
+                    </cell>
+                    <cell id="417">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="456">
+                            <property name="resultSetColumn">plusawarnint</property>
+                        </data>
+                    </cell>
+                    <cell id="412">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="457">
+                            <property name="resultSetColumn">plusaalertint</property>
+                        </data>
+                    </cell>
+                    <cell id="407">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="458">
+                            <property name="resultSetColumn">alertlead</property>
+                        </data>
+                    </cell>
+                    <cell id="402">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="459">
+                            <property name="resultSetColumn">metername</property>
+                        </data>
+                    </cell>
+                    <cell id="397">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="460">
+                            <property name="resultSetColumn">meterfrequency</property>
+                        </data>
+                    </cell>
+                    <cell id="392">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="461">
+                            <property name="resultSetColumn">meterplusaalertint</property>
+                        </data>
+                    </cell>
+                    <cell id="387">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="462">
+                            <property name="resultSetColumn">meterplusawarnint</property>
+                        </data>
+                    </cell>
+                    <cell id="362">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="463">
+                            <property name="resultSetColumn">initialreading</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="465">
+                            <property name="resultSetColumn">voorganger</property>
+                        </data>
+                    </cell>
+                    <cell id="562">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="565">
+                            <property name="resultSetColumn">cmitem</property>
+                        </data>
+                    </cell>
+                    <cell id="568">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="572">
+                            <property name="resultSetColumn">cmitemdescription</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

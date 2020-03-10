@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_poh_zonder_klant.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">masterpmnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">mpdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">customer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">custname</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">agreement</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">pagdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">priceschedule</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">psdescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">revisionnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">startdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">enddate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">ranking</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">transtype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">masterpmid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">cat</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">pagntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">pagstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">pagenddate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">text</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">masterpmnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mpdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">customer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">custname</property>
+                </structure>
+                <structure>
+                    <property name="columnName">agreement</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pagdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">priceschedule</property>
+                </structure>
+                <structure>
+                    <property name="columnName">psdescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">revisionnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">startdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">enddate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ranking</property>
+                </structure>
+                <structure>
+                    <property name="columnName">transtype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">masterpmid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cat</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pagntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pagstatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pagenddate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">text</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">masterpmnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">mpdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">customer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">custname</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">agreement</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">pagdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">priceschedule</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">psdescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">revisionnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">startdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">enddate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">ranking</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">transtype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">masterpmid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">cat</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">pagntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">pagstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">pagenddate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">text</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// 20150421 MPI: S25.RAP02 Added categories in query and added 3 columns
+// 20160720 MPI: S43.SU01 M. Vink reported discrepancies in data. Fully redesigned query
+
+var sqlText = new String();
+var poh     = new String();
+
+
+// Add query to sqlText variable.
+sqlText = " "
++ "select "
++ "  selectie.categorie as cat, "
++ "  selectie.text as text, "
++ "  selectie.masterpmnum, "
++ "  selectie.description as mpdescription, "
++ "  selectie.customer as customer, "
++ "  selectie.custname as custname, "
++ "  selectie.agreement as agreement, "
++ "  selectie.agreementdesc as pagdescription, "
++ "  selectie.priceschedule as priceschedule, "
++ "  selectie.psdescription as psdescription, "
++ "  selectie.revisionnum as revisionnum, "
++ "  selectie.status as status, "
++ "  selectie.startdate as startdate, "
++ "  selectie.enddate as enddate, "
++ "  selectie.ranking as ranking, "
++ "  selectie.transtype as transtype, "
++ "  selectie.masterpmid as masterpmid, "
++ "  selectie.ntserie as pagntserie, "
++ "  selectie.status as pagstatus, "
++ "  selectie.enddate as pagenddate "
++ "from "
++ "  ( "
++ "  select "
++ "    'Categorie 1' as categorie, "
++ "    'POH met klant, zonder gevonden klantovereenkomst' as text, "
++ "    masterpm.masterpmnum, "
++ "    masterpm.description, "
++ "    masterpm.ntserie, "
++ "    masterpm.ntcustomer as customer, "
++ "    pluspcustomer.name as custname, "
++ "    null as agreement, "
++ "    null as agreementdesc, "
++ "    null as priceschedule, "
++ "    null as psdescription, "
++ "    null as revisionnum, "
++ "    null as status, "
++ "    null as startdate, "
++ "    null as enddate, "
++ "    null as ranking, "
++ "    null as transtype, "
++ "    null as masterpmid "
++ "  from masterpm "
++ "    join pluspcustomer on masterpm.ntcustomer = pluspcustomer.customer "
++ "  where  " + params["where"]
++ "  and   masterpm.masterpmnum not in "
++ "        ( "
++ "          select masterpmnum "
++ "          from   ntpohps "
++ "          where  status in "
++ "          ( "
++ "            select value "
++ "            from   synonymdomain "
++ "            where  domainid='PLUSPAGREESTATUS' "
++ "            and    maxvalue ='APPR' "
++ "            ) "
++ "        ) "
++ "  union "
++ "  select "
++ "    'Categorie 2' as categorie, "
++ "    'POH zonder klant, zonder gevonden klantovereenkomst' as text, "
++ "    masterpm.masterpmnum, "
++ "    masterpm.description, "
++ "    masterpm.ntserie, "
++ "    null as customer, "
++ "    null as custname, "
++ "    null as agreement, "
++ "    null as agreementdesc, "
++ "    null as priceschedule, "
++ "    null as psdescription, "
++ "    null as revisionnum, "
++ "    null as status, "
++ "    null as startdate, "
++ "    null as enddate, "
++ "    null as ranking, "
++ "    null as transtype, "
++ "    null as masterpmid "
++ "  from masterpm "
++ "  where  " + params["where"]
++ "  and   ntcustomer is null "
++ "  and   masterpm.masterpmnum not in "
++ "        ( "
++ "          select masterpmnum "
++ "          from   ntpohps "
++ "          where  status in "
++ "          ( "
++ "            select value "
++ "            from   synonymdomain "
++ "            where  domainid='PLUSPAGREESTATUS' "
++ "            and    maxvalue ='APPR' "
++ "            ) "
++ "        ) "
++ "  union "
++ "  select "
++ "    'Categorie 3' as categorie, "
++ "    'POH met mogelijke klantovereenkomst(en)' as text, "
++ "    masterpm.masterpmnum, "
++ "    masterpm.description, "
++ "    masterpm.ntserie, "
++ "    ntpohps.customer as customer, "
++ "    pluspcustomer.name as custname, "
++ "    ntpohps.agreement as agreement, "
++ "    pluspagreement.description as agreementdesc, "
++ "    ntpohps.priceschedule as priceschedule, "
++ "    ntpohps.psdescription as psdescription, "
++ "    ntpohps.revisionnum as revisionnum, "
++ "    ntpohps.status as status, "
++ "    ntpohps.startdate as startdate, "
++ "    ntpohps.enddate as enddate, "
++ "    ntpohps.ranking as ranking, "
++ "    ntpohps.transtype as transtype, "
++ "    ntpohps.masterpmid as masterpmid "
++ "  from masterpm "
++ "   join ntpohps on masterpm.masterpmnum = ntpohps.masterpmnum and ntpohps.status in "
++ "           ( "
++ "            select value "
++ "            from   synonymdomain "
++ "            where  domainid='PLUSPAGREESTATUS' "
++ "            and    maxvalue ='APPR' "
++ "            ) "
++ "    join pluspcustomer on ntpohps.customer = pluspcustomer.customer "
++ "    join pluspagreement on ntpohps.agreement = pluspagreement.agreement and pluspagreement.status = 'GGK' "
++ "  where  " + params["where"]
+//+ "  and   masterpm.ntcustomer is null "
++ "  order by categorie, masterpmnum "
++ "  ) selectie"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["masterpmnum"] = maximoDataSet.getString("masterpmnum");
+row["mpdescription"] = maximoDataSet.getString("mpdescription");
+row["customer"] = maximoDataSet.getString("customer");
+row["custname"] = maximoDataSet.getString("custname");
+row["agreement"] = maximoDataSet.getString("agreement");
+row["pagdescription"] = maximoDataSet.getString("pagdescription");
+row["priceschedule"] = maximoDataSet.getString("priceschedule");
+row["psdescription"] = maximoDataSet.getString("psdescription");
+row["revisionnum"] = maximoDataSet.getString("revisionnum");
+row["status"] = maximoDataSet.getString("status");
+row["startdate"] = maximoDataSet.getTimestamp("startdate");	
+row["enddate"] = maximoDataSet.getTimestamp("enddate");	
+row["ranking"] = maximoDataSet.getString("ranking");
+row["transtype"] = maximoDataSet.getString("transtype");
+row["masterpmid"] = maximoDataSet.getString("masterpmid");
+row["cat"] = maximoDataSet.getString("cat");
+row["pagntserie"] = maximoDataSet.getString("pagntserie");
+row["pagstatus"] = maximoDataSet.getString("pagstatus");
+row["pagenddate"] = maximoDataSet.getTimestamp("pagenddate");	
+row["text"] = maximoDataSet.getString("text");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">mpdescription</property>
+                    <text-property name="displayName">mpdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mpdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">customer</property>
+                    <text-property name="displayName">customer</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["customer"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">custname</property>
+                    <text-property name="displayName">custname</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["custname"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">agreement</property>
+                    <text-property name="displayName">agreement</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["agreement"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pagdescription</property>
+                    <text-property name="displayName">pagdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pagdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">priceschedule</property>
+                    <text-property name="displayName">priceschedule</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["priceschedule"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">psdescription</property>
+                    <text-property name="displayName">psdescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["psdescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">masterpmnum</property>
+                    <text-property name="displayName">masterpmnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["masterpmnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">cat</property>
+                    <text-property name="displayName">cat</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["cat"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pagntserie</property>
+                    <text-property name="displayName">pagntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pagntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pagstatus</property>
+                    <text-property name="displayName">pagstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pagstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pagenddate</property>
+                    <text-property name="displayName">pagenddate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pagenddate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">text</property>
+                    <text-property name="displayName">text</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["text"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="362"/>
+            <column id="353"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="539"/>
+            <column id="529"/>
+            <column id="519"/>
+            <column id="509"/>
+            <column id="582"/>
+            <column id="18"/>
+            <header>
+                <row id="380">
+                    <property name="style">title</property>
+                    <cell id="381">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <label id="464">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <text-property name="text">nt_poh_zonder_klant v20160720</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <label id="465">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Gecategoriseerd overzicht PO Hoofdschemas</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">8.875in</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Selectie:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="379">
+                                        <text-property name="text">POH's uit schermselectie</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="542">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">POH</text-property>
+                        </label>
+                    </cell>
+                    <cell id="358">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="541">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="349">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="374">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Klantnaam</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="373">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Klant</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="375">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Klantovereenkomst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="535">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="376">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="525">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="377">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Prijsschema</text-property>
+                        </label>
+                    </cell>
+                    <cell id="515">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="378">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="505">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="584">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Mat Serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="576">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="583">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status contract</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="585">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Einddatum contract</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <group id="545">
+                <property name="groupName">groupCat</property>
+                <expression name="keyExpr" type="javascript">row["cat"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["cat"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="594">
+                        <cell id="595">
+                            <label id="607">
+                                <property name="color">white</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">POH</text-property>
+                            </label>
+                        </cell>
+                        <cell id="596"/>
+                        <cell id="597"/>
+                        <cell id="598"/>
+                        <cell id="599"/>
+                        <cell id="600"/>
+                        <cell id="601"/>
+                        <cell id="602"/>
+                        <cell id="603"/>
+                        <cell id="604"/>
+                        <cell id="605"/>
+                        <cell id="606"/>
+                    </row>
+                    <row id="546">
+                        <cell id="547">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <data id="570">
+                                <property name="fontSize">10pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="color">#005D57</property>
+                                <property name="borderBottomColor">#000000</property>
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="resultSetColumn">cat</property>
+                            </data>
+                        </cell>
+                        <cell id="549">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <data id="593">
+                                <property name="fontSize">10pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="color">#005D57</property>
+                                <property name="borderBottomColor">#000000</property>
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="resultSetColumn">text</property>
+                            </data>
+                        </cell>
+                        <cell id="552"/>
+                        <cell id="553"/>
+                        <cell id="554"/>
+                        <cell id="555"/>
+                        <cell id="556"/>
+                        <cell id="577"/>
+                        <cell id="557"/>
+                    </row>
+                </header>
+                <footer>
+                    <row id="558">
+                        <cell id="559"/>
+                        <cell id="560"/>
+                        <cell id="561"/>
+                        <cell id="562"/>
+                        <cell id="563"/>
+                        <cell id="564"/>
+                        <cell id="565"/>
+                        <cell id="566"/>
+                        <cell id="567"/>
+                        <cell id="568"/>
+                        <cell id="579"/>
+                        <cell id="569"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="543">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">masterpmnum</property>
+                        </data>
+                    </cell>
+                    <cell id="359">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="544">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">mpdescription</property>
+                        </data>
+                    </cell>
+                    <cell id="350">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="468">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">custname</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="467">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">customer</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="469">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">agreement</property>
+                        </data>
+                    </cell>
+                    <cell id="536">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="471">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pagdescription</property>
+                        </data>
+                    </cell>
+                    <cell id="526">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="473">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">priceschedule</property>
+                        </data>
+                    </cell>
+                    <cell id="516">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="475">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">psdescription</property>
+                        </data>
+                    </cell>
+                    <cell id="506">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="587">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pagntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="578">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="589">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pagstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="591">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yyyy HH:mm</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pagenddate</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

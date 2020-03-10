@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2016 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">cm</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/Temp/nt_overstandstaat.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">fixed layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">nttrainnr</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">nttraindep</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">dpspoornaam</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">eindaankomsttijd</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">beginvertrektijd</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">worktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">wopriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">worklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">sortkey1</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">sortkey2</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">sortkey3</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">sortkey4</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nttrainnr</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nttraindep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">dpspoornaam</property>
+                </structure>
+                <structure>
+                    <property name="columnName">eindaankomsttijd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">beginvertrektijd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wopriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worklocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sortkey1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sortkey2</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sortkey3</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sortkey4</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">nttrainnr</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">nttraindep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">dpspoornaam</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">eindaankomsttijd</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">beginvertrektijd</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">worktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">wopriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">worklocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">sortkey1</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">sortkey2</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">sortkey3</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">sortkey4</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+var whereclause 	= new String();
+
+var selectiondate = new Date();
+
+	
+// Add query to sqlText variable.
+sqlText = " "
++ " select  "
++ " ntplanarrival.SERIALNUM, "
++ " ntplanarrival.NTTRAINNR, "
++ " ntplanarrival.NTTRAINDEP, "
++ " A.EINDDPSPOORNAAM, "
++ " A.EINDAANKOMSTTIJD, "
++ " B.BEGINVERTREKTIJD, "
++ " workorder.wonum, "
++ " workorder.description, "
++ " workorder.status, "
++ " workorder.worklocation, "
++ " workorder.worktype, "
++ " workorder.wopriority, "
++ " case when workorder.worklocation is null then 2 "
++ "      when ntplanarrival.location = workorder.worklocation then 1 "
++ "      when locations.ntwontloctype in ('OB', 'RB', 'RB/OB') then 3 "
++ "      else 2 "
++ " end as sortkey1, "
++ " nvl(decode (workorder.worktype, 'PREIN', 1, 'DC', 1, 'CO', 1, 'WUI', 1),2) as sortkey2, "
++ " case workorder.status when 'GGK' then 1 when 'WGK' then 1 else 2 end as sortkey3, "
++ " nvl(decode (workorder.worktype, 'PREIN', 1, 'DC', 2, 'CO', 3, 'WUI', 3),9) as sortkey4 "
++ "  "
++ "  "
++ " from ntplanarrival "
++ " left outer join workorder "
++ " on "
++ " workorder.woclass='WORKORDER'  "
++ " and workorder.worktype! ='BWO'  "
++ " and workorder.istask=0 and workorder.historyflag = 0 and workorder.parent is null "
++ " and workorder.siteid = ntplanarrival.siteid "
++ " and (workorder.ntpmloctype is null or workorder.ntpmloctype not in ('OB', 'RB', 'RB/OB'))  "
++ " and "
++ " workorder.assetnum IN  (  SELECT assetnum  FROM assetancestor  WHERE siteid    = ntplanarrival.siteid AND ancestor= ntplanarrival.assetnum  )  "
++ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('APPR', 'INPRG', 'WAPPR'))  "
++ "  "
++ " left outer join locations on workorder.worklocation = locations.location "
++ "  "
++ " left outer join NTDONNAMATINZETOPBEWEGING A "
++ " on ntplanarrival.NETAFSLEUTEL = A.NETAFSLEUTEL "
++ " and exists (select 1 from ntdonnamapping where "
++ " DIENSTREGELPUNTNAAM = upper(A.EINDDIENSTREGELPUNTNAAM) "
++ " and DPSPOORNAAM = A.EINDDPSPOORNAAM "
++ " and ISBEHANDELSPOOR = 1 "
++ " ) "
++ "  "
++ " left outer join NTDONNAMATINZETOPBEWEGING B "
++ " on ntplanarrival.NETAFSLEUTEL = B.NETAFSLEUTEL "
++ " and exists (select 1 from ntdonnamapping where "
++ " DIENSTREGELPUNTNAAM = upper(B.BEGINDIENSTREGELPUNTNAAM) "
++ " and DPSPOORNAAM = B.BEGINDPSPOORNAAM "
++ " and ISBEHANDELSPOOR = 1 "
++ " ) " 
++ " where " + params["where"]
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+
+row["serialnum"] = maximoDataSet.getString("serialnum");
+row["nttrainnr"] = maximoDataSet.getString("nttrainnr");
+row["nttraindep"] = maximoDataSet.getString("nttraindep");
+row["dpspoornaam"] = maximoDataSet.getString("einddpspoornaam");
+row["eindaankomsttijd"] = maximoDataSet.getTimestamp("eindaankomsttijd");
+row["beginvertrektijd"] = maximoDataSet.getTimestamp("beginvertrektijd");
+row["wonum"] = maximoDataSet.getString("wonum");
+row["description"] = maximoDataSet.getString("description");
+row["status"] = maximoDataSet.getString("status");
+row["worklocation"] = maximoDataSet.getString("worklocation");
+row["worktype"] = maximoDataSet.getString("worktype");
+row["wopriority"] = maximoDataSet.getString("wopriority");
+row["sortkey1"] = maximoDataSet.getString("sortkey1");
+row["sortkey2"] = maximoDataSet.getString("sortkey2");
+row["sortkey3"] = maximoDataSet.getString("sortkey3");
+row["sortkey4"] = maximoDataSet.getString("sortkey4");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoPortrait" id="47" extends="MaximoSystemLibrary.A4100ServicePortrait">
+            <property name="headerHeight">1.2in</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="1672">
+            <property name="width">20.293541666666666cm</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">nttraindep</property>
+                    <text-property name="displayName">Trein nummer vertrek</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nttraindep"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">Stel/stam</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">nttrainnr</property>
+                    <text-property name="displayName">Trein nummer aankomst</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nttrainnr"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">dpspoornaam</property>
+                    <text-property name="displayName">Service spoor</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["dpspoornaam"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">eindaankomsttijd</property>
+                    <text-property name="displayName">Aankomsttijd op service spoor</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["eindaankomsttijd"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">beginvertrektijd</property>
+                    <text-property name="displayName">Vertrektijd van service spoor</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["beginvertrektijd"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <text-property name="displayName">Werkorder nummer</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">Omschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">worktype</property>
+                    <text-property name="displayName">Werktype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worktype"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">wopriority</property>
+                    <text-property name="displayName">Prioriteit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wopriority"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sortkey1</property>
+                    <expression name="expression" type="javascript">dataSetRow["sortkey1"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">Status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">worklocation</property>
+                    <text-property name="displayName">Werklocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worklocation"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sortkey2</property>
+                    <expression name="expression" type="javascript">dataSetRow["sortkey2"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sortkey3</property>
+                    <expression name="expression" type="javascript">dataSetRow["sortkey3"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">sortkey4</property>
+                    <expression name="expression" type="javascript">dataSetRow["sortkey4"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key" type="javascript">row["serialnum"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["sortkey1"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["sortkey2"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["sortkey3"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["sortkey4"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["wopriority"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+            </list-property>
+            <column id="1868">
+                <property name="width">3.2279166666666663cm</property>
+            </column>
+            <column id="1752">
+                <property name="width">8.625416666666666cm</property>
+            </column>
+            <column id="1753">
+                <property name="width">2.037291666666667cm</property>
+            </column>
+            <column id="2352">
+                <property name="width">2.1cm</property>
+            </column>
+            <column id="2373">
+                <property name="width">2.2225cm</property>
+            </column>
+            <column id="1754">
+                <property name="width">2.0108333333333333cm</property>
+            </column>
+            <header>
+                <row id="1830">
+                    <cell id="1831">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="1919">
+                    <cell id="1921">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="416">
+                            <property name="fontSize">12pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">center</property>
+                            <property name="whiteSpace">nowrap</property>
+                            <text-property name="text">werklijst 100 % service</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2164">
+                    <cell id="2165"/>
+                    <cell id="2166"/>
+                    <cell id="2167"/>
+                    <cell id="2335"/>
+                    <cell id="2356"/>
+                    <cell id="2168"/>
+                </row>
+                <row id="1673">
+                    <property name="height">1cm</property>
+                    <cell id="1864">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="1676">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="1678">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2336">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2357">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="1680">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="2226">
+                <property name="groupName">Train</property>
+                <expression name="keyExpr" type="javascript">row["serialnum"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["serialnum"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="2377">
+                        <property name="whiteSpace">nowrap</property>
+                        <property name="height">1cm</property>
+                        <cell id="2378">
+                            <property name="colSpan">1</property>
+                            <property name="rowSpan">1</property>
+                            <label id="2190">
+                                <property name="fontSize">24pt</property>
+                                <property name="color">#005D57</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Spoor</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2391">
+                            <data id="2315">
+                                <property name="fontSize">14pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="resultSetColumn">dpspoornaam</property>
+                            </data>
+                        </cell>
+                        <cell id="2380">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <label id="118">
+                                <property name="fontSize">24pt</property>
+                                <property name="color">#005D57</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Stel/stam</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2382">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <data id="2314">
+                                <property name="fontSize">24pt</property>
+                                <property name="textAlign">right</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">serialnum</property>
+                            </data>
+                        </cell>
+                    </row>
+                    <row id="2263">
+                        <property name="height">1cm</property>
+                        <cell id="2264"/>
+                        <cell id="2265"/>
+                        <cell id="2266"/>
+                        <cell id="2338"/>
+                        <cell id="2359"/>
+                        <cell id="2267"/>
+                    </row>
+                    <row id="2273">
+                        <property name="whiteSpace">nowrap</property>
+                        <cell id="2274">
+                            <label id="2191">
+                                <property name="fontSize">14pt</property>
+                                <property name="color">#005D57</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Aankomst:</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2275">
+                            <property name="fontWeight">bold</property>
+                            <data id="2316">
+                                <property name="fontSize">14pt</property>
+                                <structure name="dateTimeFormat">
+                                    <property name="category">Short Time</property>
+                                    <property name="pattern">Short Time</property>
+                                    <property name="locale">nl_NL</property>
+                                </structure>
+                                <property name="resultSetColumn">eindaankomsttijd</property>
+                            </data>
+                        </cell>
+                        <cell id="2276">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <label id="2161">
+                                <property name="fontSize">14pt</property>
+                                <property name="color">#005D57</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Trein nummer</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2363">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <data id="2313">
+                                <property name="fontSize">14pt</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">nttrainnr</property>
+                            </data>
+                        </cell>
+                    </row>
+                    <row id="2268">
+                        <property name="whiteSpace">nowrap</property>
+                        <cell id="2269">
+                            <label id="2202">
+                                <property name="fontSize">14pt</property>
+                                <property name="color">#005D57</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Vertrek:</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2270">
+                            <property name="fontWeight">bold</property>
+                            <data id="2317">
+                                <property name="fontSize">14pt</property>
+                                <structure name="dateTimeFormat">
+                                    <property name="category">Short Time</property>
+                                    <property name="pattern">Short Time</property>
+                                    <property name="locale">nl_NL</property>
+                                </structure>
+                                <property name="resultSetColumn">beginvertrektijd</property>
+                            </data>
+                        </cell>
+                        <cell id="2271"/>
+                        <cell id="2343"/>
+                        <cell id="2364">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <data id="2312">
+                                <property name="fontSize">14pt</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">nttraindep</property>
+                            </data>
+                        </cell>
+                    </row>
+                    <row id="2288">
+                        <property name="height">1cm</property>
+                        <cell id="2289"/>
+                        <cell id="2290"/>
+                        <cell id="2291"/>
+                        <cell id="2344"/>
+                        <cell id="2365"/>
+                        <cell id="2292"/>
+                    </row>
+                    <row id="2283">
+                        <property name="whiteSpace">nowrap</property>
+                        <cell id="2284">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <label id="2213">
+                                <property name="fontSize">14pt</property>
+                                <property name="color">#005D57</property>
+                                <property name="textAlign">left</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <text-property name="text">Uit te voeren werkorders:</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2286"/>
+                        <cell id="2345"/>
+                        <cell id="2366"/>
+                        <cell id="2287"/>
+                    </row>
+                    <row id="2298">
+                        <property name="height">1cm</property>
+                        <cell id="2299"/>
+                        <cell id="2300"/>
+                        <cell id="2301"/>
+                        <cell id="2346"/>
+                        <cell id="2367"/>
+                        <cell id="2302"/>
+                    </row>
+                    <row id="2303">
+                        <property name="fontSize">12pt</property>
+                        <property name="fontWeight">bold</property>
+                        <cell id="2304">
+                            <label id="1675">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Werkorder nummer</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2305">
+                            <label id="1681">
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Omschrijving</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2306">
+                            <label id="2353">
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Status</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2347">
+                            <label id="1679">
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Prioriteit</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2368">
+                            <label id="1677">
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Werktype</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2307">
+                            <label id="2374">
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Locatie</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="2328">
+                        <property name="fontSize">12pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="height">0.5cm</property>
+                        <cell id="2329"/>
+                        <cell id="2330"/>
+                        <cell id="2331"/>
+                        <cell id="2348"/>
+                        <cell id="2369"/>
+                        <cell id="2332"/>
+                    </row>
+                </header>
+                <footer>
+                    <row id="2232">
+                        <cell id="2233"/>
+                        <cell id="2234"/>
+                        <cell id="2235"/>
+                        <cell id="2350"/>
+                        <cell id="2371"/>
+                        <cell id="2236"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="1704">
+                    <property name="fontSize">12pt</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">dotted</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="1865">
+                        <data id="2319">
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="1707">
+                        <data id="2322">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="1709">
+                        <data id="2375">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="2349">
+                        <data id="2321">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">wopriority</property>
+                        </data>
+                    </cell>
+                    <cell id="2370">
+                        <data id="2320">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">worktype</property>
+                        </data>
+                    </cell>
+                    <cell id="1711">
+                        <data id="2376">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">worklocation</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1735">
+                    <cell id="1736">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

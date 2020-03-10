@@ -1,0 +1,870 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_open_sr_closed_wo.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ticketid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">reportdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">statusdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">wostatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">revision</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">processrev</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ntsrblock</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ntvhs</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ntmatbal</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">assetstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ticketid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">statusdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wostatus</property>
+                </structure>
+                <structure>
+                    <property name="columnName">revision</property>
+                </structure>
+                <structure>
+                    <property name="columnName">processrev</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntsrblock</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntvhs</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmatbal</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetstatus</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ticketid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">reportdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">statusdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">wostatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">revision</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">processrev</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ntsrblock</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ntvhs</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ntmatbal</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">assetstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//07-12-2014 MPI: S20.RQS06: Added criteria assetstatus must not be equal to NBVD    --> same as qry NTPLUSPSR113
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select" 
++ "   ticket.ticketid,"
++ "   ticket.description,"
++ "   ticket.reportdate,"
++ "   ticket.statusdate, "
++ "   ticket.status," 
++ "   ("
++ "     select status" 
++ "     from   workorder "
++ "     where  siteid='9030'" 
++ "     and    workorderid=ntworkorderid"
++ "   ) as wostatus, "
++ "   wfinstance.REVISION," 
++ "   wfrevision.processrev,"
++ "   ticket.NTSRBLOCK,"
++ "   ticket.NTVHS,"
++ "   ticket.NTMATBAL,"
++ "   asset.assetnum,"
++ "   asset.serialnum,"
++ "   asset.status as assetstatus"
++ " from ticket" 
++ "   left join wfinstance on (ticket.ticketuid = wfinstance.ownerid and wfinstance.ownertable='SR')" 
++ "   left join wfrevision on (wfinstance.REVISION=wfrevision.revision) "
++ "   join asset on (asset.assetnum=ticket.assetnum and asset.status not in ('NBVD'))" 
++ " where ticket.status='INUITV'" 
++ " and   ticket.ntworkorderid in "
++ "   ("
++ "     select workorderid "
++ "     from   workorder "
++ "     where  status in ('GEREED','SLUITEN' )"
++ "   ) "
++ " order by ticket.reportdate"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["ticketid"] = maximoDataSet.getString("ticketid");	
+row["description"] = maximoDataSet.getString("description");	
+row["reportdate"] = maximoDataSet.getTimestamp("reportdate");	
+row["statusdate"] = maximoDataSet.getTimestamp("statusdate");	
+row["status"] = maximoDataSet.getString("status");	
+row["wostatus"] = maximoDataSet.getString("wostatus");	
+row["revision"] = maximoDataSet.getString("revision");	
+row["processrev"] = maximoDataSet.getString("processrev");	
+row["ntsrblock"] = maximoDataSet.getString("ntsrblock");	
+row["ntvhs"] = maximoDataSet.getString("ntvhs");	
+row["ntmatbal"] = maximoDataSet.getString("ntmatbal");	
+row["assetnum"] = maximoDataSet.getString("assetnum");	
+row["serialnum"] = maximoDataSet.getString("serialnum");	
+row["assetstatus"] = maximoDataSet.getString("assetstatus");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">ticketid</property>
+                    <text-property name="displayName">ticketid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ticketid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reportdate</property>
+                    <text-property name="displayName">reportdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reportdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">statusdate</property>
+                    <text-property name="displayName">statusdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["statusdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wostatus</property>
+                    <text-property name="displayName">wostatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wostatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">revision</property>
+                    <text-property name="displayName">revision</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["revision"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">processrev</property>
+                    <text-property name="displayName">processrev</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["processrev"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntsrblock</property>
+                    <text-property name="displayName">ntsrblock</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntsrblock"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntvhs</property>
+                    <text-property name="displayName">ntvhs</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntvhs"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmatbal</property>
+                    <text-property name="displayName">ntmatbal</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmatbal"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <text-property name="displayName">assetnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">serialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetstatus</property>
+                    <text-property name="displayName">assetstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="522"/>
+            <column id="515"/>
+            <column id="508"/>
+            <column id="501"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="494"/>
+            <column id="487"/>
+            <column id="480"/>
+            <column id="473"/>
+            <column id="18"/>
+            <header>
+                <row id="345">
+                    <property name="style">title</property>
+                    <cell id="346">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <label id="465">
+                            <property name="fontSize">7pt</property>
+                            <property name="color">black</property>
+                            <property name="textAlign">left</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">nt_open_sr_closed_wo v20141208</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="565">
+                    <property name="style">title</property>
+                    <cell id="566">
+                        <label id="580"/>
+                    </cell>
+                    <cell id="567"/>
+                    <cell id="568"/>
+                    <cell id="569"/>
+                    <cell id="570"/>
+                    <cell id="571"/>
+                    <cell id="572"/>
+                    <cell id="573"/>
+                    <cell id="574"/>
+                    <cell id="575"/>
+                    <cell id="576"/>
+                    <cell id="577"/>
+                    <cell id="578"/>
+                    <cell id="579"/>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <label id="466">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Openstaande SR's met gesloten WO</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="550">
+                    <property name="style">title</property>
+                    <cell id="551">
+                        <label id="581"/>
+                    </cell>
+                    <cell id="552"/>
+                    <cell id="553"/>
+                    <cell id="554"/>
+                    <cell id="555"/>
+                    <cell id="556"/>
+                    <cell id="557"/>
+                    <cell id="558"/>
+                    <cell id="559"/>
+                    <cell id="560"/>
+                    <cell id="561"/>
+                    <cell id="562"/>
+                    <cell id="563"/>
+                    <cell id="564"/>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SR</text-property>
+                        </label>
+                    </cell>
+                    <cell id="518">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="537">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="511">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="538">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Datum gemeld</text-property>
+                        </label>
+                    </cell>
+                    <cell id="504">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="539">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status datum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="497">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="540">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SR Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="541">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WO Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="542">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Revisie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="543">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Proces revisie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="544">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">SA geblokkeerd?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="490">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="545">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">VHS niveau</text-property>
+                        </label>
+                    </cell>
+                    <cell id="483">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="546">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">In Matbalans?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="476">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="547">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="469">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="548">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serie nummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="549">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Activum status</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="523">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ticketid</property>
+                        </data>
+                    </cell>
+                    <cell id="519">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="524">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="512">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="525">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-y</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">reportdate</property>
+                        </data>
+                    </cell>
+                    <cell id="505">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="526">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-y</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">statusdate</property>
+                        </data>
+                    </cell>
+                    <cell id="498">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="527">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="528">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wostatus</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="529">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">revision</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="530">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">processrev</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="531">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntsrblock</property>
+                        </data>
+                    </cell>
+                    <cell id="491">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="532">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntvhs</property>
+                        </data>
+                    </cell>
+                    <cell id="484">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="533">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntmatbal</property>
+                        </data>
+                    </cell>
+                    <cell id="477">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="534">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="470">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="535">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">serialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="536">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">assetstatus</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">14</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="width">1.4in</property>
+                                <property name="style">summarylabel</property>
+                            </column>
+                            <column id="218">
+                                <property name="width">8.4895833333in</property>
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

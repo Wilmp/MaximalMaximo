@@ -1,0 +1,1284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_ivlijst_controle.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">masterpmnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">jpnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">jpdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">jptask</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">jtdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">cltasknum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">cltaskdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">wb</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">wbdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">tfreq</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">frequnit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">meter</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">mfreq</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">origin</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">ntclnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">wbtp</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">wbcl</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">mpmdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">mpmstatus</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">masterpmnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jpnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jpdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jptask</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jtdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cltasknum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cltaskdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wb</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wbdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tfreq</property>
+                </structure>
+                <structure>
+                    <property name="columnName">frequnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">meter</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mfreq</property>
+                </structure>
+                <structure>
+                    <property name="columnName">origin</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntclnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wbtp</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wbcl</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mpmdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">mpmstatus</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">masterpmnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">jpnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">jpdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">jptask</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">jtdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">cltasknum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">cltaskdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">wb</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">wbdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">tfreq</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">frequnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">meter</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">mfreq</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">origin</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">ntclnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">wbtp</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">wbcl</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">mpmdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">mpmstatus</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// 18-12-2014: MPI - S20.RQS04 Rework selection added queries selecting from plusamasterpmtime  
+// 10-06-2015: MPI - S27.RAP02 Added query for nested jobplans
+// 20-03-2017: MPI - S52.RAP07 Enlarge subst value over 50 chars instead of 9
+// 20-03-2017: MPI - S52.RAP08 Added colums masterpm.description and masterpm.status
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select "
++ "   masterpm.masterpmnum,"
++ "   masterpm.description as mpmdesc,"
++ "   masterpm.plusastatus as mpmstatus,"
++ "   q1.ntserie,"
++ "   q1.jpnum,"
++ "   q1.jpdesc,"
++ "   q1.jptask,"
++ "   q1.jtdesc,"
++ "   q1.wbtp,"
++ "   q1.ntclnum,"
++ "   q1.cltasknum,"
++ "   q1.cltaskdesc,"
++ "   q1.wbcl, "
++ "   nvl(q1.wbtp,q1.wbcl) as wb,"
++ "   case when q1.wbtp is not null" 
++ "         then q1.jtdesc "
++ "         else q1.cltaskdesc"
++ "   end as wbdesc,"
+
+//+ "   nvl(q1.jtdesc,q1.cltaskdesc) as wbdesc,"
++ "   q1.tfreq,"
++ "   q1.frequnit,"
++ "   q1.meter,"
++ "   q1.mfreq,"
++ "   q1.origin"
++ " from masterpm"
++ " join"
++ " ("
++ "     select" 
++ "       masterpmseq.masterpmnum as poh,"
++ "       masterpm.ntserie,"
++ "       jobplan.jpnum as jpnum," 
++ "       jobplan.description as jpdesc," 
++ "       jobtask.jptask as jptask, "
++ "       case when substr(jobtask.description,0,50) like '%.%.%'" 
++ "            then substr(jobtask.description,0,50)" 
++ "            else null" 
++ "       end as wbtp,"
++ "       jobtask.description as jtdesc, "
++ "       jobtask.nestedjpnum as nestedjpnum,"
++ "       jobtask.ntclnum,"
++ "       masterpm.frequency as tfreq,"
++ "       masterpm.frequnit as frequnit,"
++ "       masterpmmeter.metername as meter,"
++ "       masterpmmeter.frequency as mfreq,"
++ "       ntclmastertask.cltasknum,"
++ "       ntclmastertask.description as cltaskdesc,"
++ "       case when substr(ntclmastertask.description,0,50) like '%.%.%'" 
++ "            then substr(ntclmastertask.description,0,50)" 
++ "            else null" 
++ "       end as wbcl,"
+//+ "       nvl(substr(jobtask.description,0,9),substr(ntclmastertask.description,0,9)) as wb,"
+//+ "       nvl(jobtask.description,ntclmastertask.description) as wbdesc,"
++ "       case when substr(jobtask.description,0,50) like '%.%.%'" 
++ "            then 'TP' "
++ "            else 'CL'" 
++ "       end as origin"
++ "     from jobtask"
++ "       join masterpmseq on masterpmseq.jpnum = jobtask.jpnum"
++ "       join masterpm on masterpm.masterpmnum = masterpmseq.masterpmnum"
++ "       join jobplan on jobplan.jpnum = jobtask.jpnum and jobplan.jobplanid = jobtask.jobplanid and jobplan.status = 'ACTIEF'" 
++ "       left outer join ntclmastertask on jobtask.ntclnum = ntclmastertask.clnum and substr(ntclmastertask.description,0,50) like '%.%.%'"
++ "       left outer join masterpmmeter on masterpm.masterpmnum = masterpmmeter.masterpmnum"
++ "     connect by prior jobtask.nestedjpnum = jobtask.jpnum"
++ "     start with jobtask.jpnum = masterpmseq.jpnum"
+
++ "     union"
+
++ "      select " 
++ "        pmpmt.masterpmnum as poh, "
++ "        masterpm.ntserie, "
++ "        jobplan.jpnum as jpnum, " 
++ "        jobplan.description as jpdesc, " 
++ "        jobtask.jptask as jptask, "
++ "        case when substr(jobtask.description,0,50) like '%.%.%' "
++ "             then substr(jobtask.description,0,50) "
++ "             else null "
++ "        end as wbtp, "
++ "        jobtask.description as jtdesc, " 
++ "        jobtask.nestedjpnum as nestedjpnum, "
++ "        jobtask.ntclnum, "
++ "        masterpm.frequency as tfreq, "
++ "        masterpm.frequnit as frequnit, "
++ "        masterpmmeter.metername as meter, "
++ "        masterpmmeter.frequency as mfreq, "
++ "        ntclmastertask.cltasknum, "
++ "        ntclmastertask.description as cltaskdesc, "
++ "        case when substr(ntclmastertask.description,0,50) like '%.%.%' " 
++ "             then substr(ntclmastertask.description,0,50) " 
++ "             else null " 
++ "        end as wbcl, "
++ "        case when substr(jobtask.description,0,50) like '%.%.%' " 
++ "             then 'TP' " 
++ "             else 'CL' "
++ "        end as origin "
++ "      from jobtask "
++ "        join (select distinct(jpnum), masterpmnum from plusamasterpmtime) pmpmt on jobtask.jpnum = pmpmt.jpnum " 
++ "        join masterpm on masterpm.masterpmnum = pmpmt.masterpmnum "
++ "        join jobplan on jobplan.jpnum = jobtask.jpnum and jobplan.jobplanid = jobtask.jobplanid and jobplan.status = 'ACTIEF' " 
++ "        left outer join ntclmastertask on jobtask.ntclnum = ntclmastertask.clnum and substr(ntclmastertask.description,0,50) like '%.%.%' "
++ "        left outer join masterpmmeter on masterpm.masterpmnum = masterpmmeter.masterpmnum "
++ "      connect by prior jobtask.nestedjpnum = jobtask.jpnum "
++ "      start with jobtask.jpnum = pmpmt.jpnum "
+     
++ "      union "
+
++ "     select" 
++ "       masterpmseq.masterpmnum as poh,"
++ "       masterpm.ntserie,"
++ "       jobplan.jpnum as jpnum," 
++ "       jobplan.description as jpdesc," 
++ "       jobtask.jptask as jptask," 
++ "       case when substr(jobtask.description,0,50) like '%.%.%' "
++ "            then substr(jobtask.description,0,50)" 
++ "            else null" 
++ "       end as wbtp,"
++ "       jobtask.description as jtdesc," 
++ "       jobtask.nestedjpnum as nestedjpnum,"
++ "       jobtask.ntclnum,"
++ "       masterpm.frequency as tfreq,"
++ "       masterpm.frequnit as frequnit,"
++ "       masterpmmeter.metername as meter,"
++ "       masterpmmeter.frequency as mfreq,"
++ "       ntclmastertask.cltasknum,"
++ "       ntclmastertask.description as cltaskdesc,"
++ "       case when substr(ntclmastertask.description,0,50) like '%.%.%'" 
++ "            then substr(ntclmastertask.description,0,50)" 
++ "            else null" 
++ "       end as wbcl,"
+//+ "       nvl(substr(jobtask.description,0,9),substr(ntclmastertask.description,0,9)) as wb,"
+//+ "       nvl(jobtask.description,ntclmastertask.description) as wbdesc,"
++ "       case when substr(jobtask.description,0,50) like '%.%.%'" 
++ "            then 'TP' "
++ "            else 'CL' "
++ "       end as origin"
++ "     from jobtask"
++ "       join masterpmseq on masterpmseq.jpnum = jobtask.jpnum"
++ "       join masterpm on masterpm.masterpmnum = masterpmseq.masterpmnum"
++ "       join jobplan on jobplan.jpnum = jobtask.jpnum and jobplan.jobplanid = jobtask.jobplanid and jobplan.status = 'ACTIEF'" 
++ "       join ntclmastertask on jobtask.ntclnum = ntclmastertask.clnum" 
++ "       and substr(ntclmastertask.description,0,50) like '%.%.%'"
++ "       left outer join masterpmmeter on masterpm.masterpmnum = masterpmmeter.masterpmnum"
++ "     connect by prior jobtask.nestedjpnum = jobtask.jpnum"
++ "     start with jobtask.jpnum = masterpmseq.jpnum"     
+
++ "      union "
+
++ "      select "
++ "        pmpmt.masterpmnum as poh, "
++ "        masterpm.ntserie, "
++ "        jobplan.jpnum as jpnum, " 
++ "        jobplan.description as jpdesc, " 
++ "        jobtask.jptask as jptask, "
++ "        case when substr(jobtask.description,0,50) like '%.%.%' " 
++ "             then substr(jobtask.description,0,50) "
++ "             else null "
++ "        end as wbtp, "
++ "        jobtask.description as jtdesc, " 
++ "        jobtask.nestedjpnum as nestedjpnum, "
++ "        jobtask.ntclnum, "
++ "        masterpm.frequency as tfreq, "
++ "        masterpm.frequnit as frequnit, "
++ "        masterpmmeter.metername as meter, "
++ "        masterpmmeter.frequency as mfreq, "
++ "        ntclmastertask.cltasknum, "
++ "        ntclmastertask.description as cltaskdesc, "
++ "        case when substr(ntclmastertask.description,0,50) like '%.%.%' " 
++ "             then substr(ntclmastertask.description,0,50) "
++ "             else null "
++ "        end as wbcl, "
++ "        case when substr(jobtask.description,0,50) like '%.%.%' " 
++ "             then 'TP' "
++ "             else 'CL' "
++ "        end as origin "
++ "      from jobtask "
++ "        join (select distinct(jpnum), masterpmnum from plusamasterpmtime) pmpmt on jobtask.jpnum = pmpmt.jpnum "
++ "        join masterpm on masterpm.masterpmnum = pmpmt.masterpmnum "
++ "        join jobplan on jobplan.jpnum = jobtask.jpnum and jobplan.jobplanid = jobtask.jobplanid and jobplan.status = 'ACTIEF' " 
++ "        join ntclmastertask on jobtask.ntclnum = ntclmastertask.clnum "
++ "        and substr(ntclmastertask.description,0,50) like '%.%.%' "
++ "        left outer join masterpmmeter on masterpm.masterpmnum = masterpmmeter.masterpmnum "
++ "      connect by prior jobtask.nestedjpnum = jobtask.jpnum "
++ "      start with jobtask.jpnum = pmpmt.jpnum "
+//       S27.RAP02 Added query for nested jobplans 
++ "     union "
+     
++ "     select "
++ "       masterpmseq.masterpmnum as poh,"
++ "       masterpm.ntserie,"
++ "       jobplan.jpnum as jpnum," 
++ "       jobplan.description as jpdesc," 
++ "       jt1.jptask as jptask, "
++ "       case when substr(jt1.description,0,50) like '%.%.%'" 
++ "            then substr(jt1.description,0,50) "
++ "            else null "
++ "       end as wbtp,"
++ "       jt1.description as jtdesc," 
++ "       jobtask.nestedjpnum as nestedjpnum,"
++ "       jt1.ntclnum,"
++ "       masterpm.frequency as tfreq,"
++ "       masterpm.frequnit as frequnit,"
++ "       masterpmmeter.metername as meter,"
++ "       masterpmmeter.frequency as mfreq,"
++ "       ntclmastertask.cltasknum,"
++ "       ntclmastertask.description as cltaskdesc,"
++ "       case when substr(ntclmastertask.description,0,50) like '%.%.%'" 
++ "            then substr(ntclmastertask.description,0,50) "
++ "            else null "
++ "       end as wbcl,"
++ "       case when substr(jt1.description,0,50) like '%.%.%'" 
++ "            then 'TP' "
++ "            else 'CL' "
++ "       end as origin"
++ "     from jobtask"
++ "       join masterpmseq on masterpmseq.jpnum = jobtask.jpnum"
++ "       join masterpm on masterpm.masterpmnum = masterpmseq.masterpmnum"
++ "       join jobplan on jobplan.jpnum = jobtask.jpnum and jobplan.jobplanid = jobtask.jobplanid and jobplan.status = 'ACTIEF'" 
++ "       left outer join ntclmastertask on jobtask.ntclnum = ntclmastertask.clnum and substr(ntclmastertask.description,0,50) like '%.%.%'"
++ "       left outer join masterpmmeter on masterpm.masterpmnum = masterpmmeter.masterpmnum"
++ "       join jobplan jp1 on jp1.jpnum = jobtask.nestedjpnum and jp1.status = 'ACTIEF'"
++ "       join jobtask jt1 on jt1.jobplanid = jp1.jobplanid"    
++ "    where 1=1"
++ "       and jobtask.nestedjpnum is not null"
++ "       and substr(jobtask.description,0,50) not like '%.%.%'"
+    
++ "     ) q1"
++ " on q1.poh = masterpm.masterpmnum"
++ " where " + params["where"]
+//+ " and substr(wb,0,9) like '%.%.%'"
++ " and ((wbtp is not null) or (wbcl is not null))"
++ "  order by masterpmnum, jpnum, jptask, ntclnum, cltasknum"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["masterpmnum"] = maximoDataSet.getString("masterpmnum");	
+row["ntserie"] = maximoDataSet.getString("ntserie");	
+row["jpnum"] = maximoDataSet.getString("jpnum");	
+row["jpdesc"] = maximoDataSet.getString("jpdesc");	
+row["jptask"] = maximoDataSet.getString("jptask");	
+row["jtdesc"] = maximoDataSet.getString("jtdesc");	
+row["cltasknum"] = maximoDataSet.getString("cltasknum");	
+row["cltaskdesc"] = maximoDataSet.getString("cltaskdesc");	
+row["wb"] = maximoDataSet.getString("wb");	
+row["wbdesc"] = maximoDataSet.getString("wbdesc");	
+row["tfreq"] = maximoDataSet.getString("tfreq");	
+row["frequnit"] = maximoDataSet.getString("frequnit");	
+row["meter"] = maximoDataSet.getString("meter");	
+row["mfreq"] = maximoDataSet.getString("mfreq");	
+row["origin"] = maximoDataSet.getString("origin");	
+row["ntclnum"] = maximoDataSet.getString("ntclnum");	
+row["wbtp"] = maximoDataSet.getString("wbtp");	
+row["wbcl"] = maximoDataSet.getString("wbcl");
+row["mpmdesc"] = maximoDataSet.getString("mpmdesc");	
+row["mpmstatus"] = maximoDataSet.getString("mpmstatus");		
+//row["datefield"] = maximoDataSet.getTimestamp("datefield");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">masterpmnum</property>
+                    <text-property name="displayName">masterpmnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["masterpmnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jpnum</property>
+                    <text-property name="displayName">jpnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jpnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jpdesc</property>
+                    <text-property name="displayName">jpdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jpdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jptask</property>
+                    <text-property name="displayName">jptask</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jptask"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">jtdesc</property>
+                    <text-property name="displayName">jtdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["jtdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">cltasknum</property>
+                    <text-property name="displayName">cltasknum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["cltasknum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">cltaskdesc</property>
+                    <text-property name="displayName">cltaskdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["cltaskdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wb</property>
+                    <text-property name="displayName">wb</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wb"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wbdesc</property>
+                    <text-property name="displayName">wbdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wbdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">tfreq</property>
+                    <text-property name="displayName">tfreq</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["tfreq"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">frequnit</property>
+                    <text-property name="displayName">frequnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["frequnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">meter</property>
+                    <text-property name="displayName">meter</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["meter"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mfreq</property>
+                    <text-property name="displayName">mfreq</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mfreq"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">origin</property>
+                    <text-property name="displayName">origin</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["origin"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wbtp</property>
+                    <text-property name="displayName">wbtp</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wbtp"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntclnum</property>
+                    <text-property name="displayName">ntclnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntclnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wbcl</property>
+                    <text-property name="displayName">wbcl</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wbcl"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mpmdesc</property>
+                    <text-property name="displayName">mpmdesc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mpmdesc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">mpmstatus</property>
+                    <text-property name="displayName">mpmstatus</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["mpmstatus"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="539"/>
+            <column id="549"/>
+            <column id="380"/>
+            <column id="371"/>
+            <column id="362"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="500"/>
+            <column id="513"/>
+            <column id="526"/>
+            <column id="474"/>
+            <column id="484"/>
+            <column id="416"/>
+            <column id="407"/>
+            <column id="398"/>
+            <column id="389"/>
+            <column id="18"/>
+            <header>
+                <row id="432">
+                    <property name="style">title</property>
+                    <cell id="433">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <text id="447">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[nt_ivlijst_controle v20170320]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="440"/>
+                    <cell id="441"/>
+                    <cell id="491"/>
+                    <cell id="504"/>
+                    <cell id="517"/>
+                    <cell id="465"/>
+                    <cell id="475"/>
+                    <cell id="442"/>
+                    <cell id="443"/>
+                    <cell id="444"/>
+                    <cell id="445"/>
+                    <cell id="446"/>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <label id="431">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">IV-lijst controle</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">8.875in</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Legenda: </text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="464">
+                                        <text-property name="text">Bron: TP = Taakplan, CL = Checklist</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">PO Hoofdschema</text-property>
+                        </label>
+                    </cell>
+                    <cell id="535">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="552">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">POH Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="545">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="553">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">POH Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="376">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="448">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="367">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="449">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taakplan</text-property>
+                        </label>
+                    </cell>
+                    <cell id="358">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="450">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taakplan omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="485">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taakplan Taak</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="529">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WB Taak</text-property>
+                        </label>
+                    </cell>
+                    <cell id="496">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="514">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Checklist </text-property>
+                        </label>
+                    </cell>
+                    <cell id="509">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="486">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Checklist Taak</text-property>
+                        </label>
+                    </cell>
+                    <cell id="522">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="501">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WB Checklist</text-property>
+                        </label>
+                    </cell>
+                    <cell id="470">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="454">
+                            <property name="fontStyle">italic</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Bron</text-property>
+                        </label>
+                    </cell>
+                    <cell id="480">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="455">
+                            <property name="fontStyle">italic</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WB id</text-property>
+                        </label>
+                    </cell>
+                    <cell id="412">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="456">
+                            <property name="fontStyle">italic</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WB Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="403">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="457">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Frequentie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="394">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="458">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Eenheid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="385">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="459">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Meter</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="460">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Meter frequentie</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="417">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">masterpmnum</property>
+                        </data>
+                    </cell>
+                    <cell id="536">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="550">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">mpmdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="546">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="551">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">mpmstatus</property>
+                        </data>
+                    </cell>
+                    <cell id="377">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="418">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="368">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="419">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">jpnum</property>
+                        </data>
+                    </cell>
+                    <cell id="359">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="420">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">jpdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="488">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">jptask</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="503">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wbtp</property>
+                        </data>
+                    </cell>
+                    <cell id="497">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="516">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntclnum</property>
+                        </data>
+                    </cell>
+                    <cell id="510">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="490">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">cltasknum</property>
+                        </data>
+                    </cell>
+                    <cell id="523">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="528">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wbcl</property>
+                        </data>
+                    </cell>
+                    <cell id="471">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="463">
+                            <property name="fontStyle">italic</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">origin</property>
+                        </data>
+                    </cell>
+                    <cell id="481">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="425">
+                            <property name="fontStyle">italic</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wb</property>
+                        </data>
+                    </cell>
+                    <cell id="413">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="426">
+                            <property name="fontStyle">italic</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wbdesc</property>
+                        </data>
+                    </cell>
+                    <cell id="404">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="427">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">tfreq</property>
+                        </data>
+                    </cell>
+                    <cell id="395">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="428">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">frequnit</property>
+                        </data>
+                    </cell>
+                    <cell id="386">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="429">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">meter</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="430">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">mfreq</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

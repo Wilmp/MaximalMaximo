@@ -1,0 +1,2999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2012 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_tkbs.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSetWielstelDetails" id="2062">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">alnvalue</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">abbrev</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">assettype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">alias</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">prevserial</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">prevalias</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">code1</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">code2</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">position</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">alnvalue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">abbrev</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assettype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">alias</property>
+                </structure>
+                <structure>
+                    <property name="columnName">prevserial</property>
+                </structure>
+                <structure>
+                    <property name="columnName">prevalias</property>
+                </structure>
+                <structure>
+                    <property name="columnName">code1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">code2</property>
+                </structure>
+                <structure>
+                    <property name="columnName">position</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">alnvalue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">abbrev</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">assettype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">alias</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">prevserial</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">prevalias</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">code1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">code2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">position</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetWielstelDetails = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetWielstelDetails.open();
+
+// MPI 12-11-2015: S34.RAP02 Report created based on specs Machiel Schopenhauer
+// MPI 30-12-2015: S35.RAP01 Added conditional barcode (CODE128A) and changes in layout. Needs additional barcode jar to run
+// MPI 09-02-2016: S35.RAP01 Rework removed '*' at barcode and changed order of code1  
+// MPI 01-04-2016: S39.RAP02 Added column onderhoudscluster, added hard page break, added direct print capability  
+// MPI 17-08-2017: S58.SU07 Added section fixed text layout under condition only visible if alnvalue is A,C, or D
+// RYA 21-09-2017: S60.OVE09  fixed condition text layout under condition only visible if alnvalue is A,C, or D. Moved grid incontrole before pagebreak.
+// RYA 01-03-2018: S66.470 tekstueel wijzigingen verise, datum, sectie Tandwielkast opname/Aanvullendwerk
+// RYA 12-12-2018: S78.1175 case op dataSetWODetails aangepast. Naast de bestaande wo op TWK ook relevante correctieve werkorders op parent nivo.
+
+
+var sqlText 	= new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select " 
++ "   asset.assetnum,"
++ "   asset.serialnum,"
++ "   asset.description,"
++ "   asset.assettype,"
++ "   plusasaonoff.position,"
++ "   nvl(LAG(assetspec.alnvalue, 1, null) OVER (ORDER BY asset.serialnum), assetspec.alnvalue) as alnvalue,"
++ "   nvl(LAG(asset.serialnum, 1, null) OVER (ORDER BY asset.serialnum), asset.serialnum) as prevserial,"
++ "   nvl(LAG(plustassetalias.alias, 1, null) OVER (ORDER BY asset.serialnum), plustassetalias.alias) as prevalias,"
+//+ "   'WW'||nvl(LAG(assetspec.alnvalue, 1, null) OVER (ORDER BY asset.serialnum), assetspec.alnvalue)||substr(nvl(LAG(asset.serialnum, 1, null) OVER (ORDER BY asset.serialnum), asset.serialnum),1,3)||'' as code1,"
++ "   'WW'||substr(nvl(LAG(asset.serialnum, 1, null) OVER (ORDER BY asset.serialnum), asset.serialnum),1,3)||'-'||nvl(LAG(assetspec.alnvalue, 1, null) OVER (ORDER BY asset.serialnum), assetspec.alnvalue)||'' as code1,"
++ "   ''||substr(nvl(LAG(asset.serialnum, 1, null) OVER (ORDER BY asset.serialnum), asset.serialnum),5,4)||'' as code2,"
++ "   plustassetalias.alias,"
++ "  case "
++ "    when substr(asset.serialnum,1,3)='TWK'" 
++ "    then 'TWK-' "
++ "    else 'NVT' "
++ "  end as abbrev "
++ " from asset" 
++ "   left outer join assetspec on asset.assetnum = assetspec.assetnum and assetspec.assetattrid = 'TYPE'"
++ "   left outer join plustassetalias on asset.assetnum = plustassetalias.assetnum and asset.assettype = 'TANDWIELKAST' and plustassetalias.isdefault = 1"
++ "   join plusasaonoff on asset.assetid = plusasaonoff.assetid and plusasaonoff.offtime is null"
+//+ " where " + params["where"]
++ " where" 
++ "   asset.assetnum = (select asset.assetnum from asset where " + params["where"] + ")"
+//+ "   asset.assetnum = '200332651'"
++ " or "
++ "   asset.parent = (select asset.assetnum from asset where " + params["where"] + ")"
+//+ "   asset.parent = '200332651'"
++ " order by asset.serialnum desc"  
+;
+
+dataSetWielstelDetails.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetWielstelDetails.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["assetnum"] = dataSetWielstelDetails.getString("assetnum");	
+row["serialnum"] = dataSetWielstelDetails.getString("serialnum");	
+row["description"] = dataSetWielstelDetails.getString("description");	
+row["alnvalue"] = dataSetWielstelDetails.getString("alnvalue");	
+row["abbrev"] = dataSetWielstelDetails.getString("abbrev");	
+row["assettype"] = dataSetWielstelDetails.getString("assettype");	
+row["alias"] = dataSetWielstelDetails.getString("alias");
+row["prevserial"] = dataSetWielstelDetails.getString("prevserial");	
+row["prevalias"] = dataSetWielstelDetails.getString("prevalias");
+row["code1"] = dataSetWielstelDetails.getString("code1");
+row["code2"] = dataSetWielstelDetails.getString("code2");
+row["position"] = dataSetWielstelDetails.getString("position");					
+//row["datefield"] = dataSetWielstelDetails.getTimestamp("datefield");	
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="dataSetWODetails" id="2092">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">wodesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">conc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">twk</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">ntsecpotype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">istask</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">plusaposition</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">twk1</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ntpmloctype</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wodesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">conc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">twk</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntsecpotype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">istask</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusaposition</property>
+                </structure>
+                <structure>
+                    <property name="columnName">twk1</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntpmloctype</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">wodesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">conc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">twk</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ntsecpotype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">istask</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">plusaposition</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">twk1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ntpmloctype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[dataSetWODetails = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+dataSetWODetails.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = " "
++ " select"  
++ "   asset.serialnum,"
++ "   workorder.wonum,"
++ "   workorder.description as wodesc, "
++ "   workorder.wonum||' - '||workorder.description as conc, "
++ "   workorder.ntsecpotype, "
++ "   workorder.ntpmloctype, "
++ "   workorder.istask, "
++ "   workorder.plusaposition, "
+//+ "  case "
+//+ "    when substr(asset.serialnum,1,3)='TWK'" 
+//+ "    then 'TWK' "
+//+ "  end as twk, " 
+//+ "  case "
+//+ "    when substr(asset.serialnum,1,3)='TWK'" 
+//+ "    then 'TWK' "
+//+ "    else 'XXX' "
+//+ "  end as twk1 "
+// S78.1175
++ " case "
++ "   when (substr(asset.serialnum,1,3)='TWK') or "
++ "        (substr(asset.serialnum,1,3)='WST' and workorder.status='WGK' "
++ "		   and workorder.worktype in ('CO','WUI','PO') "
++ "   and  (upper(workorder.description) like ('%TWK%') or "
++ "        upper(workorder.description) like ('%TANDWIEL%') or "
++ "        upper(workorder.description) like ('%OLIE%') or "
++ "        upper(workorder.description) like ('%FE%'))) "
++ "   then 'TWK' "
++ "   end as twk, " 
++ " case "
++ "   when (substr(asset.serialnum,1,3)='TWK') or "
++ "        (substr(asset.serialnum,1,3)='WST' and workorder.status='WGK' "
++ "		   and workorder.worktype in ('CO','WUI','PO') "
++ "   and  (upper(workorder.description) like '%TWK%' or "
++ "        upper(workorder.description) like ('%TANDWIEL%') or "
++ "        upper(workorder.description) like ('%OLIE%') or "
++ "        upper(workorder.description) like ('%FE%'))) "
++ "   then 'TWK' "
++ "   else 'XXX' "
++ " end as twk1 "
++ " from workorder"  
++ "    join asset on asset.assetnum = workorder.assetnum" 
++ " where 1=1 "
++ "  and workorder.status not in ('SLUITEN','GEREED','ANNUL')" 
++ "  and workorder.historyflag = 0 "
++ "  and workorder.siteid = '9030'" 
++ "  and workorder.istask = 0 "
++ "  and workorder.assetnum in" 
++ " ("
++ "   select" 
++ "     asset.assetnum"
++ "       from asset "
+//+ "     left outer join assetspec on asset.assetnum = assetspec.assetnum and assetspec.assetattrid = 'TYPE'"
+//+ " where " + params["where"]
++ " where" 
++ "   asset.assetnum = (select asset.assetnum from asset where " + params["where"] + ")"
+//+ "   asset.assetnum = '200332651'"
++ " or "
++ "   asset.parent = (select asset.assetnum from asset where " + params["where"] + ")"
+//+ "   asset.parent = '200332651'"
++ " )"  
++ " order by asset.serialnum "  
+//+ " where " + params["where"]
+
+;
+
+dataSetWODetails.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!dataSetWODetails.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["wonum"] = dataSetWODetails.getString("wonum");	
+row["serialnum"] = dataSetWODetails.getString("serialnum");	
+row["wodesc"] = dataSetWODetails.getString("wodesc");	
+row["conc"] = dataSetWODetails.getString("conc");	
+row["twk"] = dataSetWODetails.getString("twk");	
+row["twk1"] = dataSetWODetails.getString("twk1");	
+row["ntsecpotype"] = dataSetWODetails.getString("ntsecpotype");	
+row["ntpmloctype"] = dataSetWODetails.getString("ntpmloctype");	
+row["istask"] = dataSetWODetails.getInteger("istask");	
+row["plusaposition"] = dataSetWODetails.getString("plusaposition");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="topMargin">0.05in</property>
+            <property name="leftMargin">0.5in</property>
+            <property name="bottomMargin">0.05in</property>
+            <property name="rightMargin">0.4in</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                </ref-entry>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                </ref-entry>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">10.072916666666666in</property>
+            <property name="dataSet">dataSetWielstelDetails</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">assetnum</property>
+                    <text-property name="displayName">assetnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assettype</property>
+                    <text-property name="displayName">assettype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assettype"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">serialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">alias</property>
+                    <text-property name="displayName">alias</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["alias"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">prevserial</property>
+                    <text-property name="displayName">prevserial</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["prevserial"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">prevalias</property>
+                    <text-property name="displayName">prevalias</text-property>
+                    <expression name="expression" type="javascript">"Fabrieksnummer: ".concat(dataSetRow["prevalias"])</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">alnvalue</property>
+                    <text-property name="displayName">alnvalue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["alnvalue"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">code1</property>
+                    <text-property name="displayName">code1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["code1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">code2</property>
+                    <text-property name="displayName">code2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["code2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="18"/>
+            <header>
+                <row id="3539">
+                    <property name="style">title</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="3540">
+                        <data id="2790">
+                            <property name="fontSize">xx-small</property>
+                            <property name="resultSetColumn">code1</property>
+                        </data>
+                    </cell>
+                    <cell id="3541">
+                        <data id="2791">
+                            <property name="fontSize">xx-small</property>
+                            <property name="resultSetColumn">code2</property>
+                        </data>
+                    </cell>
+                    <cell id="3542"/>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">10in</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">2.5625in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">7.364583333333333in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">TandWielKastBehandelingsStaat</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="2040">
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">Versie: 5 </text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">RLW-F-050-08</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="3642">
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">Versiedatum: 12-12-2018 </text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127">
+                                    <label id="1659">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Eigenaar: Hoofd RLW</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="3643">
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">Report-ID: nt_tkbs v20181212 </text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <data id="2775">
+                            <property name="fontSize">11pt</property>
+                            <property name="fontWeight">bold</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">prevserial</property>
+                        </data>
+                    </cell>
+                </row>
+                <row id="2765">
+                    <property name="height">0.06in</property>
+                    <cell id="2766">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <data id="2777">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">prevalias</property>
+                        </data>
+                    </cell>
+                </row>
+                <row id="2779">
+                    <property name="height">0.06in</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2780">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <extended-item extensionName="Barcode" id="2788">
+                            <expression name="codeToEncode">row["code1"]</expression>
+                            <property name="symbology">7</property>
+                            <property name="barcodeUnit">0</property>
+                            <property name="height">0.5625in</property>
+                            <property name="width">1.46875in</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                </structure>
+                            </list-property>
+                        </extended-item>
+                        <extended-item extensionName="Barcode" id="2792">
+                            <expression name="codeToEncode">row["code2"]</expression>
+                            <property name="symbology">7</property>
+                            <property name="height">0.53125in</property>
+                            <property name="width">1.46875in</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                </structure>
+                            </list-property>
+                        </extended-item>
+                    </cell>
+                </row>
+            </header>
+        </table>
+        <grid id="1741">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">10in</property>
+            <column id="1742"/>
+            <row id="1743">
+                <cell id="1744">
+                    <table id="2063">
+                        <property name="width">10in</property>
+                        <property name="dataSet">dataSetWielstelDetails</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">serialnum</property>
+                                <text-property name="displayName">serialnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">abbrev</property>
+                                <text-property name="displayName">abbrev</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["abbrev"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">alnvalue</property>
+                                <text-property name="displayName">alnvalue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["alnvalue"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">assettype</property>
+                                <text-property name="displayName">assettype</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["assettype"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">position</property>
+                                <text-property name="displayName">position</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["position"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="2076">
+                            <property name="width">1.90625in</property>
+                        </column>
+                        <column id="2077">
+                            <property name="width">2.6979166666666665in</property>
+                        </column>
+                        <column id="3576">
+                            <property name="width">0.8in</property>
+                        </column>
+                        <column id="2078">
+                            <property name="width">2.302in</property>
+                        </column>
+                        <column id="2088">
+                            <property name="width">2.29in</property>
+                        </column>
+                        <header>
+                            <row id="2759">
+                                <cell id="2760">
+                                    <property name="colSpan">5</property>
+                                    <property name="rowSpan">1</property>
+                                    <text-data id="2764">
+                                        <property name="backgroundColor">silver</property>
+                                        <property name="fontSize">medium</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="color">#005D57</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="textAlign">left</property>
+                                        <expression name="valueExpr">if (row["assettype"] == "WIELSTEL") {"Samenstelling bij binnenkomst "} else {"Wielstel details: onvolledige/onjuiste gegevens aangezien geen WST als input is gegeven" }</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                            </row>
+                            <row id="2064">
+                                <cell id="2065"/>
+                                <cell id="2066"/>
+                                <cell id="3573">
+                                    <label id="3577">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Positie</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2067">
+                                    <label id="2081">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Controleer TWK nummer</text-property>
+                                    </label>
+                                    <label id="2083">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2085">
+                                    <text-data id="2090">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                                            </structure>
+                                        </list-property>
+                                        <expression name="valueExpr">"Bij afwijkend TWK nr Support informeren"</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="2068">
+                                <cell id="2069">
+                                    <data id="2080">
+                                        <property name="resultSetColumn">serialnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="2070">
+                                    <data id="2082">
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                                <cell id="3574">
+                                    <data id="3578">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["abbrev"]=="TWK-"</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">position</property>
+                                    </data>
+                                </cell>
+                                <cell id="2071">
+                                    <data id="2084">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">abbrev</property>
+                                    </data>
+                                    <text-data id="3154">
+                                        <expression name="valueExpr">if (row["abbrev"]=="TWK-") {"TWK- ____________________"}</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                                <cell id="2086">
+                                    <data id="2091">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">alnvalue</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+        </grid>
+        <grid id="1784">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">10in</property>
+            <column id="1785">
+                <property name="width">10.03125in</property>
+            </column>
+            <row id="2115">
+                <cell id="2116">
+                    <table id="2117">
+                        <property name="masterPage">maximoLandscape</property>
+                        <property name="width">10in</property>
+                        <property name="dataSet">dataSetWODetails</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">serialnum</property>
+                                <text-property name="displayName">serialnum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">wonum</property>
+                                <text-property name="displayName">wonum</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">wodesc</property>
+                                <text-property name="displayName">wodesc</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["wodesc"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">twk</property>
+                                <text-property name="displayName">twk</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["twk"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ntsecpotype</property>
+                                <text-property name="displayName">ntsecpotype</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ntsecpotype"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">plusaposition</property>
+                                <text-property name="displayName">plusaposition</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["plusaposition"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">twk1</property>
+                                <text-property name="displayName">twk1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["twk1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ntpmloctype</property>
+                                <text-property name="displayName">ntpmloctype</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["ntpmloctype"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="repeatHeader">true</property>
+                        <column id="2136">
+                            <property name="width">1.121in</property>
+                        </column>
+                        <column id="3569">
+                            <property name="width">1.121in</property>
+                        </column>
+                        <column id="2137">
+                            <property name="width">0.8in</property>
+                        </column>
+                        <column id="3438">
+                            <property name="width">4in</property>
+                        </column>
+                        <column id="2138">
+                            <property name="width">1.25in</property>
+                        </column>
+                        <header>
+                            <row id="2881">
+                                <cell id="2882">
+                                    <property name="colSpan">5</property>
+                                    <property name="rowSpan">1</property>
+                                    <label id="2139">
+                                        <property name="backgroundColor">silver</property>
+                                        <property name="fontSize">medium</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="color">#005D57</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Overzicht geplande TWK werkorders</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                            <row id="2118">
+                                <cell id="2119">
+                                    <label id="2120">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Serienummer</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3567">
+                                    <label id="3571">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Werkorder</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2121">
+                                    <label id="2122">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">PO Locatietype</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3435">
+                                    <label id="2124">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Omschrijving</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2123">
+                                    <label id="3439">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">Onderhoudscluster</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="2125">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["twk1"]=="XXX"</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="2126">
+                                    <data id="2127">
+                                        <property name="resultSetColumn">serialnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="3568">
+                                    <data id="2129">
+                                        <property name="resultSetColumn">wonum</property>
+                                    </data>
+                                </cell>
+                                <cell id="2128">
+                                    <data id="3570">
+                                        <property name="resultSetColumn">ntpmloctype</property>
+                                    </data>
+                                </cell>
+                                <cell id="3436">
+                                    <data id="2131">
+                                        <property name="resultSetColumn">wodesc</property>
+                                    </data>
+                                </cell>
+                                <cell id="2130">
+                                    <data id="3440">
+                                        <property name="resultSetColumn">ntsecpotype</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+        </grid>
+        <grid id="2282">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">10in</property>
+            <column id="2283"/>
+            <row id="2459">
+                <cell id="2460">
+                    <grid id="2141">
+                        <property name="width">10in</property>
+                        <column id="2228"/>
+                        <column id="2142"/>
+                        <column id="2143">
+                            <property name="width">0.6875in</property>
+                        </column>
+                        <column id="2144">
+                            <property name="width">2.8in</property>
+                        </column>
+                        <column id="2145">
+                            <property name="width">1.15in</property>
+                        </column>
+                        <column id="2146">
+                            <property name="width">1.15in</property>
+                        </column>
+                        <row id="3551">
+                            <cell id="3552">
+                                <property name="colSpan">6</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3558">
+                                    <property name="backgroundColor">silver</property>
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#005D57</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">Tandwielkast opname / Aanvullend werk</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="2870">
+                            <cell id="2871"/>
+                            <cell id="2872"/>
+                            <cell id="2873"/>
+                            <cell id="2874">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <text id="2877">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="textAlign">left</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Uitgevoerd volgens werkinstructie RLW-WI-050-02-01 en RLW-WI-050-10-03/04/05/09/11/13]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="2153">
+                            <cell id="2219"/>
+                            <cell id="2154"/>
+                            <cell id="2155"/>
+                            <cell id="2156">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="2212">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Naam</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2157">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="2208">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Paraaf</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2158">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="2211">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Datum</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3155">
+                            <cell id="3156"/>
+                            <cell id="3157"/>
+                            <cell id="3158"/>
+                            <cell id="3159">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3162">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3160">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3163">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3161">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3164">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="2159">
+                            <cell id="2220"/>
+                            <cell id="2160"/>
+                            <cell id="2161"/>
+                            <cell id="2162">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="2213">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2163">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="2214">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2164">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="2215">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="2457">
+                <cell id="2458">
+                    <grid id="2286">
+                        <property name="width">10in</property>
+                        <column id="2288">
+                            <property name="width">1.6979166666666667in</property>
+                        </column>
+                        <column id="2844">
+                            <property name="width">0.8020833333333334in</property>
+                        </column>
+                        <column id="2289">
+                            <property name="width">4.40625in</property>
+                        </column>
+                        <column id="2290">
+                            <property name="width">0.7604166666666666in</property>
+                        </column>
+                        <column id="2292"/>
+                        <row id="2316">
+                            <cell id="2319">
+                                <label id="2320">
+                                    <text-property name="text">Goed</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2833">
+                                <text id="2845">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Ja / Nee]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2321"/>
+                            <cell id="2322"/>
+                            <cell id="2324"/>
+                        </row>
+                        <row id="2325">
+                            <cell id="2328"/>
+                            <cell id="2834"/>
+                            <cell id="2329"/>
+                            <cell id="2330"/>
+                            <cell id="2332"/>
+                        </row>
+                        <row id="2333">
+                            <cell id="2336">
+                                <label id="2337">
+                                    <text-property name="text">Spoelen (Water in olie)</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2835">
+                                <text id="2847">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Ja / Nee]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2338">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                            </cell>
+                            <cell id="2343"/>
+                        </row>
+                        <row id="2344">
+                            <cell id="2346"/>
+                            <cell id="2836"/>
+                            <cell id="2347"/>
+                            <cell id="2348"/>
+                            <cell id="2351"/>
+                        </row>
+                        <row id="2352">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">true</expression>
+                                </structure>
+                            </list-property>
+                            <cell id="2355">
+                                <label id="2356">
+                                    <text-property name="text">Kleine herstelling</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2837">
+                                <text id="2848">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Ja / Nee]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2357">
+                                <label id="2349">
+                                    <text-property name="text">Onderdeel: __________________________________________________________</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2359"/>
+                            <cell id="2362"/>
+                        </row>
+                        <row id="2363">
+                            <cell id="2366"/>
+                            <cell id="2838"/>
+                            <cell id="2367"/>
+                            <cell id="2368"/>
+                            <cell id="2370"/>
+                        </row>
+                        <row id="2371">
+                            <cell id="2374">
+                                <label id="2375">
+                                    <text-property name="text">Afkeur > reden:</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2839">
+                                <label id="2358">
+                                    <property name="fontFamily">"Wingdings"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <text-property name="text">o</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2376">
+                                <label id="2360">
+                                    <text-property name="text">kooidelen/metaaldeel</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2378"/>
+                            <cell id="2381"/>
+                        </row>
+                        <row id="2382">
+                            <cell id="2385"/>
+                            <cell id="2840"/>
+                            <cell id="2386"/>
+                            <cell id="2387"/>
+                            <cell id="2389"/>
+                        </row>
+                        <row id="2390">
+                            <cell id="2392"/>
+                            <cell id="2841">
+                                <label id="2377">
+                                    <property name="fontFamily">"Wingdings"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <text-property name="text">o</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2393">
+                                <label id="2379">
+                                    <text-property name="text">Hoog Fe/Cu/Cr (n.a.v. meetrapport olie-analyse)</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2395"/>
+                            <cell id="2398"/>
+                        </row>
+                        <row id="2399">
+                            <cell id="2402"/>
+                            <cell id="2842"/>
+                            <cell id="2403"/>
+                            <cell id="2404"/>
+                            <cell id="2406"/>
+                        </row>
+                        <row id="2407">
+                            <cell id="2409"/>
+                            <cell id="2843">
+                                <label id="2394">
+                                    <property name="fontFamily">"Wingdings"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <text-property name="text">o</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2410">
+                                <label id="2396">
+                                    <text-property name="text">Speling rondselas nastellen</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2412"/>
+                            <cell id="2415"/>
+                        </row>
+                        <row id="2863">
+                            <cell id="2864"/>
+                            <cell id="2865"/>
+                            <cell id="2866"/>
+                            <cell id="2867"/>
+                            <cell id="2869"/>
+                        </row>
+                        <row id="2856">
+                            <cell id="2857"/>
+                            <cell id="2858">
+                                <label id="2411">
+                                    <property name="fontFamily">"Wingdings"</property>
+                                    <property name="fontWeight">bold</property>
+                                    <text-property name="text">o</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2859">
+                                <label id="2413">
+                                    <text-property name="text">Anders: _____________________________________________________________</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2860"/>
+                            <cell id="2862"/>
+                        </row>
+                        <row id="2849">
+                            <cell id="2850"/>
+                            <cell id="2851"/>
+                            <cell id="2852"/>
+                            <cell id="2853"/>
+                            <cell id="2855"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3655">
+                <cell id="3656">
+                    <grid id="3657">
+                        <property name="width">10in</property>
+                        <property name="dataSet">dataSetWielstelDetails</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["alnvalue"]!="D" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="A"</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">alnvalue</property>
+                                <text-property name="displayName">alnvalue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["alnvalue"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="3658">
+                            <property name="width">2.7708333333333335in</property>
+                        </column>
+                        <column id="3659">
+                            <property name="width">7.229166666666667in</property>
+                        </column>
+                        <row id="3660">
+                            <cell id="3661">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3662">
+                                    <property name="backgroundColor">silver</property>
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#005D57</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">Incontrole: Meting axiale speling rondselas</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3663">
+                            <cell id="3664">
+                                <text id="3665">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="contentType">auto</property>
+                                </text>
+                            </cell>
+                            <cell id="3666"/>
+                        </row>
+                        <row id="3667">
+                            <cell id="3668">
+                                <text id="3669">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling lagers rondselas (handmatig)]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3670">
+                                <text id="3671">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________ mm]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3672">
+                            <cell id="3673">
+                                <label id="3674">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3675"/>
+                        </row>
+                        <row id="3676">
+                            <cell id="3677">
+                                <text id="3678">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling lagers rondselas (Alfing apparaat)]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3679">
+                                <text id="3680">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________ mm]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3681">
+                            <cell id="3682">
+                                <label id="3683">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3684"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid id="2472">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="pageBreakBefore">always</property>
+            <property name="width">10in</property>
+            <column id="2473"/>
+            <row id="3621">
+                <cell id="3622">
+                    <grid id="3623">
+                        <property name="width">10in</property>
+                        <column id="3624">
+                            <property name="style">reportheaderlabel</property>
+                            <property name="width">2.5625in</property>
+                        </column>
+                        <column id="3625">
+                            <property name="style">reportheaderdata</property>
+                            <property name="width">7.364583333333333in</property>
+                        </column>
+                        <row id="3626">
+                            <cell id="3627">
+                                <label id="3628">
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">TandWielKastBehandelingsStaat</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3629">
+                                <property name="paddingLeft">2px</property>
+                                <label id="3630">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">Versie: 5     </text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3631">
+                            <cell id="3632">
+                                <label id="3633">
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">RLW-F-050-08</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3634">
+                                <property name="paddingLeft">2px</property>
+                                <label id="3644">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">Versiedatum: 12-12-2018    </text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3636">
+                            <property name="height">0.06in</property>
+                            <cell id="3637">
+                                <label id="3638">
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">Eigenaar: Hoofd RLW</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3639">
+                                <property name="paddingLeft">2px</property>
+                                <label id="3640">
+                                    <property name="textAlign">right</property>
+                                    <text-property name="text">Report-ID: nt_tkbs v20181212    </text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="3619">
+                <cell id="3620">
+                    <text id="3641">
+                        <property name="color">#FFFFFF</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[XXX]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="3645">
+                <cell id="3646"/>
+            </row>
+            <row id="3165">
+                <cell id="3166">
+                    <grid id="3167">
+                        <property name="width">10in</property>
+                        <column id="3169">
+                            <property name="width">2.6875in</property>
+                        </column>
+                        <column id="3171">
+                            <property name="width">2.8in</property>
+                        </column>
+                        <column id="3172">
+                            <property name="width">1.15in</property>
+                        </column>
+                        <column id="3173">
+                            <property name="width">1.15in</property>
+                        </column>
+                        <row id="3174">
+                            <cell id="3175">
+                                <property name="colSpan">4</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3176">
+                                    <property name="backgroundColor">silver</property>
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#005D57</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">Draaibank</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3177">
+                            <cell id="3178">
+                                <property name="colSpan">1</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3291">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">OPDRACHT</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3181">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <text id="3182">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="textAlign">left</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Uitgevoerd volgens werkinstructie RLW-WI-050-21-01]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3183">
+                            <cell id="3185"/>
+                            <cell id="3187">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3188">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Naam</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3189">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3190">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Paraaf</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3191">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3192">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Datum</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3193">
+                            <cell id="3195"/>
+                            <cell id="3197">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3198">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3199">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3200">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3201">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3202">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3203">
+                            <cell id="3205">
+                                <text id="3214">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Spoelen TWK                      Ja / Nee]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3207">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3208">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3209">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3210">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3211">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3212">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+            <row id="2885">
+                <cell id="2886"/>
+            </row>
+        </grid>
+        <grid id="3292">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">10in</property>
+            <column id="3293"/>
+            <row id="3294">
+                <cell id="3295">
+                    <grid id="3296">
+                        <property name="width">10in</property>
+                        <column id="3297">
+                            <property name="width">2.3958333333333335in</property>
+                        </column>
+                        <column id="3298">
+                            <property name="width">2.46875in</property>
+                        </column>
+                        <column id="3300">
+                            <property name="width">2.8020833333333335in</property>
+                        </column>
+                        <column id="3301">
+                            <property name="width">1.1145833333333333in</property>
+                        </column>
+                        <column id="3302">
+                            <property name="width">1.1354166666666667in</property>
+                        </column>
+                        <row id="3303">
+                            <cell id="3304">
+                                <property name="colSpan">5</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3305">
+                                    <property name="backgroundColor">silver</property>
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#005D57</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">TWK Afdeling</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3306">
+                            <cell id="3307">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3308">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">OPDRACHT</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3310">
+                                <property name="colSpan">3</property>
+                                <property name="rowSpan">1</property>
+                                <text id="3311">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="textAlign">left</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Uitgevoerd volgens werkinstructie RLW-WI-050-30-01/02/03/04/05/06/07/08]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3312">
+                            <cell id="3313"/>
+                            <cell id="3314"/>
+                            <cell id="3316">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3317">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Naam</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3318">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3319">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Paraaf</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3320">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3321">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                    <text-property name="text">Datum</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3322">
+                            <cell id="3323">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <table id="3408">
+                                    <property name="dataSet">dataSetWODetails</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">conc</property>
+                                            <text-property name="displayName">conc</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["conc"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">twk</property>
+                                            <text-property name="displayName">twk</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["twk"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="3423">
+                                        <property name="width">4.34375in</property>
+                                    </column>
+                                    <column id="3424">
+                                        <property name="width">0.5in</property>
+                                    </column>
+                                    <header>
+                                        <row id="3409">
+                                            <cell id="3410"/>
+                                            <cell id="3411"/>
+                                        </row>
+                                    </header>
+                                    <detail>
+                                        <row id="3413">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr" type="javascript">row["twk"] != "TWK"</expression>
+                                                </structure>
+                                            </list-property>
+                                            <cell id="3414">
+                                                <data id="3415">
+                                                    <property name="resultSetColumn">conc</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="3416">
+                                                <data id="3417">
+                                                    <list-property name="visibility">
+                                                        <structure>
+                                                            <property name="format">all</property>
+                                                            <expression name="valueExpr" type="javascript">true</expression>
+                                                        </structure>
+                                                    </list-property>
+                                                    <property name="resultSetColumn">twk</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </detail>
+                                    <footer>
+                                        <row id="3419">
+                                            <cell id="3420"/>
+                                            <cell id="3421"/>
+                                        </row>
+                                    </footer>
+                                </table>
+                            </cell>
+                            <cell id="3326">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3327">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                                <label id="3427">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                                <label id="3428">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3328">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3329">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                                <label id="3429">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                                <label id="3430">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3330">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <label id="3433">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                                <label id="3431">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                                <label id="3432">
+                                    <property name="color">white</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3346">
+                            <cell id="3347">
+                                <label id="3390">
+                                    <text-property name="text">Correctieve Tandwielkast revisie (opname)</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3348">
+                                <text id="3391">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Ja / Nee / Nee want gepland]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3350">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3399">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3351">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3403">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3352">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3404">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3353">
+                            <cell id="3354">
+                                <label id="3393">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3355">
+                                <label id="3395">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3357">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3398">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3358">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3402">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3359">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3405">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3360">
+                            <cell id="3361">
+                                <label id="3387">
+                                    <text-property name="text">Tandwielkast speling nastellen</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3362">
+                                <text id="3389">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Ja / Nee ]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3364">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3397">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3365">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3401">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3366">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3406">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3367">
+                            <cell id="3368">
+                                <label id="3392">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3369">
+                                <label id="3394">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3371">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3396">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3372">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3400">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3373">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3407">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3332">
+                            <cell id="3333">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3374">
+                                    <text-property name="text">Anders, nl: ___________________________________________________</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3338">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3339">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3340">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3341">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3342">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3343">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3375">
+                            <cell id="3376">
+                                <label id="3382">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3377">
+                                <label id="3383">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3379">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3384">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3380">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <label id="3385">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3381">
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3386">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid id="2521">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">10.05in</property>
+            <column id="2522"/>
+            <row id="2523">
+                <cell id="2524">
+                    <grid id="3045">
+                        <property name="width">10in</property>
+                        <property name="dataSet">dataSetWielstelDetails</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["alnvalue"]=="A"||row["alnvalue"]=="B"||row["alnvalue"]=="C"||row["alnvalue"]=="D"</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">alnvalue</property>
+                                <text-property name="displayName">alnvalue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["alnvalue"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="3046"/>
+                        <column id="3047"/>
+                        <column id="3048"/>
+                        <column id="3049"/>
+                        <row id="3050">
+                            <cell id="3051">
+                                <property name="colSpan">4</property>
+                                <property name="rowSpan">1</property>
+                                <label id="3052">
+                                    <property name="backgroundColor">silver</property>
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#005D57</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">TWK Meetgegevens</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="3053">
+                            <cell id="3054">
+                                <text id="3055">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[DM90]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3056"/>
+                            <cell id="3057">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <text id="3058">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[SLT]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3059"/>
+                        </row>
+                        <row id="3060">
+                            <cell id="3061">
+                                <text id="3062">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Flankspeling bij binnenkomst]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3063">
+                                <text id="3064">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3065">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <text id="3066">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling lagers rondselas]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3067">
+                                <text id="3068">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3069">
+                            <cell id="3070">
+                                <label id="3071">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3072"/>
+                            <cell id="3073">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3074">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3075"/>
+                        </row>
+                        <row id="3076">
+                            <cell id="3077">
+                                <text id="3078">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Flankspeling na revisie]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3079">
+                                <text id="3080">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3081">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <text id="3082">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling lagers tussentandwiel]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3083">
+                                <text id="3084">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3085">
+                            <cell id="3086">
+                                <label id="3087">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3088"/>
+                            <cell id="3089">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <label id="3090">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3091"/>
+                        </row>
+                        <row id="3092">
+                            <cell id="3093">
+                                <text id="3094">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Maat oude kopring]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3095">
+                                <text id="3096">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3097">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <text id="3098">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling wielas]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3099">
+                                <text id="3100">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3101">
+                            <cell id="3102">
+                                <label id="3103">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3104"/>
+                            <cell id="3105">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                            </cell>
+                            <cell id="3106"/>
+                        </row>
+                        <row id="3107">
+                            <cell id="3108">
+                                <text id="3109">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling rondsel]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3110">
+                                <text id="3111">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3112">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <data id="3152">
+                                    <property name="color">white</property>
+                                    <property name="resultSetColumn">alnvalue</property>
+                                </data>
+                            </cell>
+                            <cell id="3113"/>
+                        </row>
+                        <row id="3114">
+                            <cell id="3115">
+                                <label id="3116">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3117"/>
+                            <cell id="3118">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                            </cell>
+                            <cell id="3119"/>
+                        </row>
+                        <row id="3120">
+                            <cell id="3121">
+                                <text id="3122">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[SGM - ICM]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3123"/>
+                            <cell id="3124">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                            </cell>
+                            <cell id="3125"/>
+                        </row>
+                        <row id="3126">
+                            <cell id="3127">
+                                <text id="3128">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling wielas]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3129">
+                                <text id="3130">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3131">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                            </cell>
+                            <cell id="3132"/>
+                        </row>
+                        <row id="3133">
+                            <cell id="3134">
+                                <label id="3135">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3136"/>
+                            <cell id="3137">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                            </cell>
+                            <cell id="3138"/>
+                        </row>
+                        <row id="3139">
+                            <cell id="3140">
+                                <text id="3141">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling rondsel]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3142">
+                                <text id="3143">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3144">
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                            </cell>
+                            <cell id="3145"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <grid id="2517">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">10.05in</property>
+            <column id="2518"/>
+            <row id="2519">
+                <cell id="2520">
+                    <grid id="2939">
+                        <property name="width">10in</property>
+                        <property name="dataSet">dataSetWielstelDetails</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["alnvalue"]!="A" &amp;&amp; row["alnvalue"]!="B" &amp;&amp; row["alnvalue"]!="C" &amp;&amp; row["alnvalue"]!="D"</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">alnvalue</property>
+                                <text-property name="displayName">alnvalue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["alnvalue"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="2940">
+                            <property name="width">2.3645833333333335in</property>
+                        </column>
+                        <column id="2941">
+                            <property name="width">7.510416666666667in</property>
+                        </column>
+                        <row id="2944">
+                            <cell id="2945">
+                                <property name="colSpan">2</property>
+                                <property name="rowSpan">1</property>
+                                <label id="2994">
+                                    <property name="backgroundColor">silver</property>
+                                    <property name="fontSize">medium</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="color">#005D57</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="textAlign">left</property>
+                                    <text-property name="text">TWK Meetgegevens</text-property>
+                                </label>
+                            </cell>
+                        </row>
+                        <row id="2949">
+                            <cell id="2950">
+                                <text id="2996">
+                                    <property name="fontWeight">bold</property>
+                                    <property name="fontStyle">italic</property>
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[(V)IRM - VIRM4 - MDDM ]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2951"/>
+                        </row>
+                        <row id="2954">
+                            <cell id="2955">
+                                <text id="3146">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling lagers rondselas]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2956">
+                                <text id="3030">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="2959">
+                            <cell id="2960">
+                                <label id="2998">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2961"/>
+                        </row>
+                        <row id="2964">
+                            <cell id="2965">
+                                <text id="3147">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling lagers tussentandwiel]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="2966">
+                                <text id="3031">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="2969">
+                            <cell id="2970">
+                                <label id="3023">
+                                    <property name="color">white</property>
+                                    <text-property name="text">BLANK</text-property>
+                                </label>
+                            </cell>
+                            <cell id="2971"/>
+                        </row>
+                        <row id="2999">
+                            <cell id="3000">
+                                <text id="3148">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[Axiale speling holle as]]></text-property>
+                                </text>
+                            </cell>
+                            <cell id="3001">
+                                <text id="3032">
+                                    <property name="contentType">auto</property>
+                                    <text-property name="content"><![CDATA[________________________________________]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                        <row id="3004">
+                            <cell id="3005">
+                                <text-data id="3151">
+                                    <property name="color">white</property>
+                                    <expression name="valueExpr">row["alnvalue"]</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
+                            </cell>
+                            <cell id="3006"/>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

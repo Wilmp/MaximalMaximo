@@ -1,0 +1,3066 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data, and contains three styles of charts.</html-property>
+    <simple-property-list name="includeResource">
+        <value>wotrack</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+var totalDiff = 0;
+var strDiff = new String();
+var iCount = 1;
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("./temp/wotrack_costanalysis.log");
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+//Sets empty string for non-required paramters that cause problems for being null
+if(BirtComp.equalTo(params["worktype"], null)) {
+	params["worktype"] = "";
+}
+]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Chart Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="costesttype" id="349">
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="status" id="476">
+            <property name="hidden">false</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="worktype" id="477">
+            <property name="hidden">false</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="woclass" id="478">
+            <property name="hidden">false</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="site" id="479">
+            <property name="hidden">false</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="480">
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="481">
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">wopriority</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">worktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">estintlabcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">estoutlabcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">estlabcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">estmatcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">esttoolcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">estservcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">actintlabcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">actoutlabcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">actlabcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">actmatcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">acttoolcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">actservcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">totalest</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">totalact</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">diff</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wopriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estlabcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estmatcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">esttoolcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estservcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actlabcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actmatcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acttoolcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actservcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalest</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalact</property>
+                </structure>
+                <structure>
+                    <property name="columnName">diff</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estintlabcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estoutlabcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actintlabcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actoutlabcost</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">wopriority</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">worktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">estintlabcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">estoutlabcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">estlabcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">estmatcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">esttoolcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">estservcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">actintlabcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">actoutlabcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">actlabcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">actmatcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">acttoolcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">actservcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">totalest</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">totalact</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">diff</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+params["costesttype"] = params["costesttype"].toUpperCase();
+
+if(params["status"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.status", params["status"].replace(/[=!,]/,""));
+}
+
+if(params["site"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.siteid", params["site"].replace(/[=!,]/,""));
+}
+
+if(params["woclass"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.woclass", params["woclass"]);
+}
+
+if(params["worktype"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.worktype", params["worktype"]);
+}
+
+
+var sqlText = new String();
+if(scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug(" >>> params[\"costesttype\"].value " + params["costesttype"].value + " = " + params["costesttype"]);
+	if(params["costesttype"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params["costesttype"])==0) ){
+		scriptLogger.debug(" >>> params[\"costesttype\"] is localized NO");
+	}
+	if(params["costesttype"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params["costesttype"])==1) ){
+		scriptLogger.debug(" >>> params[\"costesttype\"] is localized YES");
+	}
+}
+
+if (BirtComp.notEqual(params["costesttype"],null) &amp;&amp;  BirtComp.notEqual(params["costesttype"],"")) {
+
+	if(scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(" >>> params[\"costesttype\"] is not null AND not empty string");
+	}
+	if (maximoDataSet.getBooleanInteger(params["costesttype"]) == 0) {
+		sqlText = "select workorder.wonum, workorder.wopriority, workorder.worktype, " 
+		+ " workorder.estatapprintlabcost, workorder.estatapproutlabcost, workorder.estatapprlabcost,"
+		+ " workorder.estatapprmatcost, workorder.estatapprtoolcost, workorder.estatapprservcost, "
+		+ " workorder.actintlabcost, workorder.actoutlabcost, workorder.actlabcost, " 
+		+ " workorder.actmatcost, workorder.acttoolcost, workorder.actservcost "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " order by workorder.wonum"
+		;
+	} else {
+		sqlText = "select workorder.wonum, workorder.wopriority, workorder.worktype, "
+		+ " workorder.estintlabcost, workorder.estoutlabcost, workorder.estlabcost, "
+		+ "workorder.estmatcost, workorder.esttoolcost, workorder.estservcost, "
+		+ " workorder.actintlabcost, workorder.actoutlabcost, workorder.actlabcost, "
+		+ "workorder.actmatcost, workorder.acttoolcost, workorder.actservcost "
+ 		+ "from workorder "
+		+ "where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " order by workorder.wonum"
+		;
+	}
+} else {
+	if(scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(" >>> params[\"costesttype\"] is null OR empty string");
+	}
+}
+
+if(scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug(" >>> dataSet[\"" + maximoDataSet.getName() + "\"] query will be:\n" + sqlText);
+}
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+if (maximoDataSet.getBooleanInteger(params["costesttype"]) == 0) {
+	row["wonum"] = maximoDataSet.getString("wonum");
+	row["worktype"] = maximoDataSet.getString("worktype");	
+	row["wopriority"] = maximoDataSet.getDouble("wopriority");
+	row["estintlabcost"] = maximoDataSet.getDouble("estatapprintlabcost");
+	row["estoutlabcost"] = maximoDataSet.getDouble("estatapproutlabcost");
+	row["estlabcost"] = maximoDataSet.getDouble("estatapprlabcost");	
+	row["estmatcost"] = maximoDataSet.getDouble("estatapprmatcost");	
+	row["esttoolcost"] = maximoDataSet.getDouble("estatapprtoolcost");	
+	row["estservcost"] = maximoDataSet.getDouble("estatapprservcost");	
+	row["actintlabcost"] = maximoDataSet.getDouble("actintlabcost");
+	row["actoutlabcost"] = maximoDataSet.getDouble("actoutlabcost");
+	row["actlabcost"] = maximoDataSet.getDouble("actlabcost");	
+	row["actmatcost"] = maximoDataSet.getDouble("actmatcost");	
+	row["acttoolcost"] = maximoDataSet.getDouble("acttoolcost");	
+	row["actservcost"] = maximoDataSet.getDouble("actservcost");	
+	row["totalest"] = row["estlabcost"] + row["estmatcost"] + row["esttoolcost"] + row["estservcost"];
+	row["totalact"] = row["actlabcost"] + row["actmatcost"] + row["acttoolcost"] + row["actservcost"];
+} else {
+	row["wonum"] = maximoDataSet.getString("wonum");
+	row["worktype"] = maximoDataSet.getString("worktype");	
+	row["wopriority"] = maximoDataSet.getDouble("wopriority");
+	row["estintlabcost"] = maximoDataSet.getDouble("estintlabcost");
+	row["estoutlabcost"] = maximoDataSet.getDouble("estoutlabcost");
+	row["estlabcost"] = maximoDataSet.getDouble("estlabcost");	
+	row["estmatcost"] = maximoDataSet.getDouble("estmatcost");	
+	row["esttoolcost"] = maximoDataSet.getDouble("esttoolcost");	
+	row["estservcost"] = maximoDataSet.getDouble("estservcost");	
+	row["actintlabcost"] = maximoDataSet.getDouble("actintlabcost");
+	row["actoutlabcost"] = maximoDataSet.getDouble("actoutlabcost");
+	row["actlabcost"] = maximoDataSet.getDouble("actlabcost");	
+	row["actmatcost"] = maximoDataSet.getDouble("actmatcost");	
+	row["acttoolcost"] = maximoDataSet.getDouble("acttoolcost");	
+	row["actservcost"] = maximoDataSet.getDouble("actservcost");	
+	row["totalest"] = row["estlabcost"] + row["estmatcost"] + row["esttoolcost"] + row["estservcost"];
+	row["totalact"] = row["actlabcost"] + row["actmatcost"] + row["acttoolcost"] + row["actservcost"];		
+}
+totalDiff = row["totalest"] - row["totalact"];
+
+if (totalDiff < 0) {
+	strDiff = "(" + totalDiff.toFixed(2) + ")";
+} else {
+	strDiff = totalDiff.toFixed(2);
+}
+row["diff"] = strDiff;
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="graphDataSet" id="565">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">categories</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">estimates</property>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">actuals</property>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">categories</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estimates</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actuals</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">categories</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">estimates</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">actuals</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[graphDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+if(params["status"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.status", params["status"].replace(/[=!,]/,""));
+}
+
+if(params["site"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.siteid", params["site"].replace(/[=!,]/,""));
+}
+
+if(params["woclass"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.woclass", params["woclass"]);
+}
+
+if(params["worktype"].value){
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("workorder.worktype", params["worktype"]);
+}
+
+var sqlText = new String();
+
+if (BirtComp.notEqual(params["costesttype"],null) &amp;&amp;  BirtComp.notEqual(params["costesttype"],"")) {
+
+	if(scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(" >>> params[\"costesttype\"] is not null AND not empty string");
+	}
+	if (maximoDataSet.getBooleanInteger(params["costesttype"]) == 0) {
+		sqlText = "select sum(workorder.estatapprintlabcost) estimates, "
+		+ " sum(workorder.actintlabcost) actuals, "
+		+ " 'Internal Labor' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estatapproutlabcost) estimates, "
+		+ " sum(workorder.actoutlabcost) actuals, "
+		+ " 'External Labor' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estatapprlabcost) estimates, "
+		+ " sum(workorder.actlabcost) actuals, "
+		+ " 'Labor' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estatapprmatcost) estimates, "
+		+ " sum(workorder.actmatcost) actuals, "
+		+ " 'Materials' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estatapprtoolcost) estimates, "
+		+ " sum(workorder.acttoolcost) actuals, "
+		+ " 'Tools' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estatapprservcost) estimates, "
+		+ " sum(workorder.actservcost) actuals, "
+		+ " 'Services' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estatapprservcost)+sum(workorder.estatapprtoolcost)+sum(workorder.estatapprmatcost)+ "
+		+ " sum(workorder.estatapprlabcost) estimates, "
+		+ " sum(workorder.actservcost)+sum(workorder.acttoolcost)+sum(workorder.actmatcost)+ "
+		+ " sum(workorder.actlabcost) actuals, "
+		+ " 'Totals' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		;
+	} else {
+	 	sqlText = "select sum(workorder.estintlabcost) estimates, "
+		+ " sum(workorder.actintlabcost) actuals, "
+		+ " 'Internal Labor' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estoutlabcost) estimates, "
+		+ " sum(workorder.actoutlabcost) actuals, "
+		+ " 'External Labor' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estlabcost) estimates, "
+		+ " sum(workorder.actlabcost) actuals, "
+		+ " 'Labor' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estmatcost) estimates, "
+		+ " sum(workorder.actmatcost) actuals, "
+		+ " 'Materials' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.esttoolcost) estimates, "
+		+ " sum(workorder.acttoolcost) actuals, "
+		+ " 'Tools' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estservcost) estimates, "
+		+ " sum(workorder.actservcost) actuals, "
+		+ " 'Services' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		+ " union all  "
+		+ " select sum(workorder.estservcost)+sum(workorder.esttoolcost)+sum(workorder.estmatcost)+ "
+		+ " sum(workorder.estlabcost) estimates, "
+		+ " sum(workorder.actservcost)+sum(workorder.acttoolcost)+sum(workorder.actmatcost)+ "
+		+ " sum(workorder.actlabcost) actuals, "
+		+ " 'Totals' categories "
+		+ " from workorder "
+		+ " where " + params["where"]
+		+ " and workorder.actstart >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+		+ " and workorder.actfinish <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+		;
+	}
+} else {
+	if(scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(" >>> params[\"costesttype\"] is null OR empty string");
+	}
+}
+
+graphDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!graphDataSet.fetch()) {
+			return (false);
+		}
+
+
+row["estimates"] = graphDataSet.getDouble("estimates");	
+row["actuals"] = graphDataSet.getDouble("actuals");		
+row["categories"] = graphDataSet.getString("categories");	
+if (row["categories"]=='Labor'){
+	row["categories"] = reportContext.getMessage("labor", reportContext.getLocale());
+}
+else if (row["categories"]=='Materials'){
+	row["categories"] = reportContext.getMessage("materials.data", reportContext.getLocale());
+}
+else if (row["categories"]=='Tools'){
+	row["categories"] = reportContext.getMessage("tools.data", reportContext.getLocale());
+}
+
+else if (row["categories"]=='Services'){
+	row["categories"] = reportContext.getMessage("services.data", reportContext.getLocale());
+}
+else if (row["categories"]=='Totals'){
+	row["categories"] = reportContext.getMessage("totals.data", reportContext.getLocale());
+}
+
+		
+return(true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <expression name="expression">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wopriority</property>
+                    <expression name="expression">dataSetRow["wopriority"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">worktype</property>
+                    <expression name="expression">dataSetRow["worktype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">estlabcost</property>
+                    <expression name="expression">dataSetRow["estlabcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">estmatcost</property>
+                    <expression name="expression">dataSetRow["estmatcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">esttoolcost</property>
+                    <expression name="expression">dataSetRow["esttoolcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">estservcost</property>
+                    <expression name="expression">dataSetRow["estservcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">actlabcost</property>
+                    <expression name="expression">dataSetRow["actlabcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">actmatcost</property>
+                    <expression name="expression">dataSetRow["actmatcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">acttoolcost</property>
+                    <expression name="expression">dataSetRow["acttoolcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">actservcost</property>
+                    <expression name="expression">dataSetRow["actservcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalest</property>
+                    <expression name="expression">dataSetRow["totalest"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalact</property>
+                    <expression name="expression">dataSetRow["totalact"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">diff</property>
+                    <expression name="expression">dataSetRow["diff"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">totalLaborEst</property>
+                    <expression name="expression">Total.sum(row["estlabcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalLaborAct</property>
+                    <expression name="expression">Total.sum(row["actlabcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalMatEst</property>
+                    <expression name="expression">Total.sum(row["estmatcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalMatAct</property>
+                    <expression name="expression">Total.sum(row["actmatcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalToolEst</property>
+                    <expression name="expression">Total.sum(row["esttoolcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalToolAct</property>
+                    <expression name="expression">Total.sum(row["acttoolcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalServEst</property>
+                    <expression name="expression">Total.sum(row["estservcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalServAct</property>
+                    <expression name="expression">Total.sum(row["actservcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalTotalEst</property>
+                    <expression name="expression">Total.sum(row["totalest"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalTotalAct</property>
+                    <expression name="expression">Total.sum(row["totalact"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalDiffData</property>
+                    <expression name="expression">Total.sum(row["totalest"]) - Total.sum(row["totalact"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">chart_key</property>
+                    <expression name="expression">1</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">label_key</property>
+                    <expression name="expression">1</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">estintlabcost</property>
+                    <text-property name="displayName">estintlabcost</text-property>
+                    <expression name="expression">dataSetRow["estintlabcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">estoutlabcost</property>
+                    <text-property name="displayName">estoutlabcost</text-property>
+                    <expression name="expression">dataSetRow["estoutlabcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">actintlabcost</property>
+                    <text-property name="displayName">actintlabcost</text-property>
+                    <expression name="expression">dataSetRow["actintlabcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">actoutlabcost</property>
+                    <text-property name="displayName">actoutlabcost</text-property>
+                    <expression name="expression">dataSetRow["actoutlabcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalIntLaborEst</property>
+                    <expression name="expression">Total.sum(row["estintlabcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalIntLaborAct</property>
+                    <expression name="expression">Total.sum(row["actintlabcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalExtLaborEst</property>
+                    <expression name="expression">Total.sum(row["estoutlabcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalExtLaborAct</property>
+                    <expression name="expression">Total.sum(row["actoutlabcost"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="79">
+                <property name="width">0.4in</property>
+            </column>
+            <column id="91">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="446">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="434">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="422">
+                <property name="width">0.57in</property>
+            </column>
+            <column id="410">
+                <property name="width">0.57in</property>
+            </column>
+            <column id="1074">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="1062">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="1050">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="1038">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="398">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="386">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="374">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="362">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="87">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="17">
+                <property name="width">0.55in</property>
+            </column>
+            <column id="18">
+                <property name="width">0.76in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <label id="350">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="costanalysis.title">Estimated vs Actual Work Order Costs</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="marginTop">2pt</property>
+                            <property name="marginBottom">2pt</property>
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">2in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="496">
+                                <property name="width">3in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="503">
+                                <property name="width">2in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">3in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="workorderstatus.headerlabel">Work Order Status:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="491">
+                                    <data id="507">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">status</property>
+                                                <expression name="expression">params["status"].replace(/[=!,]/,"")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">status</property>
+                                    </data>
+                                </cell>
+                                <cell id="498">
+                                    <label id="504">
+                                        <text-property name="text" key="sitecolon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="511">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">site</property>
+                                                <expression name="expression">params["site"].replace(/[=!,]/,"")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">site</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="482">
+                                <cell id="483">
+                                    <label id="488">
+                                        <property name="marginTop">0pt</property>
+                                        <text-property name="text" key="worktype">Work Type:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="492">
+                                    <data id="508">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">worktype</property>
+                                                <expression name="expression">params["worktype"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">worktype</property>
+                                    </data>
+                                </cell>
+                                <cell id="499">
+                                    <label id="505">
+                                        <text-property name="text" key="startdate.headerlabel">Start Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="484">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="512">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="485">
+                                <cell id="486">
+                                    <label id="489">
+                                        <text-property name="text" key="workclass.headerlabel">Work Class:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="493">
+                                    <data id="509">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">woclass</property>
+                                                <expression name="expression">params["woclass"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">woclass</property>
+                                    </data>
+                                </cell>
+                                <cell id="500">
+                                    <label id="506">
+                                        <text-property name="text" key="enddate.headerlabel">End Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="487">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="513">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">enddate</property>
+                                                <expression name="expression">params["enddate"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">enddate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="costestimate.headerlabel">Estimate prepared at WO Generation?</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="494">
+                                    <data id="510">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">costesttype</property>
+                                                <expression name="expression">params["costesttype"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">costesttype</property>
+                                    </data>
+                                </cell>
+                                <cell id="501"/>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="626">
+                <property name="groupName">chartGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["chart_key"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["chart_key"]</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="627">
+                        <property name="style">chart</property>
+                        <cell id="628">
+                            <property name="colSpan">18</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">chart</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="textAlign">center</property>
+                            <extended-item extensionName="Chart" name="Bar Chart" id="273">
+                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Bar Chart</Type>
+  <SubType>Side-by-side</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>costanalysis.title=&lt;Value of key 'costanalysis.title'></Value>
+          <Font>
+            <Name>SansSerif</Name>
+            <Size>12.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Stretch>Horizontal</Stretch>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <ClientArea>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>2.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Horizontal</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Series</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+      <ShowValue>false</ShowValue>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>648.0</Width>
+      <Height>252.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>false</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>A, B, C</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>1</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity>
+    <Enable>false</Enable>
+    <LegendBehavior>None</LegendBehavior>
+  </Interactivity>
+  <EmptyMessage>
+    <Caption>
+      <Value></Value>
+      <Font>
+        <Alignment/>
+      </Font>
+    </Caption>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>0</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+    </Outline>
+    <Insets>
+      <Top>0.0</Top>
+      <Left>2.0</Left>
+      <Bottom>0.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Visible>false</Visible>
+  </EmptyMessage>
+  <Axes>
+    <Type>Text</Type>
+    <Title>
+      <Caption>
+        <Value>X-Axis Title</Value>
+        <Font>
+          <Size>14.0</Size>
+          <Bold>true</Bold>
+          <Alignment>
+            <horizontalAlignment>Center</horizontalAlignment>
+            <verticalAlignment>Center</verticalAlignment>
+          </Alignment>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>false</Visible>
+    </Title>
+    <TitlePosition>Below</TitlePosition>
+    <AssociatedAxes>
+      <Type>Linear</Type>
+      <Title>
+        <Caption>
+          <Value>Y-Axis Title</Value>
+          <Font>
+            <Size>14.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+            <Rotation>90.0</Rotation>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Left</TitlePosition>
+      <SeriesDefinitions>
+        <Query>
+          <Definition></Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>34</Red>
+            <Green>89</Green>
+            <Blue>114</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>72</Red>
+            <Green>153</Green>
+            <Blue>119</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>221</Red>
+            <Green>205</Green>
+            <Blue>93</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>199</Red>
+            <Green>134</Green>
+            <Blue>57</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>152</Red>
+            <Green>96</Green>
+            <Blue>48</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>141</Red>
+            <Green>134</Green>
+            <Blue>142</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>131</Red>
+            <Green>162</Green>
+            <Blue>176</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>187</Red>
+            <Green>217</Green>
+            <Blue>0</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>10.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>false</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>row[&quot;estimates&quot;]</Definition>
+          </DataDefinition>
+          <SeriesIdentifier>estimated.data=&lt;Value of key 'estimated.data'></SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>false</Enabled>
+          <GroupingInterval>2.0</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+        <Sorting>Ascending</Sorting>
+      </SeriesDefinitions>
+      <SeriesDefinitions>
+        <Query>
+          <Definition></Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>228</Red>
+            <Green>184</Green>
+            <Blue>88</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>128</Green>
+            <Blue>128</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>152</Red>
+            <Green>96</Green>
+            <Blue>48</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>141</Red>
+            <Green>134</Green>
+            <Blue>142</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>131</Red>
+            <Green>162</Green>
+            <Blue>176</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>170</Red>
+            <Green>85</Green>
+            <Blue>85</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>128</Green>
+            <Blue>0</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>80</Red>
+            <Green>166</Green>
+            <Blue>218</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>10.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>false</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>row[&quot;actuals&quot;]</Definition>
+          </DataDefinition>
+          <SeriesIdentifier>actuals.data=&lt;Value of key 'actuals.data'></SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>false</Enabled>
+          <GroupingInterval>2.0</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+      </SeriesDefinitions>
+      <Orientation>Vertical</Orientation>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Name>SansSerif</Name>
+            <Size>10.0</Size>
+            <Alignment/>
+            <Rotation>0.0</Rotation>
+          </Font>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+      <LabelPosition>Left</LabelPosition>
+      <Interval>1</Interval>
+      <MajorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </TickAttributes>
+      </MajorGrid>
+      <MinorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </TickAttributes>
+      </MinorGrid>
+      <Scale>
+        <MinorGridsPerUnit>5</MinorGridsPerUnit>
+      </Scale>
+      <Origin>
+        <Type>Min</Type>
+        <Value xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Value>
+      </Origin>
+      <PrimaryAxis>true</PrimaryAxis>
+      <Percent>false</Percent>
+    </AssociatedAxes>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>34</Red>
+          <Green>89</Green>
+          <Blue>114</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>72</Red>
+          <Green>153</Green>
+          <Blue>119</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>221</Red>
+          <Green>205</Green>
+          <Blue>93</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>199</Red>
+          <Green>134</Green>
+          <Blue>57</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>152</Red>
+          <Green>96</Green>
+          <Blue>48</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>141</Red>
+          <Green>134</Green>
+          <Blue>142</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>131</Red>
+          <Green>162</Green>
+          <Blue>176</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>187</Red>
+          <Green>217</Green>
+          <Blue>0</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series>
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>false</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;categories&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Orthogonal_Value</Type>
+          </Components>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+      </Series>
+      <Grouping>
+        <Enabled>false</Enabled>
+        <GroupingInterval>2.0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+    </SeriesDefinitions>
+    <Orientation>Horizontal</Orientation>
+    <LineAttributes>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </LineAttributes>
+    <Label>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+          <Rotation>-45.0</Rotation>
+        </Font>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>true</Visible>
+    </Label>
+    <LabelPosition>Below</LabelPosition>
+    <Interval>1</Interval>
+    <MajorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </TickAttributes>
+    </MajorGrid>
+    <MinorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </TickAttributes>
+    </MinorGrid>
+    <Scale>
+      <MinorGridsPerUnit>5</MinorGridsPerUnit>
+    </Scale>
+    <Origin>
+      <Type>Min</Type>
+      <Value xsi:type="data:NumberDataElement">
+        <Value>0.0</Value>
+      </Value>
+    </Origin>
+    <PrimaryAxis>true</PrimaryAxis>
+    <CategoryAxis>true</CategoryAxis>
+    <Percent>false</Percent>
+  </Axes>
+  <Orientation>Vertical</Orientation>
+  <UnitSpacing>0.0</UnitSpacing>
+  <Rotation/>
+</model:ChartWithAxes>
+]]></xml-property>
+                                <property name="outputFormat">SVG</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <property name="borderTopColor">#000000</property>
+                                <property name="borderLeftStyle">solid</property>
+                                <property name="borderLeftWidth">thin</property>
+                                <property name="borderLeftColor">#000000</property>
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="borderBottomColor">#000000</property>
+                                <property name="borderRightStyle">solid</property>
+                                <property name="borderRightWidth">thin</property>
+                                <property name="borderRightColor">#000000</property>
+                                <property name="marginTop">15px</property>
+                                <property name="marginLeft">15px</property>
+                                <property name="dataSet">graphDataSet</property>
+                                <property name="height">3.5in</property>
+                                <property name="width">9in</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">categories</property>
+                                        <expression name="expression">dataSetRow["categories"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">estimates</property>
+                                        <expression name="expression">dataSetRow["estimates"]</expression>
+                                        <property name="dataType">float</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">actuals</property>
+                                        <expression name="expression">dataSetRow["actuals"]</expression>
+                                        <property name="dataType">float</property>
+                                    </structure>
+                                </list-property>
+                            </extended-item>
+                        </cell>
+                    </row>
+                    <row id="711">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="712">
+                            <property name="colSpan">18</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tableheaderlabel</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <label id="847">
+                                <text-property name="text" key="totals.data">Totals</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="797">
+                        <cell id="798">
+                            <property name="colSpan">18</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tabledetailslabelcell</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <grid id="812">
+                                <property name="width">100%</property>
+                                <column id="813">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="814">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="815">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="816">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="817">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="818">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="819">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="820">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="821">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="822">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="823">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="953">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="951">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="949">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="947">
+                                    <property name="width">0.76in</property>
+                                </column>
+                                <row id="824">
+                                    <property name="style">tabledetailslabel</property>
+                                    <cell id="825">
+                                        <label id="966">
+                                            <text-property name="text" key="intlaborest"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="827">
+                                        <label id="967">
+                                            <text-property name="text" key="intlaboract"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="829">
+                                        <label id="968">
+                                            <text-property name="text" key="extlaborest"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="831">
+                                        <label id="969">
+                                            <text-property name="text" key="extlaboract"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="833">
+                                        <label id="744">
+                                            <text-property name="text" key="laborest.label">Labor Est</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="835">
+                                        <label id="745">
+                                            <text-property name="text" key="laboract.label">Labor Actual</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="837">
+                                        <label id="746">
+                                            <text-property name="text" key="materialest.label">Mat'l Est</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="839">
+                                        <label id="747">
+                                            <text-property name="text" key="materialact.label">Mat'l Actual</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="841">
+                                        <label id="748">
+                                            <text-property name="text" key="toolest.label">Tool Est</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="843">
+                                        <label id="749">
+                                            <text-property name="text" key="toolact.label">Tool Actual</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="845">
+                                        <label id="750">
+                                            <text-property name="text" key="serviceest.label">Serv Est</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="952">
+                                        <label id="751">
+                                            <text-property name="text" key="servact.label">Serv Actual</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="950">
+                                        <label id="752">
+                                            <text-property name="text" key="totalest.label">Total Est</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="948">
+                                        <label id="753">
+                                            <text-property name="text" key="totalact.label">Total Actual</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="946">
+                                        <label id="754">
+                                            <text-property name="text" key="diff.label">Diff</text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="848">
+                        <property name="style">tabledetailsdatarow</property>
+                        <cell id="849">
+                            <property name="colSpan">18</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <grid id="898">
+                                <property name="width">100%</property>
+                                <column id="899">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="900">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="901">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="902">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="903">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="904">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="905">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="961">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="959">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="957">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="955">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="906">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="907">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="908">
+                                    <property name="width">0.66in</property>
+                                </column>
+                                <column id="909">
+                                    <property name="width">0.76in</property>
+                                </column>
+                                <row id="910">
+                                    <cell id="911">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="974">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalIntLaborEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="912">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="975">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalIntLaborAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="913">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="976">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalExtLaborEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="914">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="978">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalExtLaborAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="915">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="776">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalLaborEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="916">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="778">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalLaborAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="917">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="780">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalMatEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="960">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="782">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalMatAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="958">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="784">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalToolEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="956">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="786">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalToolAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="954">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="788">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalServEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="918">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="790">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalServAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="919">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="792">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalTotalEst</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="920">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="794">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">totalTotalAct</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="921">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="796">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="textAlign">right</property>
+                                            <property name="pageBreakAfter">always</property>
+                                            <property name="resultSetColumn">totalDiffData</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="658">
+                <property name="groupName">labelGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["label_key"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">""</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="659">
+                        <property name="style">tabledetailslabel</property>
+                        <cell id="660">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="96">
+                                <text-property name="text" key="wo">WO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="661">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="447">
+                                <text-property name="text" key="priority">Priority</text-property>
+                            </label>
+                        </cell>
+                        <cell id="662">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="448">
+                                <text-property name="text" key="worktype.label">Work Type</text-property>
+                            </label>
+                        </cell>
+                        <cell id="663">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1092">
+                                <text-property name="text" key="intlaborest"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="664">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1093">
+                                <text-property name="text" key="intlaboract"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="665">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1094">
+                                <text-property name="text" key="extlaborest"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="666">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1095">
+                                <text-property name="text" key="extlaboract"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="1071">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="449">
+                                <text-property name="text" key="laborest.label">Labor Est</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1059">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="450">
+                                <text-property name="text" key="laboract.label">LaborActual</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1047">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="451">
+                                <text-property name="text" key="materialest.label">Mat'l Est</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1035">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="452">
+                                <text-property name="text" key="materialact.label">Mat'l Actual</text-property>
+                            </label>
+                        </cell>
+                        <cell id="667">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="453">
+                                <text-property name="text" key="toolest.label">Tool Est</text-property>
+                            </label>
+                        </cell>
+                        <cell id="668">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="454">
+                                <text-property name="text" key="toolact.label">Tool Actual</text-property>
+                            </label>
+                        </cell>
+                        <cell id="669">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="455">
+                                <text-property name="text" key="serviceest.label">Serv Est</text-property>
+                            </label>
+                        </cell>
+                        <cell id="670">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="456">
+                                <text-property name="text" key="servact.label">Serv Actual</text-property>
+                            </label>
+                        </cell>
+                        <cell id="671">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="457">
+                                <text-property name="text" key="totalest.label">Total Est</text-property>
+                            </label>
+                        </cell>
+                        <cell id="672">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="458">
+                                <text-property name="text" key="totalact.label">Total Actual</text-property>
+                            </label>
+                        </cell>
+                        <cell id="673">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="459">
+                                <text-property name="text" key="diff.label">Diff</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">reportContext.getParameterValue("paramstring") == "1"</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="460">
+                            <property name="resultSetColumn">wonum</property>
+                            <list-property name="action">
+                                <structure>
+                                    <property name="formatType">html</property>
+                                    <property name="linkType">drill-through</property>
+                                    <property name="reportName">woprint.rptdesign</property>
+                                    <property name="targetWindow">_self</property>
+                                    <property name="targetFileType">report-design</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">where</property>
+                                            <simple-property-list name="expression">
+                                                <value>"workorder.wonum='" + row["wonum"] + "'"</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">appname</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["appname"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">paramdelimiter</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["paramdelimiter"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">paramstring</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["paramstring"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                    </list-property>
+                                </structure>
+                            </list-property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="461">
+                            <property name="resultSetColumn">wopriority</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="462">
+                            <property name="resultSetColumn">worktype</property>
+                        </data>
+                    </cell>
+                    <cell id="443">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1075">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">estintlabcost</property>
+                        </data>
+                    </cell>
+                    <cell id="431">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1077">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">actintlabcost</property>
+                        </data>
+                    </cell>
+                    <cell id="419">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1076">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">estoutlabcost</property>
+                        </data>
+                    </cell>
+                    <cell id="407">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1078">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">actoutlabcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1072">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="463">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">estlabcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1060">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="464">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">actlabcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1048">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="465">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">estmatcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1036">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="466">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">actmatcost</property>
+                        </data>
+                    </cell>
+                    <cell id="395">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="467">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">esttoolcost</property>
+                        </data>
+                    </cell>
+                    <cell id="383">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="468">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">acttoolcost</property>
+                        </data>
+                    </cell>
+                    <cell id="371">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="469">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">estservcost</property>
+                        </data>
+                    </cell>
+                    <cell id="359">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="470">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">actservcost</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="471">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">totalest</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="472">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">totalact</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="475">
+                            <structure name="numberFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="resultSetColumn">diff</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="207">
+                    <property name="height">0.08in</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">reportContext.getParameterValue("paramstring") == "1"</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="208">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

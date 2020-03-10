@@ -1,0 +1,916 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_v20090521 Build &lt;2.3.2.v20090601-0700></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>plusaasset_life_remaining</value>
+    </simple-property-list>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+importPackage(Packages.psdi.plusa.orapiranha);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogFile("c:/temp/plusaasset_life_remaining.log");
+
+
+params["paramstring"]=reportContext.getMessage("life_remaining_simple_title", reportContext.getLocale()); 
+
+if(params["fleetname"].value ) {
+	params["paramstring"] = reportContext.getMessage("life_remaining_fleet_title", reportContext.getLocale()) + " " + params["fleetname"] ; 
+}
+
+if(params["assetnum"].value ) {
+	params["paramstring"] = reportContext.getMessage("life_remaining_complete_title", reportContext.getLocale()) + " " + params["assetnum"] ; 
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="assetnum" id="467">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Asset</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="asofdate" id="466">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">As Of Date</text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="fleetname" id="474">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText">Fleet Name</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="plusaassetliferemaining" id="410">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">assetid</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">item</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">plusalfeventid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">label</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ontime</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">activedate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">frequnit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">plusaduedateexp</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">plusaintaction</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">plusaalertint</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">plusawarnint</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">frequency</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">extrapolatelife</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">due</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">duecount</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">currentcount</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">left</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">metername</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">item</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusalfeventid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">label</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ontime</property>
+                </structure>
+                <structure>
+                    <property name="columnName">activedate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">frequnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusaduedateexp</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusaintaction</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusaalertint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusawarnint</property>
+                </structure>
+                <structure>
+                    <property name="columnName">frequency</property>
+                </structure>
+                <structure>
+                    <property name="columnName">extrapolatelife</property>
+                </structure>
+                <structure>
+                    <property name="columnName">due</property>
+                </structure>
+                <structure>
+                    <property name="columnName">duecount</property>
+                </structure>
+                <structure>
+                    <property name="columnName">currentcount</property>
+                </structure>
+                <structure>
+                    <property name="columnName">left</property>
+                </structure>
+                <structure>
+                    <property name="columnName">metername</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">assetid</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">item</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">plusalfeventid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">label</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ontime</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">activedate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">frequnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">plusaduedateexp</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">plusaintaction</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">plusaalertint</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">plusawarnint</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">frequency</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">extrapolatelife</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">due</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">duecount</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">currentcount</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">left</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">metername</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="onFetch"><![CDATA[activeCount = RapCall.calcLifeReport(maximoDataSource.getConnection(), maximoDataSet.getInteger("assetid"), maximoDataSet.getString("metername"), maximoDataSet.getTimestamp("activedate"), maximoDataSet.getString("siteid") );
+currentCount= RapCall.calcLifeReport(maximoDataSource.getConnection(), maximoDataSet.getInteger("assetid"), maximoDataSet.getString("metername"), maximoDataSet.getTimestamp("ontime"), maximoDataSet.getString("siteid") );
+
+row["due"] 			= activeCount + maximoDataSet.getDouble("frequency");
+row["duecount"] 	= row["due"] ;
+row["currentcount"] = currentCount;
+row["left"]			= row["due"] - currentCount;]]></method>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// get the current connection
+maximoDataSource=CustomDataSourceProvider.create(this.getDataSource().getName()) ;
+
+var sqlText = new String();
+
+sqlText = " "
++ " select "
++ "    asset.assetnum "
++ "  , asset.assetid "
++ "  , asset.siteid "
++ "  , asset.serialnum  "
++ "  , plusacacat.item "
++ "  , pm.pmnum plusalfeventid "
++ "  , pm.description "
++ "  , plusasaonoff.label "
++ "  , plusasaonoff.ontime "
++ "  , assetmeter.metername "
++ "  , plusalfevent.activedate "
+//+ "  , pm.frequency "
++ "  , pm.frequnit "
++ "  , pm.plusaduedateexp "
++ "  , pm.plusaintaction "
++ "  , pmmeter.plusaalertint "
++ "  , pmmeter.plusawarnint "
++ "  , pmmeter.frequency " 
++ "  , plusacmmodel.extrapolatelife "
++ "  , 0 due "
++ "  , 0 duecount "
++ "  , 0 currentcount "
++ "  , 0 left "
++ " from asset "
++ " inner join plusacacat   on plusacacat.plusacacatid = asset.plusacatid "
++ " inner join plusasaonoff on asset.assetid = plusasaonoff.assetid "
++ " left outer join pm on pm.assetnum = asset.assetnum and pm.siteid=asset.siteid "
++ " left outer join plusalfevent on asset.assetid = plusalfevent.assetid and plusalfevent.pmuid = pm.pmuid "
++ " left outer join pmmeter on asset.assetnum = pmmeter.assetnum  and pm.pmnum = pmmeter.pmnum "
++ " inner join plusacmmodel on asset.plusamodelid =	plusacmmodel.plusacmmodelid "  
++ " left outer join assetmeter   on asset.assetnum = assetmeter.assetnum and asset.siteid = assetmeter.siteid "  
++ " left outer join plusasafleet on asset.assetid = plusasafleet.assetid "
++ " left outer join plusacmfleet on plusasafleet.fleetid = plusacmfleet.plusacmfleetid " 
+
++ " where " + params["where"] 
+
++ " and plusalfevent.activedate between " 
++ MXReportSqlFormat.getStartDayTimestampFunction(params["asofdate"]) 
++ " and " 
++ MXReportSqlFormat.getEndDayTimestampFunction(params["asofdate"]) 
+
++ " order by asset.assetnum  " ;
+
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["assetnum"] 	    = maximoDataSet.getString("assetnum");	
+row["assetid"] 		    = maximoDataSet.getInteger("assetid");	
+row["serialnum"] 	    = maximoDataSet.getString("serialnum");	
+row["siteid"] 	    	= maximoDataSet.getString("siteid");	
+row["item"] 	    	= maximoDataSet.getString("item");	
+row["plusalfeventid"] 	= maximoDataSet.getString("plusalfeventid");	
+row["description"] 	    = maximoDataSet.getString("description");	
+row["label"] 	    	= maximoDataSet.getString("label");	
+row["ontime"] 			= maximoDataSet.getTimestamp("ontime");	
+row["activedate"] 		= maximoDataSet.getTimestamp("activedate");	
+row["frequnit"] 	    = maximoDataSet.getString("frequnit");	
+row["plusaduedateexp"] 	= maximoDataSet.getString("plusaduedateexp");	
+row["plusaintaction"] 	= maximoDataSet.getString("plusaintaction");	
+row["plusaalertint"] 	= maximoDataSet.getDouble("plusaalertint");	
+row["plusawarnint"] 	= maximoDataSet.getDouble("plusawarnint");	
+row["frequency"] 		= maximoDataSet.getDouble("frequency");	
+row["extrapolatelife"] 	= maximoDataSet.getBooleanString("extrapolatelife");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="height">1.5in</property>
+            <property name="width">10.020833333333334in</property>
+            <property name="dataSet">plusaassetliferemaining</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">assetnum</property>
+                    <expression name="expression">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetid</property>
+                    <expression name="expression">dataSetRow["assetid"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <expression name="expression">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item</property>
+                    <expression name="expression">dataSetRow["item"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusalfeventid</property>
+                    <expression name="expression">dataSetRow["plusalfeventid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">label</property>
+                    <expression name="expression">dataSetRow["label"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ontime</property>
+                    <expression name="expression">dataSetRow["ontime"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">activedate</property>
+                    <expression name="expression">dataSetRow["activedate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">frequnit</property>
+                    <expression name="expression">dataSetRow["frequnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusaduedateexp</property>
+                    <expression name="expression">dataSetRow["plusaduedateexp"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusaintaction</property>
+                    <expression name="expression">dataSetRow["plusaintaction"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusaalertint</property>
+                    <expression name="expression">dataSetRow["plusaalertint"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">plusawarnint</property>
+                    <expression name="expression">dataSetRow["plusawarnint"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">frequency</property>
+                    <expression name="expression">dataSetRow["frequency"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">extrapolatelife</property>
+                    <expression name="expression">dataSetRow["extrapolatelife"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">due</property>
+                    <expression name="expression">dataSetRow["due"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">duecount</property>
+                    <expression name="expression">dataSetRow["duecount"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">currentcount</property>
+                    <expression name="expression">dataSetRow["currentcount"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">left</property>
+                    <expression name="expression">dataSetRow["left"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">metername</property>
+                    <expression name="expression">dataSetRow["metername"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pdate</property>
+                    <expression name="expression">params["asofdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">0.8854166667in</property>
+            </column>
+            <column id="79">
+                <property name="width">0.8854166667in</property>
+            </column>
+            <column id="91">
+                <property name="width">1.0729166666666667in</property>
+            </column>
+            <column id="87">
+                <property name="width">2.4270833333in</property>
+            </column>
+            <column id="378">
+                <property name="width">0.8645833333in</property>
+            </column>
+            <column id="17">
+                <property name="width">0.6145833333in</property>
+            </column>
+            <column id="388">
+                <property name="width">0.7916666667in</property>
+            </column>
+            <column id="398">
+                <property name="width">0.8645833333in</property>
+            </column>
+            <column id="408">
+                <property name="width">0.9166666667in</property>
+            </column>
+            <column id="18">
+                <property name="width">0.7395833333333334in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">5</property>
+                        <property name="rowSpan">1</property>
+                        <data id="472">
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">paramstring</property>
+                                    <expression name="expression">params["paramstring"].value</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">paramstring</property>
+                        </data>
+                    </cell>
+                    <cell id="436">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <label id="441">
+                            <property name="style">reportheaderlabel</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text" key="pasofdate">As Of Date: </text-property>
+                        </label>
+                    </cell>
+                    <cell id="439">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <data id="465">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Medium Date</property>
+                                <property name="pattern">Medium Date</property>
+                            </structure>
+                            <property name="resultSetColumn">pdate</property>
+                        </data>
+                    </cell>
+                </row>
+                <row id="443">
+                    <property name="height">0.1in</property>
+                    <property name="style">title</property>
+                    <cell id="444">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.2395833333in</property>
+                    <cell id="174">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tableheaderrow</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="411">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="item"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="413">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="serialnum"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="415">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="plusalfeventid"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="417">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="description"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="374">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="420">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="label"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="422">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="due"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="384">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="424">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="duecount"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="394">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="425">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="currentcount"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="404">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="427">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="left"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="429">
+                            <property name="style">tableheaderlabel</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text" key="extrapolatelife"></text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="height">0.3333333333333333in</property>
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="454">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">item</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="455">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">serialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="475">
+                            <property name="resultSetColumn">plusalfeventid</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="457">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="375">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="458">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">label</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="459">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">due</property>
+                        </data>
+                    </cell>
+                    <cell id="385">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="460">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">duecount</property>
+                        </data>
+                    </cell>
+                    <cell id="395">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="461">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">currentcount</property>
+                        </data>
+                    </cell>
+                    <cell id="405">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="463">
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.00</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">left</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="464">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">extrapolatelife</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <property name="height">0.23958333333333334in</property>
+                    <cell id="208">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

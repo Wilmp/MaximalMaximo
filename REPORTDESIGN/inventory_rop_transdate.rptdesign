@@ -1,0 +1,1447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <simple-property-list name="includeResource">
+        <value>inventory</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/inventory_rop_transdate.log");
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+var timeInMs = Date.now();
+
+attkey = "st-inventory_rop_" + params["appname"]+ "_"+ timeInMs;
+dskey = "ds-inventory_rop_" + params["appname"]+ "_"+ timeInMs;
+]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="storeroom" id="341">
+            <text-property name="promptText">Storeroom</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="site" id="342">
+            <text-property name="promptText">Site</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="343">
+            <text-property name="promptText">Start Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="714">
+            <text-property name="promptText">End Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">date</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="updatesafety" id="715">
+            <text-property name="promptText">Update Safety Stock</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">False</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">itemnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">orderunit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">minlevel</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">sstock</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">newsstock</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">newrop</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">costtype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ropvalueinc</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ropvaluedec</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ssvalueinc</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ssvaluedec</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">itemnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">orderunit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">minlevel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sstock</property>
+                </structure>
+                <structure>
+                    <property name="columnName">newsstock</property>
+                </structure>
+                <structure>
+                    <property name="columnName">newrop</property>
+                </structure>
+                <structure>
+                    <property name="columnName">costtype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ropvalueinc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ropvaluedec</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ssvalueinc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ssvaluedec</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">itemnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">orderunit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">minlevel</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">sstock</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">newsstock</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">newrop</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">costtype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ropvalueinc</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ropvaluedec</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ssvalueinc</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">ssvaluedec</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="afterClose"><![CDATA[//if(params["update"]== true){
+
+//myTxn = MXReportTxnProvider.create("maximoDataSource");
+//myStmt = myTxn.createStatement();
+//myStmt.setQuery("update inventory set sstock = " + sstock + " and minlevel = " + newlevel + ";" );
+//myStmt.setQuery("update inventory set sstock = 20" );
+//myTxn.save();
+//}]]></method>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var request = reportContext.getHttpServletRequest();
+if(request != null){
+	var session = request.getSession();
+	session.setAttribute(dskey, this.getDataSource().getName());
+}
+
+var mutDateSql = "1=1";
+var mrtDateSql = "1=1";
+
+params["paramdelimiter"] = "||";
+params["paramstring"] = attkey + params["paramdelimiter"] + dskey;
+
+var sqlText = new String();
+
+if((BirtComp.notEqual(params["storeroom"],null))&amp;&amp;(BirtComp.notEqual(params["storeroom"],''))) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.location", params["storeroom"].toUpperCase());
+}
+if((BirtComp.notEqual(params["site"],null))&amp;&amp;(BirtComp.notEqual(params["site"],''))) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.siteid", params["site"].toUpperCase());
+}
+
+if( BirtComp.notEqual(params["startdate"], null) &amp;&amp; BirtComp.notEqual(params["startdate"], "") ) {
+	if( BirtComp.notEqual(params["enddate"], null) &amp;&amp; BirtComp.notEqual(params["enddate"], "") ) {
+		mutDateSql = " matusetrans.transdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]) 
+		+ " and matusetrans.transdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+		
+		mrtDateSql = " matrectrans.transdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]) 
+		+ " and matrectrans.transdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+	} else {
+		mutDateSql = " matusetrans.transdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+		
+		mrtDateSql = " matrectrans.transdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+	}
+} else {
+	if( BirtComp.notEqual(params["enddate"], null) &amp;&amp; BirtComp.notEqual(params["enddate"], "") ) {
+		mutDateSql = " matusetrans.transdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+		
+		mrtDateSql = " matrectrans.transdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+	}
+}
+	
+sqlText = "select inventory.siteid, inventory.itemsetid, inventory.location, inventory.itemnum, "
++ " item.description, inventory.orderunit, inventory.costtype, inventory.minlevel, inventory.deliverytime, inventory.sstock, "
++ " ( "
++ " select coalesce(sum(matusetrans.quantity),0) as mut_qty "
++ " from matusetrans "
++ " where " + mutDateSql
++ " and matusetrans.issuetype in (select value from synonymdomain where domainid='ISSUETYP' and maxvalue='ISSUE') "
++ " and matusetrans.siteid = inventory.siteid "
++ " and matusetrans.itemnum = inventory.itemnum "
++ " and matusetrans.itemsetid = inventory.itemsetid "
++ " and matusetrans.storeloc = inventory.location "
++ " and matusetrans.quantity is not null "
++ " group by matusetrans.itemnum, matusetrans.siteid, matusetrans.itemsetid, matusetrans.storeloc "
++ " ) as mut_qty, "
++ " ( "
++ " select coalesce(sum(matrectrans.quantity),0) as mrt_qty " 
++ " from matrectrans "
++ " where " + mrtDateSql
++ " and matrectrans.issuetype in (select value from synonymdomain where domainid='ISSUETYP' and maxvalue='TRANSFER') "
++ " and matrectrans.siteid = inventory.siteid " 
++ " and matrectrans.itemnum = inventory.itemnum "
++ " and matrectrans.itemsetid = inventory.itemsetid "
++ " and matrectrans.tostoreloc = inventory.location "
++ " and matrectrans.quantity is not null "
++ " group by matrectrans.itemnum, matrectrans.siteid, matrectrans.itemsetid, matrectrans.tostoreloc "
++ " ) as mrt_qty "
++ " from item, inventory "
++ " where inventory.itemsetid=item.itemsetid "
++ " and inventory.itemnum=item.itemnum "
++ " and item.itemtype in (select value from synonymdomain where domainid='ITEMTYPE' and maxvalue='ITEM') "
++ " and inventory.status not in (select value from synonymdomain where domainid='ITEMSTATUS' and maxvalue='OBSOLETE') "
++ " and item.status not in (select value from synonymdomain where domainid='ITEMSTATUS' and maxvalue='OBSOLETE') "
++ " and inventory.minlevel >= 0 "
++ " and " + params["where"]
++ " order by inventory.siteid, inventory.location, inventory.itemnum "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+var siteid = maximoDataSet.getString("siteid");
+var itemsetid = maximoDataSet.getString("itemsetid");
+var location = maximoDataSet.getString("location");
+var itemnum = maximoDataSet.getString("itemnum");
+
+row["itemnum"] = maximoDataSet.getString("itemnum");
+row["description"] = maximoDataSet.getString("description");
+row["orderunit"] = maximoDataSet.getString("orderunit");
+row["minlevel"] = maximoDataSet.getString("minlevel");
+row["sstock"] = maximoDataSet.getString("sstock");
+row["costtype"] = maximoDataSet.getString("costtype");
+
+var matusetransTotal = maximoDataSet.getInteger("mut_qty");
+var matrectransTotal = maximoDataSet.getInteger("mrt_qty");
+var deliverytime = maximoDataSet.getDouble("deliverytime");
+
+//Caculations
+
+// Lead Time = Average Monthly Usage * (INVENTORY.DELIVERYTIME / Average Days In a Month)
+var avg_monthly_usage = Math.abs(matrectransTotal) + Math.abs(matusetransTotal); 
+var avg_days_in_month = 30.44;
+var leadtime = avg_monthly_usage * BirtMath.safeDivide(deliverytime, avg_days_in_month, 0);
+
+// Safety Stock = (2  *  (Standard Deviation of Lead time)  *   (1.6 * Square Root of ( Lead time / Average Days In a Month)
+var sstock = 2 * maximoDataSet.getDouble("deliverytime") * Math.pow( BirtMath.safeDivide(leadtime, avg_days_in_month, 0), (1/1.6) );
+
+// Recommended ROP Value = Lead Time + Safety Stock
+row["newrop"] = Math.ceil(leadtime + sstock);
+row["newsstock"] = Math.ceil(sstock);
+
+var diffInROP = row["newrop"] - row["minlevel"];
+var diffInSStock = row["newsstock"] - row["sstock"]; 
+
+if (diffInROP >= 0) {
+	row["ropvalueinc"] = Math.abs(diffInROP);
+} else {
+	row["ropvaluedec"] = Math.abs(diffInROP);
+}
+
+if (diffInSStock >= 0) {
+	row["ssvalueinc"] = Math.abs(diffInSStock);
+} else {
+	row["ssvaluedec"] = Math.abs(diffInSStock);
+}
+
+var request = reportContext.getHttpServletRequest();
+if( BirtComp.notEqual(request,null) ) {
+	var session = request.getSession();
+	var updStmtList = session.getAttribute(attkey);
+
+	if( BirtComp.equalTo(updStmtList,null) ){
+		updStmtList = new Array;
+	}
+	
+	var updateQuery = new String();
+	
+	var strSite = "";
+	var strItem = "";
+	var strItemset = "";
+	var strLocation = "";
+		
+	if( BirtComp.notEqual(maximoDataSet.getString("siteid"),null)) {
+		strSite = " = '" + maximoDataSet.getString("siteid") + "'";
+	} else {
+		strSite = " is null";
+	}
+		
+	if( BirtComp.notEqual(maximoDataSet.getString("itemnum"),null)) {
+		strItem = " = '" + maximoDataSet.getString("itemnum") + "'";
+	} else {
+		strItem = " is null";
+	}
+		
+	if( BirtComp.notEqual(maximoDataSet.getString("itemsetid"),null)) {
+		strItemset = " = '" + maximoDataSet.getString("itemsetid") + "'";
+	} else {
+		strItemset = " is null";
+	}
+	
+	if( BirtComp.notEqual(maximoDataSet.getString("location"),null)) {
+		strLocation = " = '" + maximoDataSet.getString("location") + "'";
+	} else {
+		strLocation = " is null";
+	}
+	
+	if (BirtComp.equalTo(params["updatesafety"],mxReportScriptContext.getDisplayYesValue())) {
+		updateQuery = "update inventory set minlevel=" + Math.ceil(leadtime + sstock)
+		+ ", sstock=" +  Math.ceil(sstock)
+		+ " where siteid " + strSite
+		+ " and itemsetid " + strItemset
+		+ " and location " + strLocation
+		+ " and itemnum " + strItem
+		;
+	} else {
+		updateQuery = "update inventory set minlevel=" + Math.ceil(leadtime + sstock)
+		+ " where siteid " + strSite
+		+ " and itemsetid " + strItemset
+		+ " and location " + strLocation
+		+ " and itemnum " + strItem
+		;
+	}
+	
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug("["+maximoDataSet.getName() + "] >>> updateQuery: " + updateQuery);
+	}
+	updStmtList.push(updateQuery);
+	
+	session.setAttribute(attkey, updStmtList);
+}
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">itemnum</property>
+                    <text-property name="displayName">itemnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">orderunit</property>
+                    <text-property name="displayName">orderunit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["orderunit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">minlevel</property>
+                    <text-property name="displayName">minlevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["minlevel"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">sstock</property>
+                    <text-property name="displayName">sstock</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["sstock"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">newsstock</property>
+                    <text-property name="displayName">newsstock</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["newsstock"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">newrop</property>
+                    <text-property name="displayName">newrop</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["newrop"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">costtype</property>
+                    <text-property name="displayName">costtype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costtype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ropvalueinc</property>
+                    <text-property name="displayName">ropvalueinc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ropvalueinc"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ropvaluedec</property>
+                    <text-property name="displayName">ropvaluedec</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ropvaluedec"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ssvalueinc</property>
+                    <text-property name="displayName">ssvalueinc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ssvalueinc"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">ssvaluedec</property>
+                    <text-property name="displayName">ssvaluedec</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ssvaluedec"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">totalropvalueinc</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["ropvalueinc"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">totalropvaluedec</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["ropvaluedec"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">totalsstockvalueinc</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["ssvalueinc"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">totalsstockvaluedec</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["ssvaluedec"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">row["totalropvalueinc"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_1</property>
+                    <expression name="expression" type="javascript">row["totalropvaluedec"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_2</property>
+                    <expression name="expression" type="javascript">row["totalsstockvalueinc"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_3</property>
+                    <expression name="expression" type="javascript">row["totalsstockvaluedec"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_4</property>
+                    <expression name="expression" type="javascript">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="79">
+                <property name="width">1.5in</property>
+            </column>
+            <column id="387">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="378">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="369">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="360">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="738">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="748">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="91">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="648">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="758">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="768">
+                <property name="width">0.8in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="344">
+                            <property name="marginTop">0pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="inventory_rop_transdate.reportdesign">Inventory ROP Transaction Date Analysis</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="marginTop">3pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1.5in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">3.5in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="719">
+                                <property name="width">1.5in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="723">
+                                <property name="width">3.5in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="storeroom_colon">Storeroom:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="726">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">storeroom</property>
+                                                <expression name="expression" type="javascript">params["storeroom"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">storeroom</property>
+                                    </data>
+                                </cell>
+                                <cell id="716">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="348">
+                                        <text-property name="text" key="startdate_colon">Start Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="720">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="351">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Long Date</property>
+                                            <property name="pattern">Long Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="site_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="350">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">site</property>
+                                                <expression name="expression">if (BirtComp.notEqual(params["site"],null)) {
+params["site"].replace(/[=!,]/,"")
+}</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">site</property>
+                                    </data>
+                                </cell>
+                                <cell id="717">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="724">
+                                        <text-property name="text" key="enddate_colon">End Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="721">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="725">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Long Date</property>
+                                            <property name="pattern">Long Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">enddate</property>
+                                                <expression name="expression" type="javascript">params["enddate"]</expression>
+                                                <property name="dataType">date</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">enddate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="345">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">!(params["startdate"].value)</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="346">
+                                    <label id="727">
+                                        <text-property name="text" key="updatesafetystock">Update Safety Stock?</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="347">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="728">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">updatesafety</property>
+                                                <expression name="expression" type="javascript">params["updatesafety"].value</expression>
+                                                <property name="dataType">string</property>
+                                                <property name="allowExport">true</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">updatesafety</property>
+                                    </data>
+                                </cell>
+                                <cell id="718">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                                <cell id="722">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="712">
+                    <property name="height">0.08in</property>
+                    <cell id="713">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="751"/>
+                    <cell id="761"/>
+                </row>
+                <row id="685">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="686">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="544">
+                            <text-property name="text" key="item">Item</text-property>
+                        </label>
+                    </cell>
+                    <cell id="687">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="546">
+                            <text-property name="text" key="description">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="688">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="550">
+                            <text-property name="text" key="costtype">Cost Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="689">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="548">
+                            <text-property name="text" key="orderunit">Order Unit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="690">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="552">
+                            <text-property name="text" key="previousropvalue">Previous ROP Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="691">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="554">
+                            <text-property name="text" key="recommendedropvalue">Recommended ROP Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="732">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="769">
+                            <text-property name="text" key="ropvalueinc">ROP Value Increase</text-property>
+                        </label>
+                    </cell>
+                    <cell id="742">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="770">
+                            <text-property name="text" key="ropvaluedec">ROP Value Decrease</text-property>
+                        </label>
+                    </cell>
+                    <cell id="692">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="556">
+                            <text-property name="text" key="oldsafetystock">Old Safety Stock Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="693">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="558">
+                            <text-property name="text" key="recommendedsafetystock">Recommended Safety Stock Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="752">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="771">
+                            <text-property name="text" key="ssvalueinc">Safety Stock Value Increase</text-property>
+                        </label>
+                    </cell>
+                    <cell id="762">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="772">
+                            <text-property name="text" key="ssvaluedec">Safety Stock Value Decrease</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                    <cell id="753"/>
+                    <cell id="763"/>
+                </row>
+            </header>
+            <detail>
+                <row id="658">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="659">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="562">
+                            <property name="resultSetColumn">itemnum</property>
+                        </data>
+                    </cell>
+                    <cell id="660">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="564">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="661">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="789">
+                            <property name="resultSetColumn">costtype</property>
+                        </data>
+                    </cell>
+                    <cell id="662">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="566">
+                            <property name="resultSetColumn">orderunit</property>
+                        </data>
+                    </cell>
+                    <cell id="663">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="570">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">minlevel</property>
+                        </data>
+                    </cell>
+                    <cell id="664">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="572">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">newrop</property>
+                        </data>
+                    </cell>
+                    <cell id="734">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="790">
+                            <property name="resultSetColumn">ropvalueinc</property>
+                        </data>
+                    </cell>
+                    <cell id="744">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="791">
+                            <property name="resultSetColumn">ropvaluedec</property>
+                        </data>
+                    </cell>
+                    <cell id="665">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="574">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">sstock</property>
+                        </data>
+                    </cell>
+                    <cell id="666">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="576">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">newsstock</property>
+                        </data>
+                    </cell>
+                    <cell id="754">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="792">
+                            <property name="resultSetColumn">ssvalueinc</property>
+                        </data>
+                    </cell>
+                    <cell id="764">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="793">
+                            <property name="resultSetColumn">ssvaluedec</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.24in</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <cell id="82">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <grid id="618">
+                            <property name="marginTop">1pt</property>
+                            <property name="marginBottom">1pt</property>
+                            <property name="width">100%</property>
+                            <column id="619">
+                                <property name="width">9.7in</property>
+                                <property name="style">tabledetailslabel</property>
+                                <property name="textAlign">right</property>
+                            </column>
+                            <column id="620">
+                                <property name="width">0.3in</property>
+                                <property name="style">summarydata</property>
+                                <property name="textAlign">right</property>
+                            </column>
+                            <row id="621">
+                                <cell id="622">
+                                    <label id="785">
+                                        <text-property name="text" key="totalrecropvalueinc">Total Recommended ROP Value Increase:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="624">
+                                    <data id="794">
+                                        <property name="resultSetColumn">Column Binding</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="773">
+                                <cell id="774">
+                                    <label id="786">
+                                        <text-property name="text" key="totalrecropvaluedec">Total Recommended ROP Value Decrease:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="775">
+                                    <data id="795">
+                                        <property name="resultSetColumn">Column Binding_1</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="776">
+                                <cell id="777">
+                                    <label id="787">
+                                        <text-property name="text" key="totalrecssvalueinc">Total Recommended Safety Stock Value Increase:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="778">
+                                    <data id="796">
+                                        <property name="resultSetColumn">Column Binding_2</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="779">
+                                <cell id="780">
+                                    <label id="788">
+                                        <text-property name="text" key="totalrecssvaluedec">Total Recommended Safety Stock Value Decrease:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="781">
+                                    <data id="797">
+                                        <property name="resultSetColumn">Column Binding_3</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="782">
+                                <cell id="783">
+                                    <label id="623">
+                                        <text-property name="text" key="totalcountofrecords_colon">Total Count of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="784">
+                                    <data id="798">
+                                        <property name="resultSetColumn">Column Binding_4</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="694">
+                    <property name="height">0.08in</property>
+                    <cell id="695">
+                        <property name="colSpan">10</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="756">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="766">
+                        <property name="textAlign">left</property>
+                    </cell>
+                </row>
+                <row id="838">
+                    <property name="height">0.12in</property>
+                    <property name="style">summarylabel</property>
+                    <cell id="839">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <label id="948">
+                            <property name="pageBreakBefore">always</property>
+                            <text-property name="text" key="sstock_yes_msg">If you set the Update Safety Stock parameter value to YES, clicking the hyperlink below will update both the ROP and Safety Stock Values. </text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="825">
+                    <property name="height">0.12in</property>
+                    <property name="style">summarylabel</property>
+                    <cell id="826">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <label id="949">
+                            <text-property name="text" key="sstock_no_msg">If you set the Update Safety Stock parameter value to NO, clicking the hyperlink below will update only the ROP Values.</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="851">
+                    <property name="height">0.12in</property>
+                    <cell id="852">
+                        <property name="textAlign">left</property>
+                        <label id="952"/>
+                    </cell>
+                    <cell id="853">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="854">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="855">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="856">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="857">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="858">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="859">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="860">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="861">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="862">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="863">
+                        <property name="textAlign">left</property>
+                    </cell>
+                </row>
+                <row id="812">
+                    <property name="height">0.12in</property>
+                    <property name="style">summarylabel</property>
+                    <cell id="813">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <label id="951">
+                            <text-property name="text" key="sstock_cancel_msg">To cancel these actions, close this browser and do not click the Hyperlink below.</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="799">
+                    <property name="height">0.12in</property>
+                    <cell id="800">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="801">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="802">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="803">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="804">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="805">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="806">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="807">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="808">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="809">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="810">
+                        <property name="textAlign">left</property>
+                    </cell>
+                    <cell id="811">
+                        <property name="textAlign">left</property>
+                    </cell>
+                </row>
+                <row id="676">
+                    <property name="height">0.12in</property>
+                    <property name="style">summarylabel</property>
+                    <cell id="677">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <label id="428">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <text-property name="text" key="updaterop">Click To Update Database With New Values</text-property>
+                            <list-property name="action">
+                                <structure>
+                                    <property name="formatType">html</property>
+                                    <property name="linkType">drill-through</property>
+                                    <property name="reportName">inventory_rop_transdate_update.rptdesign</property>
+                                    <property name="targetWindow">_self</property>
+                                    <property name="targetFileType">report-design</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">where</property>
+                                            <simple-property-list name="expression">
+                                                <value>" 1 = 1 "</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">appname</property>
+                                            <simple-property-list name="expression">
+                                                <value>"INVENTOR"</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">paramdelimiter</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["paramdelimiter"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">paramstring</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["paramstring"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">site</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["site"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">startdate</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["startdate"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">enddate</property>
+                                            <simple-property-list name="expression">
+                                                <value type="javascript">params["enddate"].value</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">storeroom</property>
+                                            <simple-property-list name="expression">
+                                                <value type="javascript">params["storeroom"].value</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">updatesafety</property>
+                                            <simple-property-list name="expression">
+                                                <value type="javascript">params["updatesafety"].value</value>
+                                            </simple-property-list>
+                                        </structure>
+                                    </list-property>
+                                </structure>
+                            </list-property>
+                        </label>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

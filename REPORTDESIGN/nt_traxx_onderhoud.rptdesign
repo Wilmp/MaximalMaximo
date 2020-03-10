@@ -1,0 +1,2675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_traxx_onderhoud.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ancestor" id="1641">
+            <text-property name="promptText">Top WO</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">topwo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">wo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">bovenliggendewo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">typewerk</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">isTaak</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">taak</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">beschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">taakplan</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">taakplanOmschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">werktijd</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">arbeid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">naam</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">typeArbeid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">goedgekeurd</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">startdatum</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">normaleUren</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">checklijst</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">checklijstType</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">checklijkstOmschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">rijtuig</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">materieelserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">werklocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">locatieomschr</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">reparatielocatie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">gereedGemeldDoor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">werkelijkeinde</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">checklijstCT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">checklijstTypeCT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">checklijkstOmschrijvingCT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">taaktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">inspectietype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">volgorde</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">34</property>
+                    <property name="name">hfdst</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">35</property>
+                    <property name="name">taakbeschrijving</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">36</property>
+                    <property name="name">OK</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">37</property>
+                    <property name="name">NOK</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">38</property>
+                    <property name="name">waardeVerplicht</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">39</property>
+                    <property name="name">waarde</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">40</property>
+                    <property name="name">eenheid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">41</property>
+                    <property name="name">diagnoseAfhandelcode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">42</property>
+                    <property name="name">taakplanCT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">43</property>
+                    <property name="name">storingstekst</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">44</property>
+                    <property name="name">MBNurgentie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">45</property>
+                    <property name="name">vervolgprioriteit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">46</property>
+                    <property name="name">vervolgwo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">47</property>
+                    <property name="name">vervolgwoomschr</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">48</property>
+                    <property name="name">analyse</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">49</property>
+                    <property name="name">diagnose</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">50</property>
+                    <property name="name">herstelling</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">topwo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">bovenliggendewo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">typewerk</property>
+                </structure>
+                <structure>
+                    <property name="columnName">isTaak</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taak</property>
+                </structure>
+                <structure>
+                    <property name="columnName">beschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taakplan</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taakplanOmschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">werktijd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">arbeid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">naam</property>
+                </structure>
+                <structure>
+                    <property name="columnName">typeArbeid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">goedgekeurd</property>
+                </structure>
+                <structure>
+                    <property name="columnName">startdatum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">normaleUren</property>
+                </structure>
+                <structure>
+                    <property name="columnName">checklijst</property>
+                </structure>
+                <structure>
+                    <property name="columnName">checklijstType</property>
+                </structure>
+                <structure>
+                    <property name="columnName">checklijkstOmschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">rijtuig</property>
+                </structure>
+                <structure>
+                    <property name="columnName">materieelserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">werklocatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locatieomschr</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reparatielocatie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">gereedGemeldDoor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">werkelijkeinde</property>
+                </structure>
+                <structure>
+                    <property name="columnName">checklijstCT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">checklijstTypeCT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">checklijkstOmschrijvingCT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taaktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">inspectietype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">volgorde</property>
+                </structure>
+                <structure>
+                    <property name="columnName">hfdst</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taakbeschrijving</property>
+                </structure>
+                <structure>
+                    <property name="columnName">OK</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NOK</property>
+                </structure>
+                <structure>
+                    <property name="columnName">waardeVerplicht</property>
+                </structure>
+                <structure>
+                    <property name="columnName">waarde</property>
+                </structure>
+                <structure>
+                    <property name="columnName">eenheid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">diagnoseAfhandelcode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taakplanCT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">storingstekst</property>
+                </structure>
+                <structure>
+                    <property name="columnName">MBNurgentie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vervolgprioriteit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vervolgwo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vervolgwoomschr</property>
+                </structure>
+                <structure>
+                    <property name="columnName">analyse</property>
+                </structure>
+                <structure>
+                    <property name="columnName">diagnose</property>
+                </structure>
+                <structure>
+                    <property name="columnName">herstelling</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">topwo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">wo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">bovenliggendewo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">typewerk</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">isTaak</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">taak</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">beschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">taakplan</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">taakplanOmschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">werktijd</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">arbeid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">naam</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">typeArbeid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">goedgekeurd</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">startdatum</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">normaleUren</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">checklijst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">checklijstType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">checklijkstOmschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">rijtuig</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">materieelserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">werklocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">locatieomschr</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">reparatielocatie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">gereedGemeldDoor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">werkelijkeinde</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">checklijstCT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">checklijstTypeCT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">checklijkstOmschrijvingCT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">taaktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">inspectietype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">volgorde</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">34</property>
+                        <property name="name">hfdst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">35</property>
+                        <property name="name">taakbeschrijving</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">36</property>
+                        <property name="name">OK</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">37</property>
+                        <property name="name">NOK</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">38</property>
+                        <property name="name">waardeVerplicht</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">39</property>
+                        <property name="name">waarde</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">40</property>
+                        <property name="name">eenheid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">41</property>
+                        <property name="name">diagnoseAfhandelcode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">42</property>
+                        <property name="name">taakplanCT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">43</property>
+                        <property name="name">storingstekst</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">44</property>
+                        <property name="name">MBNurgentie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">45</property>
+                        <property name="name">vervolgprioriteit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">46</property>
+                        <property name="name">vervolgwo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">47</property>
+                        <property name="name">vervolgwoomschr</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">48</property>
+                        <property name="name">analyse</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">49</property>
+                        <property name="name">diagnose</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">50</property>
+                        <property name="name">herstelling</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// RYZ 21022019: S80.1239 Nieuw rapport; Traxx onderhoud 
+// RYZ 29032019: S82.1371 Vervolg aanpassingen layout rapport 
+// RYZ 18042019: S82.1444 Vervolg aanpassingen 
+// RYZ 06052019: S84.1474 Dubbele regels niet meer tonen door MAX(STARTTIME) te gebruiken
+// IJI 29072019: S88.1874 Rapport "onderhoud Traxx" toont te veel informatie
+// IJI 30072019: S88.1875 Uitbreiden parameter rapport "Traxx onderhoud"
+
+var sqlText = new String();
+// var finishDate  = " and   workorder.ACTFINISH > (sysdate -" + params["dagen"] + ")"
+var TopWO = new String();
+
+if(params["ancestor"].value) 
+{
+    TopWO +=   MXReportSqlFormat.createParamWhereClause("woancestor.ancestor", params["ancestor"] );
+}
+
+// Add query to sqlText variable.
+sqlText = " "
++ " SELECT "
++ "   woancestor.ANCESTOR              AS topwo, "
++ "   workorder.WONUM                  AS wo, "
++ "   workorder.PARENT                 AS bovenliggendewo, "
++ "   workorder.WORKTYPE               AS typewerk, "
++ "   workorder.ISTASK                 AS isTaak, "
++ "   workorder.TASKID                 AS taak, "
++ "   workorder.DESCRIPTION            AS beschrijving, "
++ "   workorder.JPNUM                  AS taakplan, "
++ "   jobplan.DESCRIPTION              AS taakplanOmschrijving, "
++ "   workorder.ESTDUR                 AS werktijd, "
++ "   labtrans.LABORCODE               AS arbeid, "
++ "   person.DISPLAYNAME               AS naam, "
++ "   labor.NTRESOURCETYPE             AS typeArbeid, "
++ "   labtrans.GENAPPRSERVRECEIPT      AS goedgekeurd, "
++ "   labtrans.STARTDATE               AS startdatum, "
++ "   labtrans.REGULARHRS              AS normaleUren, "
++ "   workorder.NTCLNUM                AS checklijst, "
++ "   ntclmaster.NTTYPE                AS checklijstType, "
++ "   ntclmaster.DESCRIPTION           AS checklijkstOmschrijving, "
++ "   asset.SERIALNUM                  AS rijtuig, "
++ "   workorder.NTSERIE                AS materieelserie, "
++ "   workorder.WORKLOCATION           AS werklocatie, "
++ "   locations.description            AS locatieomschr, "
+//+ "   workorder.REPAIRFACILITY         AS reparatielocatie, "
++ "   workorder.STATUS                 AS status, "
++ "   changedby.DISPLAYNAME            AS gereedGemeldDoor, "
++ "   workorder.ACTFINISH              AS werkelijkeinde, "
++ "   ntchecklisttask.CLNUM            AS checklijstCT, "
+// + "   ntclmaster.NTTYPE                AS checklijstTypeCT, "
++ "   ntclmaster.DESCRIPTION           AS checklijkstOmschrijvingCT, "
++ "   ntchecklisttask.NTTASKTYPE       AS taaktype, "
+// + "   ntchecklisttask.NTCHECKTYPE      AS inspectietype, "
++ "   ntchecklisttask.SEQUENCE         AS volgorde, "
++ "   ntchecklisttask.NTCHAPTERNUM     AS hfdst, "
++ "   ntchecklisttask.DESCRIPTION      AS taakbeschrijving, "
++ "   ntchecklisttask.checked          AS OK, "
++ "   ntchecklisttask.defect           AS NOK, "
++ "   ntchecklisttask.NTVALUEREQ       AS waardeVerplicht, "
++ "   ntchecklisttask.NTVALUE          AS waarde, "
++ "   ntchecklisttask.NTUNIT           AS eenheid, "
+// + "   ntchecklisttask.NTDIAGCODE       AS diagnoseAfhandelcode, "
+// + "   ntchecklisttask.JPNUM            AS taakplanCT, "
+// + "   ntchecklisttask.NTPREDEFINEDTEXT AS storingstekst, "
+// + "   ntchecklisttask.NTMBNURGENTIE    AS MBNurgentie, "
+// + "   ntchecklisttask.NTCLPRIORITY     AS vervolgprioriteit "
++ "   ntchecklisttask.FOLLOWUPREFWO    AS vervolgwo, "
++ "  (select workorder.description from workorder where ntchecklisttask.FOLLOWUPREFWO=workorder.wonum) as vervolgwoomschr, "
++ "  (select workorder.WOEQ2 from workorder where ntchecklisttask.FOLLOWUPREFWO=workorder.wonum) as analyse, "
++ "  (select workorder.WOEQ3 from workorder where ntchecklisttask.FOLLOWUPREFWO=workorder.wonum) as diagnose, "
++ "  (select workorder.WOEQ8 from workorder where ntchecklisttask.FOLLOWUPREFWO=workorder.wonum) as herstelling "
+//+ " WORKORDER.WOEQ2 as analyse, "
+//+ " WORKORDER.WOEQ3 as diagnose, "
+//+ " WORKORDER.WOEQ8 as herstelling "
++ " FROM workorder "
++ " LEFT OUTER JOIN locations on workorder.worklocation=locations.location "
++ " LEFT OUTER JOIN woancestor ON woancestor.WONUM = workorder.WONUM AND woancestor.ORGID = workorder.ORGID AND woancestor.SITEID = workorder.SITEID "
++ " LEFT OUTER JOIN asset ON asset.ASSETNUM = workorder.ASSETNUM AND asset.SITEID = workorder.SITEID "
++ " LEFT OUTER JOIN ntchecklisttask on ntchecklisttask.REFWO = workorder.WONUM "
++ " LEFT OUTER JOIN ntclmaster ON ntclmaster.CLNUM = workorder.NTCLNUM "
++ " LEFT OUTER JOIN jobplan ON jobplan.JPNUM = workorder.JPNUM AND jobplan.STATUS IN (SELECT synonymdomain.VALUE FROM synonymdomain WHERE synonymdomain.DOMAINID = 'JOBPLANSTATUS' AND synonymdomain.MAXVALUE = 'ACTIVE') "
++ " LEFT OUTER JOIN labtrans ON labtrans.REFWO = workorder.WONUM AND labtrans.SITEID = workorder.SITEID and labtrans.starttime in (select MAX(STARTTIME) from labtrans where labtrans.REFWO = workorder.WONUM AND labtrans.SITEID = workorder.SITEID)"
+// + " LEFT OUTER JOIN labtrans ON labtrans.REFWO = workorder.WONUM AND labtrans.SITEID = workorder.SITEID "
++ " LEFT OUTER JOIN labor ON labor.LABORCODE = labtrans.LABORCODE AND labor.ORGID = labtrans.ORGID "
++ " LEFT OUTER JOIN person ON person.PERSONID = labor.PERSONID "
++ " LEFT OUTER JOIN wostatus ON wostatus.WONUM = workorder.WONUM AND wostatus.STATUS IN (SELECT synonymdomain.VALUE FROM synonymdomain WHERE synonymdomain.DOMAINID = 'WOSTATUS' AND synonymdomain.MAXVALUE   = 'COMP') "
++ " LEFT OUTER JOIN person changedby ON changedby.PERSONID = wostatus.CHANGEBY "
+// WHERE woancestor.ANCESTOR = 'M109670208'
++ " where " + TopWO
+// + finishDate 
++ " and WORKTYPE not in ('QC') "
++ " and workorder.WORKLOCATION ='773000' "
++ " ORDER BY bovenliggendewo DESC, wo, volgorde "
+// + " order by workorder.parent desc, workorder.wonum "
+
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["topwo"] = maximoDataSet.getString("topwo");
+row["wo"] = maximoDataSet.getString("wo");
+row["bovenliggendewo"] = maximoDataSet.getString("bovenliggendewo");	
+row["typewerk"] = maximoDataSet.getString("typewerk");
+row["isTaak"] = maximoDataSet.getString("isTaak");	
+row["taak"] = maximoDataSet.getString("taak");
+row["beschrijving"] = maximoDataSet.getString("beschrijving");	
+row["taakplan"] = maximoDataSet.getString("taakplan");
+row["taakplanOmschrijving"] = maximoDataSet.getString("taakplanOmschrijving");
+row["werktijd"] = maximoDataSet.getDuration("werktijd");
+row["arbeid"] = maximoDataSet.getString("arbeid");
+row["naam"] = maximoDataSet.getString("naam");
+row["typeArbeid"] = maximoDataSet.getString("typeArbeid");
+row["goedgekeurd"] = maximoDataSet.getString("goedgekeurd");
+row["startdatum"] = maximoDataSet.getTimestamp("startdatum");
+row["normaleUren"] = maximoDataSet.getDuration("normaleUren");
+row["checklijst"] = maximoDataSet.getString("checklijst");
+row["checklijstType"] = maximoDataSet.getString("checklijstType");
+row["checklijkstOmschrijving"] = maximoDataSet.getString("checklijkstOmschrijving");
+row["rijtuig"] = maximoDataSet.getString("rijtuig");
+row["materieelserie"] = maximoDataSet.getString("materieelserie");
+row["werklocatie"] = maximoDataSet.getString("werklocatie");
+row["locatieomschr"] = maximoDataSet.getString("locatieomschr");
+//row["reparatielocatie"] = maximoDataSet.getString("reparatielocatie");	
+row["status"] = maximoDataSet.getString("status");
+row["gereedGemeldDoor"] = maximoDataSet.getString("gereedGemeldDoor");	
+row["werkelijkeinde"] = maximoDataSet.getTimestamp("werkelijkeinde");
+row["checklijstCT"] = maximoDataSet.getString("checklijstCT");	
+//row["checklijstTypeCT"] = maximoDataSet.getString("checklijstTypeCT");	
+row["checklijkstOmschrijvingCT"] = maximoDataSet.getString("checklijkstOmschrijvingCT");	
+row["taaktype"] = maximoDataSet.getString("taaktype");	
+// row["inspectietype"] = maximoDataSet.getString("inspectietype");	
+row["volgorde"] = maximoDataSet.getString("volgorde");	
+row["hfdst"] = maximoDataSet.getString("hfdst");	
+row["taakbeschrijving"] = maximoDataSet.getString("taakbeschrijving");
+row["OK"] = maximoDataSet.getString("OK");
+row["NOK"] = maximoDataSet.getString("NOK");	
+row["waardeVerplicht"] = maximoDataSet.getString("waardeVerplicht");
+row["waarde"] = maximoDataSet.getString("waarde");	
+row["eenheid"] = maximoDataSet.getString("eenheid");	
+// row["diagnoseAfhandelcode"] = maximoDataSet.getString("diagnoseAfhandelcode");	
+// row["taakplanCT"] = maximoDataSet.getString("taakplanCT");	
+// row["storingstekst"] = maximoDataSet.getString("storingstekst");	
+// row["MBNurgentie"] = maximoDataSet.getString("MBNurgentie");	
+// row["vervolgprioriteit"] = maximoDataSet.getString("vervolgprioriteit");
+row["vervolgwo"] = maximoDataSet.getString("vervolgwo");
+row["vervolgwoomschr"] = maximoDataSet.getString("vervolgwoomschr");
+row["analyse"] = maximoDataSet.getString("analyse");
+row["diagnose"] = maximoDataSet.getString("diagnose");
+row["herstelling"] = maximoDataSet.getString("herstelling");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="type">a3</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="TopWo" id="2870">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">topwo</property>
+                    <text-property name="displayName">topwo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["topwo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">typewerk</property>
+                    <text-property name="displayName">typewerk</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["typewerk"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">beschrijving</property>
+                    <text-property name="displayName">beschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["beschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">rijtuig</property>
+                    <text-property name="displayName">rijtuig</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["rijtuig"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">materieelserie</property>
+                    <text-property name="displayName">materieelserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["materieelserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werklocatie</property>
+                    <text-property name="displayName">werklocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werklocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reparatielocatie</property>
+                    <text-property name="displayName">reparatielocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reparatielocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werkelijkeinde</property>
+                    <text-property name="displayName">werkelijkeinde</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werkelijkeinde"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">bovenliggendewo</property>
+                    <text-property name="displayName">bovenliggendewo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["bovenliggendewo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locatieomschr</property>
+                    <text-property name="displayName">locatieomschr</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locatieomschr"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="2901"/>
+            <column id="2902"/>
+            <column id="2903"/>
+            <column id="2904"/>
+            <column id="2905"/>
+            <column id="2906"/>
+            <column id="2908"/>
+            <column id="2946">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="2909"/>
+            <header>
+                <row id="2920">
+                    <cell id="2921">
+                        <property name="colSpan">9</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <label id="1640">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <text-property name="text">nt_traxx_onderhoud v20190506</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2910">
+                    <cell id="2911">
+                        <property name="colSpan">9</property>
+                        <property name="rowSpan">1</property>
+                        <label id="345">
+                            <property name="fontSize">200%</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Traxx onderhoud</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2871">
+                    <property name="fontSize">x-small</property>
+                    <property name="textAlign">left</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["bovenliggendewo"]!=null</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2872">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="96">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Top WO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2873">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="2933">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Type Werk</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2874">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="2934">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2875">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1684">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Rijtuig/loc</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2876">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1685">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Materieelserie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2877">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1686">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werklocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2879">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1803">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Status</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2943">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="2880">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1689">
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkelijk einde</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="2881">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["bovenliggendewo"]!=null</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2882">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2930">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">topwo</property>
+                        </data>
+                    </cell>
+                    <cell id="2883">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2931">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">typewerk</property>
+                        </data>
+                    </cell>
+                    <cell id="2884">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2932">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">beschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="2885">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2935">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">rijtuig</property>
+                        </data>
+                    </cell>
+                    <cell id="2886">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2936">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">materieelserie</property>
+                        </data>
+                    </cell>
+                    <cell id="2887">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2972">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">locatieomschr</property>
+                        </data>
+                    </cell>
+                    <cell id="2889">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2939">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="2944">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2947">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">bovenliggendewo</property>
+                        </data>
+                    </cell>
+                    <cell id="2890">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2940">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yy HH:mm:ss</property>
+                            </structure>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">werkelijkeinde</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="2891">
+                    <cell id="2892"/>
+                    <cell id="2893"/>
+                    <cell id="2894"/>
+                    <cell id="2895"/>
+                    <cell id="2896"/>
+                    <cell id="2897"/>
+                    <cell id="2899"/>
+                    <cell id="2945"/>
+                    <cell id="2900"/>
+                </row>
+            </footer>
+        </table>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">topwo</property>
+                    <text-property name="displayName">topwo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["topwo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wo</property>
+                    <text-property name="displayName">wo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wo"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">bovenliggendewo</property>
+                    <text-property name="displayName">bovenliggendewo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["bovenliggendewo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">typewerk</property>
+                    <text-property name="displayName">typewerk</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["typewerk"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">beschrijving</property>
+                    <text-property name="displayName">beschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["beschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">rijtuig</property>
+                    <text-property name="displayName">rijtuig</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["rijtuig"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">materieelserie</property>
+                    <text-property name="displayName">materieelserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["materieelserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werklocatie</property>
+                    <text-property name="displayName">werklocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werklocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">reparatielocatie</property>
+                    <text-property name="displayName">reparatielocatie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["reparatielocatie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werkelijkeinde</property>
+                    <text-property name="displayName">werkelijkeinde</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werkelijkeinde"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">isTaak</property>
+                    <text-property name="displayName">isTaak</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["isTaak"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taak</property>
+                    <text-property name="displayName">taak</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taak"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">werktijd</property>
+                    <text-property name="displayName">werktijd</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["werktijd"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">arbeid</property>
+                    <text-property name="displayName">arbeid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["arbeid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">naam</property>
+                    <text-property name="displayName">naam</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["naam"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">typeArbeid</property>
+                    <text-property name="displayName">typeArbeid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["typeArbeid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">goedgekeurd</property>
+                    <text-property name="displayName">goedgekeurd</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["goedgekeurd"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">startdatum</property>
+                    <text-property name="displayName">startdatum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["startdatum"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">normaleUren</property>
+                    <text-property name="displayName">normaleUren</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["normaleUren"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">checklijstTypeCT</property>
+                    <text-property name="displayName">checklijstTypeCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijstTypeCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">checklijstCT</property>
+                    <text-property name="displayName">checklijstCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijstCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">checklijkstOmschrijvingCT</property>
+                    <text-property name="displayName">checklijkstOmschrijvingCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijkstOmschrijvingCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taakplan</property>
+                    <text-property name="displayName">taakplan</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taakplan"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">locatieomschr</property>
+                    <text-property name="displayName">locatieomschr</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["locatieomschr"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="1648"/>
+            <column id="1655"/>
+            <column id="1662"/>
+            <column id="1832"/>
+            <column id="1841"/>
+            <column id="1889">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="18"/>
+            <header>
+                <row id="166">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="167">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">8.875in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text">Parameter 1:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="1860">
+                                        <property name="resultSetColumn">topwo</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="1861">
+                                        <property name="resultSetColumn">typewerk</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="2208">
+                <property name="groupName">TopWO</property>
+                <expression name="keyExpr" type="javascript">row["wo"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["wo"]</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="2209">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["isTaak"]==1||row["bovenliggendewo"]==null</expression>
+                            </structure>
+                        </list-property>
+                        <cell id="2210">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1804">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">WO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2211">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1806">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Bovenliggende WO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2212">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1807">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Top-WO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2213">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1808">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Type werk</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2214">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1810">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Beschrijving</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2215">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1842">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Rijtuig/loc</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2216">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1843">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Materieelserie</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2217">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1844">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Werklocatie</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2218">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1846">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Status</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2219">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1847">
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <text-property name="text">Werkelijk einde</text-property>
+                            </label>
+                        </cell>
+                        <cell id="2220">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                        </cell>
+                        <cell id="2221">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">dotted</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="2222">
+                        <cell id="2223"/>
+                        <cell id="2224"/>
+                        <cell id="2225"/>
+                        <cell id="2226"/>
+                        <cell id="2227"/>
+                        <cell id="2228"/>
+                        <cell id="2229"/>
+                        <cell id="2230"/>
+                        <cell id="2231"/>
+                        <cell id="2232"/>
+                        <cell id="2233"/>
+                        <cell id="2234"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="2273">
+                    <property name="style">tabledetailsdatarow</property>
+                    <property name="textAlign">left</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["isTaak"]==1||row["bovenliggendewo"]==null</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2274">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2235">
+                            <property name="resultSetColumn">wo</property>
+                        </data>
+                    </cell>
+                    <cell id="2275">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2236">
+                            <property name="resultSetColumn">bovenliggendewo</property>
+                        </data>
+                    </cell>
+                    <cell id="2276">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2237">
+                            <property name="resultSetColumn">topwo</property>
+                        </data>
+                    </cell>
+                    <cell id="2277">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2238">
+                            <property name="resultSetColumn">typewerk</property>
+                        </data>
+                    </cell>
+                    <cell id="2278">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2239">
+                            <property name="resultSetColumn">beschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="2279">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2240">
+                            <property name="resultSetColumn">rijtuig</property>
+                        </data>
+                    </cell>
+                    <cell id="2280">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2241">
+                            <property name="resultSetColumn">materieelserie</property>
+                        </data>
+                    </cell>
+                    <cell id="2281">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2973">
+                            <property name="resultSetColumn">locatieomschr</property>
+                        </data>
+                    </cell>
+                    <cell id="2282">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2244">
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="2283">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2245">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yy HH:mm:ss</property>
+                            </structure>
+                            <property name="resultSetColumn">werkelijkeinde</property>
+                        </data>
+                    </cell>
+                    <cell id="2284">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2246">
+                            <property name="resultSetColumn">isTaak</property>
+                        </data>
+                    </cell>
+                    <cell id="2285">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+                <row id="2525">
+                    <property name="style">tabledetailsdatarow</property>
+                    <property name="textAlign">left</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["isTaak"]==0||row["bovenliggendewo"]==null||row["checklijstCT"]!=null||row["status"]=='ANNUL'</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2526">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="2527">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2551">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taak </text-property>
+                        </label>
+                    </cell>
+                    <cell id="2528">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2552">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Samenvatting</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2529">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2553">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werktijd</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2530">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2554">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werklocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2531">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2555">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Resource</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2532">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2556">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Naam</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2533">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2557">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Resource Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2534">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2558">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Goedgekeurd</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2535">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2559">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Start Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2536">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="2537">
+                        <property name="style">tabledetailsdatacell</property>
+                        <label id="2560">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Normale uren</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2538">
+                    <property name="style">tabledetailsdatarow</property>
+                    <property name="textAlign">left</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["isTaak"]==0||row["bovenliggendewo"]==null||row["checklijstCT"]!=null||row["status"]=='ANNUL'</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2539">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="2540">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2561">
+                            <property name="resultSetColumn">taak</property>
+                        </data>
+                    </cell>
+                    <cell id="2541">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2562">
+                            <property name="resultSetColumn">beschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="2542">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2563">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <structure name="numberFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="resultSetColumn">werktijd</property>
+                        </data>
+                    </cell>
+                    <cell id="2543">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2564">
+                            <property name="resultSetColumn">werklocatie</property>
+                        </data>
+                    </cell>
+                    <cell id="2544">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2565">
+                            <property name="resultSetColumn">arbeid</property>
+                        </data>
+                    </cell>
+                    <cell id="2545">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2566">
+                            <property name="resultSetColumn">naam</property>
+                        </data>
+                    </cell>
+                    <cell id="2546">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2567">
+                            <property name="resultSetColumn">typeArbeid</property>
+                        </data>
+                    </cell>
+                    <cell id="2547">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2568">
+                            <property name="resultSetColumn">goedgekeurd</property>
+                        </data>
+                    </cell>
+                    <cell id="2548">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2569">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM-yy HH:mm:ss</property>
+                            </structure>
+                            <property name="resultSetColumn">startdatum</property>
+                        </data>
+                    </cell>
+                    <cell id="2549">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2611">
+                            <property name="resultSetColumn">isTaak</property>
+                        </data>
+                        <data id="2995">
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                        <data id="2613">
+                            <property name="resultSetColumn">taakplan</property>
+                        </data>
+                    </cell>
+                    <cell id="2550">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="2570">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Time</property>
+                                <property name="pattern">Short Time</property>
+                            </structure>
+                            <property name="resultSetColumn">normaleUren</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="207">
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">true</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="208">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+        <table name="CL" id="2614">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">checklijstCT</property>
+                    <text-property name="displayName">checklijstCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijstCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">checklijstTypeCT</property>
+                    <text-property name="displayName">checklijstTypeCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijstTypeCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">checklijkstOmschrijvingCT</property>
+                    <text-property name="displayName">checklijkstOmschrijvingCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["checklijkstOmschrijvingCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taaktype</property>
+                    <text-property name="displayName">taaktype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taaktype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">inspectietype</property>
+                    <text-property name="displayName">inspectietype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["inspectietype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wo</property>
+                    <text-property name="displayName">wo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taakbeschrijving</property>
+                    <text-property name="displayName">taakbeschrijving</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taakbeschrijving"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">waardeVerplicht</property>
+                    <text-property name="displayName">waardeVerplicht</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["waardeVerplicht"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">eenheid</property>
+                    <text-property name="displayName">eenheid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["eenheid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vervolgprioriteit</property>
+                    <text-property name="displayName">vervolgprioriteit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["vervolgprioriteit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">MBNurgentie</property>
+                    <text-property name="displayName">MBNurgentie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["MBNurgentie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">storingstekst</property>
+                    <text-property name="displayName">storingstekst</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["storingstekst"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">volgorde</property>
+                    <text-property name="displayName">volgorde</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["volgorde"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">hfdst</property>
+                    <text-property name="displayName">hfdst</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["hfdst"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">diagnoseAfhandelcode</property>
+                    <text-property name="displayName">diagnoseAfhandelcode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["diagnoseAfhandelcode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">taakplanCT</property>
+                    <text-property name="displayName">taakplanCT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["taakplanCT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vervolgwo</property>
+                    <text-property name="displayName">vervolgwo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["vervolgwo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vervolgwoomschr</property>
+                    <text-property name="displayName">vervolgwoomschr</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["vervolgwoomschr"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">waarde</property>
+                    <text-property name="displayName">waarde</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["waarde"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">OK</property>
+                    <text-property name="displayName">OK</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["OK"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">NOK</property>
+                    <text-property name="displayName">NOK</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["NOK"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">analyse</property>
+                    <text-property name="displayName">analyse</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["analyse"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">diagnose</property>
+                    <text-property name="displayName">diagnose</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["diagnose"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">herstelling</property>
+                    <text-property name="displayName">herstelling</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["herstelling"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">status</property>
+                    <text-property name="displayName">status</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="2651">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="2701">
+                <property name="width">2cm</property>
+            </column>
+            <column id="2709">
+                <property name="width">5cm</property>
+            </column>
+            <column id="2652">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="2725">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="2735">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="2653">
+                <property name="width">8cm</property>
+            </column>
+            <column id="2952">
+                <property name="width">1cm</property>
+            </column>
+            <column id="2957">
+                <property name="width">1cm</property>
+            </column>
+            <column id="2654"/>
+            <column id="2964"/>
+            <column id="2655"/>
+            <column id="3000">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="2750">
+                <property name="width">2cm</property>
+            </column>
+            <column id="3007">
+                <property name="textAlign">left</property>
+                <property name="width">4cm</property>
+            </column>
+            <column id="3017">
+                <property name="textAlign">left</property>
+                <property name="width">4cm</property>
+            </column>
+            <column id="3012">
+                <property name="textAlign">left</property>
+                <property name="width">4cm</property>
+            </column>
+            <column id="3028">
+                <property name="textAlign">left</property>
+                <property name="width">3.5cm</property>
+            </column>
+            <header>
+                <row id="2659">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <cell id="2660">
+                        <property name="colSpan">18</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="2668">
+                            <property name="fontSize">x-large</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Check-lijst(en)</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2615">
+                    <cell id="2616">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2682">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">WO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2697">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2710">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Check-lijst</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2705">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2712">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2617">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2683">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">TaaktypeH </text-property>
+                        </label>
+                    </cell>
+                    <cell id="2721">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2727">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">VolgordeH </text-property>
+                        </label>
+                    </cell>
+                    <cell id="2731">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2737">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">HfdstH.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2618">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2684">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Taakbeschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2949">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2958">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">OK?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2954">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2959">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">NOK?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2619">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2685">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Verplicht?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2961">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2965">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Waarde</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2620">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2686">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Eenheid</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2997">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="3001">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Hidden</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2746">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2757">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Vervolg WO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3004">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="2758">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3014">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="3018">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Analyse</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3009">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="3019">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Diagnose</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3025">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <label id="3020">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Herstelling</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="2624">
+                    <property name="pageBreakAfter">avoid</property>
+                    <property name="pageBreakBefore">avoid</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["checklijstCT"]==null||row["status"]=='ANNUL'</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="2625">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2674">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wo</property>
+                        </data>
+                    </cell>
+                    <cell id="2698">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2702">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">checklijstCT</property>
+                        </data>
+                    </cell>
+                    <cell id="2706">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2713">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">checklijkstOmschrijvingCT</property>
+                        </data>
+                    </cell>
+                    <cell id="2626">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2675">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">taaktype</property>
+                        </data>
+                    </cell>
+                    <cell id="2722">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2729">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">volgorde</property>
+                        </data>
+                    </cell>
+                    <cell id="2732">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2736">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">hfdst</property>
+                        </data>
+                    </cell>
+                    <cell id="2627">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2676">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">taakbeschrijving</property>
+                        </data>
+                    </cell>
+                    <cell id="2950">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2969">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">OK</property>
+                        </data>
+                    </cell>
+                    <cell id="2955">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2971">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">NOK</property>
+                        </data>
+                    </cell>
+                    <cell id="2628">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2677">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">waardeVerplicht</property>
+                        </data>
+                    </cell>
+                    <cell id="2962">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2968">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">waarde</property>
+                        </data>
+                    </cell>
+                    <cell id="2629">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2678">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">eenheid</property>
+                        </data>
+                    </cell>
+                    <cell id="2998">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="3002">
+                            <property name="resultSetColumn">status</property>
+                        </data>
+                    </cell>
+                    <cell id="2747">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2966">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">vervolgwo</property>
+                        </data>
+                    </cell>
+                    <cell id="3005">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="2967">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">vervolgwoomschr</property>
+                        </data>
+                    </cell>
+                    <cell id="3015">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="3021">
+                            <property name="resultSetColumn">analyse</property>
+                        </data>
+                    </cell>
+                    <cell id="3010">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="3022">
+                            <property name="resultSetColumn">diagnose</property>
+                        </data>
+                    </cell>
+                    <cell id="3026">
+                        <property name="borderBottomStyle">dotted</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <data id="3023">
+                            <property name="resultSetColumn">herstelling</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="2642">
+                    <cell id="2643"/>
+                    <cell id="2700"/>
+                    <cell id="2708"/>
+                    <cell id="2644"/>
+                    <cell id="2724"/>
+                    <cell id="2734"/>
+                    <cell id="2645"/>
+                    <cell id="2951"/>
+                    <cell id="2956"/>
+                    <cell id="2646"/>
+                    <cell id="2963"/>
+                    <cell id="2647"/>
+                    <cell id="2999"/>
+                    <cell id="2749"/>
+                    <cell id="3006"/>
+                    <cell id="3016"/>
+                    <cell id="3011"/>
+                    <cell id="3027"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

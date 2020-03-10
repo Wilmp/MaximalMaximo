@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+OCO Source Materials
+5724-M19
+(C) COPYRIGHT IBM CORP. 2006
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000
+AutoLayout@000</property>
+    <property name="createdBy">MAXIMO Create List Report run-time functionality</property>
+    <html-property name="description">FLIRT-HRN GARANTIE GEREED</html-property>
+    <simple-property-list name="includeResource">
+        <value>NTPLUSAWO_01009307_14815479111481548235647</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+ mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+ mxReportScriptContext.setDefaultLogLevel("DEBUG");
+ mxReportScriptContext.setDefaultLogFile("c:/temp/myreport.log");
+ scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+ displayWhere = "";
+ if (params["paramstring"].value &amp;&amp; params["paramdelimiter"].value)
+ {
+   displayWhere = MXReportUtil.getParameterFromString("displayWhere", params["paramstring"], params["paramdelimiter"]);
+
+ }]]></method>
+    <method name="beforeFactory"><![CDATA[
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["dataSet_workorder_id16#"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null) {
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[// Close the report context to cleanup resources.
+ MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">FLIRT-HRN GARANTIE GEREED</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="5">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="6">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="7">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="8">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="9">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntwarranty" id="10">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntwarackn" id="11">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ntwarrreviewed" id="12">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="13" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet_workorder" id="15">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">worktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">worklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">actfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">repairfacility</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">plusthaswarranty</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ntwarranty_text</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ntwarranty</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ntthirdparty_text</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ntthirdparty</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ntwarackn</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">ntwarrreviewed</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worklocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">repairfacility</property>
+                </structure>
+                <structure>
+                    <property name="columnName">plusthaswarranty</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntwarranty_text</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntthirdparty_text</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntwarackn</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntwarrreviewed</property>
+                </structure>
+            </list-property>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[
+ dataSet_workorder = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+ dataSet_workorder.open();
+ var sqlText = new String();
+ sqlText = 
+   "select  " 
+ + " workorder.wonum,workorder.worktype,workorder.description,workorder.worklocation,workorder.actfinish,workorder.repairfacility,workorder.plusthaswarranty,workorder.ntwarranty,workorder.ntthirdparty,workorder.ntwarackn,workorder.ntwarrreviewed "
+ + "from workorder " 
+ + "where " +  params["where"] +  " and ( "  + "( workorder.status  =  'GEREED'  and ( workorder.woclass  =  'WORKORDER'  or workorder.woclass  =  'ACTIVITY'  ) and workorder.ntserie  =  'FLIRT-HRN'  and workorder.historyflag  =  0 and workorder.istask  =  0 and workorder.siteid  =  '9030'  and ( workorder.worktype  =  'CO'  or workorder.worktype  =  'CREIN'  or workorder.worktype  =  'DHST'  or workorder.worktype  =  'GAR'  or workorder.worktype  =  'SCHA'  or workorder.worktype  =  'WUI'  ) )" + " ) " 
+ + "  "
+ ;
+
+ dataSet_workorder.setQuery(sqlText);
+]]></method>
+            <method name="fetch"><![CDATA[if (!dataSet_workorder.fetch()) 
+   return (false);
+ 
+//         Add a line for each output column
+//         The specific get method should match the data type of the output column.
+ row["wonum"] = dataSet_workorder.getString("wonum"); 
+ row["worktype"] = dataSet_workorder.getString("worktype"); 
+ row["description"] = dataSet_workorder.getString("description"); 
+ row["worklocation"] = dataSet_workorder.getString("worklocation"); 
+ row["actfinish"] = dataSet_workorder.getTimestamp("actfinish"); 
+ row["repairfacility"] = dataSet_workorder.getString("repairfacility"); 
+ row["plusthaswarranty"] = dataSet_workorder.getString("plusthaswarranty"); 
+ row["ntwarranty_text"] = dataSet_workorder.getBooleanString("ntwarranty"); 
+ row["ntwarranty"] = dataSet_workorder.getInteger("ntwarranty"); 
+ row["ntthirdparty_text"] = dataSet_workorder.getBooleanString("ntthirdparty"); 
+ row["ntthirdparty"] = dataSet_workorder.getInteger("ntthirdparty"); 
+ row["ntwarackn"] = dataSet_workorder.getString("ntwarackn"); 
+ row["ntwarrreviewed"] = dataSet_workorder.getString("ntwarrreviewed"); 
+ return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="2">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="3">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="report" id="4"/>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="14" extends="MaximoSystemLibrary.maximoLandscape"/>
+    </page-setup>
+    <body>
+        <table name="dataSet_workorder_id16#" id="16">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet_workorder</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">wonum</property>
+                    <expression name="expression">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worktype</property>
+                    <expression name="expression">dataSetRow["worktype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worklocation</property>
+                    <expression name="expression">dataSetRow["worklocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">actfinish</property>
+                    <expression name="expression">dataSetRow["actfinish"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">repairfacility</property>
+                    <expression name="expression">dataSetRow["repairfacility"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plusthaswarranty</property>
+                    <expression name="expression">dataSetRow["plusthaswarranty"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntwarranty_text</property>
+                    <expression name="expression">dataSetRow["ntwarranty_text"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntthirdparty_text</property>
+                    <expression name="expression">dataSetRow["ntthirdparty_text"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntwarackn</property>
+                    <expression name="expression">dataSetRow["ntwarackn"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntwarrreviewed</property>
+                    <expression name="expression">dataSetRow["ntwarrreviewed"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">params_where</property>
+                    <expression name="expression">if (!displayWhere.equals("1=1"))
+{displayWhere;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="94">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="95">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="96">
+                <property name="width">2.3000000000000007in</property>
+            </column>
+            <column id="97">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="98">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="99">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="100">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="101">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="102">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="103">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="104">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="105">
+                <property name="width">0.7in</property>
+            </column>
+            <header>
+                <row id="17">
+                    <property name="style">title</property>
+                    <cell id="18">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label name="refTemplateParameter" id="19">
+                            <text-property name="text" key="report_title">FLIRT-HRN GARANTIE GEREED</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="20">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="21">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_wonum_0" id="22">
+                            <text-property name="text" key="header_wonum_0">WO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="23">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_worktype_0" id="24">
+                            <text-property name="text" key="header_worktype_0">Type werk</text-property>
+                        </label>
+                    </cell>
+                    <cell id="25">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_description_0" id="26">
+                            <text-property name="text" key="header_description_0">Beschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="27">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_worklocation_0" id="28">
+                            <text-property name="text" key="header_worklocation_0">Werklocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="29">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_actfinish_0" id="30">
+                            <text-property name="text" key="header_actfinish_0">Werkelijk einde</text-property>
+                        </label>
+                    </cell>
+                    <cell id="31">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_repairfacility_0" id="32">
+                            <text-property name="text" key="header_repairfacility_0">Reparatielocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="33">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_plusthaswarranty_0" id="34">
+                            <text-property name="text" key="header_plusthaswarranty_0">Garantie?</text-property>
+                        </label>
+                    </cell>
+                    <cell id="35">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntwarranty_0" id="36">
+                            <text-property name="text" key="header_ntwarranty_0">Garantie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="37">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntthirdparty_0" id="38">
+                            <text-property name="text" key="header_ntthirdparty_0">Uitv derden</text-property>
+                        </label>
+                    </cell>
+                    <cell id="39">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntwarackn_0" id="40">
+                            <text-property name="text" key="header_ntwarackn_0">Garantie gerechtvaardigd: OEM</text-property>
+                        </label>
+                    </cell>
+                    <cell id="41">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label name="header_ntwarrreviewed_0" id="42">
+                            <text-property name="text" key="header_ntwarrreviewed_0">Garantie gerechtvaardigd: NT</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="43">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="44">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailwonum_0" id="45">
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="46">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailworktype_0" id="47">
+                            <property name="resultSetColumn">worktype</property>
+                        </data>
+                    </cell>
+                    <cell id="48">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detaildescription_0" id="49">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="50">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailworklocation_0" id="51">
+                            <property name="resultSetColumn">worklocation</property>
+                        </data>
+                    </cell>
+                    <cell id="52">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailactfinish_0" id="53">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Date</property>
+                                <property name="pattern">Short Date</property>
+                            </structure>
+                            <property name="resultSetColumn">actfinish</property>
+                        </data>
+                    </cell>
+                    <cell id="54">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailtimeactfinish_0" id="55">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Medium Time</property>
+                                <property name="pattern">Medium Time</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">actfinish</property>
+                        </data>
+                    </cell>
+                    <cell id="56">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailrepairfacility_0" id="57">
+                            <property name="resultSetColumn">repairfacility</property>
+                        </data>
+                    </cell>
+                    <cell id="58">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailplusthaswarranty_0" id="59">
+                            <property name="resultSetColumn">plusthaswarranty</property>
+                        </data>
+                    </cell>
+                    <cell id="60">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntwarranty_0" id="61">
+                            <property name="resultSetColumn">ntwarranty_text</property>
+                        </data>
+                    </cell>
+                    <cell id="62">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntthirdparty_0" id="63">
+                            <property name="resultSetColumn">ntthirdparty_text</property>
+                        </data>
+                    </cell>
+                    <cell id="64">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntwarackn_0" id="65">
+                            <property name="resultSetColumn">ntwarackn</property>
+                        </data>
+                    </cell>
+                    <cell id="66">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data name="detailntwarrreviewed_0" id="67">
+                            <property name="resultSetColumn">ntwarrreviewed</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="68">
+                    <cell id="69">
+                        <property name="colSpan">12</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid name="Grid3" id="70">
+                            <property name="width">100%</property>
+                            <column id="71">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.8in</property>
+                            </column>
+                            <column id="72">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.2in</property>
+                            </column>
+                            <column id="73">
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="74">
+                                <cell id="75">
+                                    <label name="footernoofrecords" id="76">
+                                        <text-property name="text" key="workorder_selected">Aantal records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="77">
+                                    <data name="footertotalrecs" id="78">
+                                        <property name="textAlign">left</property>
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                                <cell id="79"/>
+                            </row>
+                            <row id="80">
+                                <property name="height">0.06in</property>
+                                <cell id="81">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                </cell>
+                            </row>
+                            <row id="82">
+                                <cell id="83">
+                                    <label name="footersavedwherelabel" id="84">
+                                        <text-property name="text" key="saved_where_clause">Opgeslagen Where-clausule:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="85">
+                                    <label name="footersavedwherevalue" id="86">
+                                        <property name="textAlign">left</property>
+                                        <text-property name="text">( workorder.status  =  'GEREED'  and ( workorder.woclass  =  'WORKORDER'  or workorder.woclass  =  'ACTIVITY'  ) and workorder.ntserie  =  'FLIRT-HRN'  and workorder.historyflag  =  0 and workorder.istask  =  0 and workorder.siteid  =  '9030'  and ( workorder.worktype  =  'CO'  or workorder.worktype  =  'CREIN'  or workorder.worktype  =  'DHST'  or workorder.worktype  =  'GAR'  or workorder.worktype  =  'SCHA'  or workorder.worktype  =  'WUI'  ) )</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="87"/>
+                            </row>
+                            <row id="88">
+                                <cell id="89">
+                                    <label name="footerdynamicwherelabel" id="90">
+                                        <text-property name="text" key="dynamic_where_clause">Dynamische Where-clausule:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="91">
+                                    <data name="footerdynamicwherevalue" id="92">
+                                        <property name="textAlign">left</property>
+                                        <property name="resultSetColumn">params_where</property>
+                                    </data>
+                                </cell>
+                                <cell id="93"/>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

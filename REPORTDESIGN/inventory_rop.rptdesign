@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <simple-property-list name="includeResource">
+        <value>inventory</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/inventory_rop.log");
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+var timeInMs = Date.now();
+
+attkey = "st-inventory_rop_" + params["appname"]+ "_"+ timeInMs;
+dskey = "ds-inventory_rop_" + params["appname"]+ "_"+ timeInMs;
+
+var leadtimemonths = Math.floor(DateTimeSpan.months(params["startdate"], new Date()));]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="location" id="341">
+            <text-property name="promptText">Storeroom</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="site" id="342">
+            <text-property name="promptText">Site</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">true</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="343">
+            <text-property name="promptText">Start Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">itemnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">orderunit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">minlevel</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">sstock</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">cfactor</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">newsstock</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">newrop</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">itemnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">orderunit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">minlevel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sstock</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cfactor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">newsstock</property>
+                </structure>
+                <structure>
+                    <property name="columnName">newrop</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">itemnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">orderunit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">minlevel</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">sstock</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">cfactor</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">newsstock</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">newrop</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="afterClose"><![CDATA[//if(params["update"]== true){
+
+//myTxn = MXReportTxnProvider.create("maximoDataSource");
+//myStmt = myTxn.createStatement();
+//myStmt.setQuery("update inventory set sstock = " + sstock + " and minlevel = " + newlevel + ";" );
+//myStmt.setQuery("update inventory set sstock = 20" );
+//myTxn.save();
+//}]]></method>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var request = reportContext.getHttpServletRequest();
+if(request != null){
+	var session = request.getSession();
+	session.setAttribute(dskey, this.getDataSource().getName());
+}
+
+params["paramdelimiter"] = "||";
+params["paramstring"] = attkey + params["paramdelimiter"] + dskey;
+
+var sqlText = new String();
+
+if((BirtComp.notEqual(params["location"],null))&amp;&amp;(BirtComp.notEqual(params["location"],''))) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.location", params["location"]);
+}
+if((BirtComp.notEqual(params["site"],null))&amp;&amp;(BirtComp.notEqual(params["site"],''))) {
+	params["where"]+= " and " + MXReportSqlFormat.createParamWhereClause("inventory.siteid", params["site"]);
+}
+	
+sqlText = "select inventory.siteid, inventory.itemsetid, inventory.location, inventory.itemnum, "
++ " item.description, "
++ " inventory.orderunit, "
++ " inventory.minlevel, "
++ " inventory.deliverytime as delivery, "
++ " inventory.sstock, "
++ maximoDataSet.getNullValueFunction(
+	"(select conversion.conversion from conversion where inventory.itemsetid=conversion.itemsetid and inventory.itemnum=conversion.itemnum and inventory.orderunit=conversion.frommeasureunit)", 
+	"(select conversion.conversion from conversion where inventory.itemsetid=conversion.itemsetid and conversion.itemnum is null and inventory.orderunit=conversion.frommeasureunit)"
+  ) 
++ " as conversion, "
++ maximoDataSet.getNullValueFunction(
+	"(select conversion.conversion from conversion where inventory.itemsetid=conversion.itemsetid and inventory.itemnum=conversion.itemnum and inventory.orderunit=conversion.tomeasureunit)", 
+	"(select conversion.conversion from conversion where inventory.itemsetid=conversion.itemsetid and conversion.itemnum is null and inventory.orderunit=conversion.tomeasureunit)"
+  ) 
++ " as revconversion "
++ " from item inner join "
++ " inventory on "
++ " inventory.itemsetid=item.itemsetid "
++ " and inventory.itemnum=item.itemnum "
++ " where " + params["where"]
++ " and item.itemtype in (select value from synonymdomain where domainid='ITEMTYPE' and maxvalue='ITEM') "
++ " order by inventory.siteid, inventory.location, inventory.itemnum "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+var siteid = maximoDataSet.getString("siteid");
+var itemsetid = maximoDataSet.getString("itemsetid");
+var location = maximoDataSet.getString("location");
+var itemnum = maximoDataSet.getString("itemnum");
+var enddate = new Date();
+
+if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug("["+maximoDataSet.getName() + "] >>> itemnum: " + itemnum);
+}
+
+//row["siteid"] = maximoDataSet.getString("siteid");
+//row["itemsetid"] = maximoDataSet.getString("itemsetid");
+//row["location"] = maximoDataSet.getString("location");
+row["itemnum"] = maximoDataSet.getString("itemnum");
+row["description"] = maximoDataSet.getString("description");
+row["orderunit"] = maximoDataSet.getString("orderunit");
+row["minlevel"] = maximoDataSet.getString("minlevel");
+//row["delivery"] = maximoDataSet.getString("delivery");
+row["sstock"] = maximoDataSet.getString("sstock");
+//row["conversion"] = maximoDataSet.getString("conversion");
+
+if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug("["+maximoDataSet.getName() + "] >>> leadtimemonths: " + leadtimemonths);
+}
+
+var leadtime = 0;
+var sstock = 0;
+var newlevel = 0;
+
+// ********* MATRECTRANS part
+var matrectransTotal = 0;
+
+matrectransDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "matrectransDS");
+matrectransDS.open();
+
+if (scriptLogger.isDebugEnabled()) {
+	//scriptLogger.debug("["+matrectransDS.getName() + "] >>> created ");
+}
+
+var matrectransSQL = "select sum(coalesce(matrectrans.quantity,0)) as matrectransTotal "
++ " from item inner join "
++ " inventory on "
++ " item.itemsetid = inventory.itemsetid "
++ " and item.itemnum = inventory.itemnum inner join "
++ " matrectrans on "
++ " inventory.siteid = matrectrans.siteid "
++ " and inventory.location = matrectrans.tostoreloc "
++ " and inventory.itemsetid = matrectrans.itemsetid "
++ " and inventory.itemnum = matrectrans.itemnum "
++ " where matrectrans.issuetype in (select value from synonymdomain where domainid='ISSUETYP' and maxvalue='TRANSFER') "
++ " and item.itemtype in (select value from synonymdomain where domainid='ITEMTYPE' and maxvalue='ITEM') "
+;
+if(params["startdate"].value) {
+	matrectransSQL+= " and matrectrans.actualdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+	;
+}
+matrectransSQL+= " and matrectrans.actualdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(enddate)
++ " and inventory.siteid = ? "
++ " and inventory.itemsetid = ? "
++ " and inventory.location = ? "
++ " and inventory.itemnum = ? "
+;
+
+matrectransDS.setQuery(matrectransSQL);
+matrectransDS.setQueryParameterValue(1, siteid);
+matrectransDS.setQueryParameterValue(2, itemsetid);
+matrectransDS.setQueryParameterValue(3, location);
+matrectransDS.setQueryParameterValue(4, itemnum);
+
+if(matrectransDS.fetch()) {
+	matrectransTotal = Math.abs(matrectransDS.getInteger("matrectransTotal"));
+	//matrectransTotal = matrectransDS.getInteger("matrectransTotal");
+}
+matrectransDS.close();
+if (scriptLogger.isDebugEnabled()) {
+	//scriptLogger.debug("["+matrectransDS.getName() + "] >>> closed");
+}
+
+// ********* MATUSETRANS part
+var matusetransTotal = 0;
+
+matusetransDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "matusetransDS");
+matusetransDS.open();
+if (scriptLogger.isDebugEnabled()) {
+	//scriptLogger.debug("["+matusetransDS.getName() + "] >>> created");
+}
+
+var matusetransSQL = "select sum(coalesce(quantity,0)) as matusetransTotal "
++ " from inventory inner join "
++ " matusetrans on "
++ " inventory.siteid = matusetrans.siteid "
++ " and inventory.itemsetid = matusetrans.itemsetid "
++ " and inventory.location = matusetrans.storeloc "
++ " and inventory.itemnum = matusetrans.itemnum "
++ " where matusetrans.issuetype in (select value from synonymdomain where domainid='ISSUETYP' and maxvalue='ISSUE') "
+;
+if(params["startdate"].value) {
+	matusetransSQL+= " and matusetrans.actualdate >= " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+	;
+}
+matusetransSQL+= " and matusetrans.actualdate <= " + MXReportSqlFormat.getEndDayTimestampFunction(enddate)
++ " and inventory.siteid = ? "
++ " and inventory.itemsetid = ? "
++ " and inventory.location = ? "
++ " and inventory.itemnum = ? "
+;
+
+matusetransDS.setQuery(matusetransSQL);
+matusetransDS.setQueryParameterValue(1, siteid);
+matusetransDS.setQueryParameterValue(2, itemsetid);
+matusetransDS.setQueryParameterValue(3, location);
+matusetransDS.setQueryParameterValue(4, itemnum);
+
+if(matusetransDS.fetch()) {
+	matusetransTotal = Math.abs(matusetransDS.getInteger("matusetransTotal"));
+	//matusetransTotal = matusetransDS.getInteger("matusetransTotal");
+}
+matusetransDS.close();
+
+if (scriptLogger.isDebugEnabled()) {
+	//scriptLogger.debug("["+matusetransDS.getName() + "] >>> closed");
+}
+
+
+//Caculations
+var totalitems = matrectransTotal + matusetransTotal; 
+if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug("["+maximoDataSet.getName() + "] >>> totalitems: " + totalitems);
+}
+
+if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug("["+maximoDataSet.getName() + "] >>> (totalitems!=0) &amp;&amp; (leadtimemonths!=0): " + ((totalitems!=0) &amp;&amp; (leadtimemonths!=0)));
+}
+if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug("["+maximoDataSet.getName() + "] >>> maximoDataSet.getInteger(\"delivery\")!=0: " + (maximoDataSet.getInteger("delivery")!=0));
+}
+
+if ( (totalitems!=0) &amp;&amp; (leadtimemonths!=0) ) { 
+	leadtime = totalitems * leadtimemonths / 30.44;
+
+	if(maximoDataSet.getInteger("delivery")!=0){
+		sstock = 2 * maximoDataSet.getDouble("delivery") * Math.pow( (leadtime / 30.44), (1/1.6) );
+	}
+}
+
+newlevel = Math.ceil(sstock + leadtime);
+
+row["newrop"] = newlevel;
+row["newsstock"] = Math.ceil(sstock);
+
+var conversion = maximoDataSet.getInteger("conversion");
+var revconversion = maximoDataSet.getInteger("revconversion");
+
+if(BirtComp.notEqual(conversion, null) &amp;&amp; conversion!=0) {
+	row["cfactor"] = maximoDataSet.getDouble("conversion");
+}
+else if(BirtComp.notEqual(revconversion, null) &amp;&amp; revconversion!=0) {
+	row["cfactor"] = 1.0/maximoDataSet.getDouble("revconversion");
+}
+
+var request = reportContext.getHttpServletRequest();
+if( BirtComp.notEqual(request,null) ) {
+	var session = request.getSession();
+	var updStmtList = session.getAttribute(attkey);
+
+	if( BirtComp.equalTo(updStmtList,null) ){
+		updStmtList = new Array;
+	}
+	
+	var updateQuery = "update inventory set minlevel=" + newlevel
+	+ ", sstock=" +  Math.ceil(sstock)
+	+ " where siteid='" +maximoDataSet.getString("siteid")+ "' "
+	+ " and itemsetid='" +maximoDataSet.getString("itemsetid") + "' "
+	+ " and location='" +maximoDataSet.getString("location") + "' "
+	+ " and itemnum='" +maximoDataSet.getString("itemnum") + "' "
+	;
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug("["+maximoDataSet.getName() + "] >>> updateQuery: " + updateQuery);
+	}
+	updStmtList.push(updateQuery);
+	
+	session.setAttribute(attkey, updStmtList);
+}
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">itemnum</property>
+                    <expression name="expression">dataSetRow["itemnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">orderunit</property>
+                    <expression name="expression">dataSetRow["orderunit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">minlevel</property>
+                    <expression name="expression">dataSetRow["minlevel"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">sstock</property>
+                    <expression name="expression">dataSetRow["sstock"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">cfactor</property>
+                    <expression name="expression">dataSetRow["cfactor"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">newsstock</property>
+                    <expression name="expression">dataSetRow["newsstock"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">newrop</property>
+                    <expression name="expression">dataSetRow["newrop"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">total_rec</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">row["itemnum"]</expression>
+                        </structure>
+                    </list-property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">1in</property>
+            </column>
+            <column id="79">
+                <property name="width">2.5in</property>
+            </column>
+            <column id="387">
+                <property name="width">1in</property>
+            </column>
+            <column id="378">
+                <property name="width">1in</property>
+            </column>
+            <column id="369">
+                <property name="width">1in</property>
+            </column>
+            <column id="360">
+                <property name="width">1in</property>
+            </column>
+            <column id="91">
+                <property name="width">1.25in</property>
+            </column>
+            <column id="648">
+                <property name="width">1.25in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="344">
+                            <property name="marginTop">0pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="inventory_rop.reportdesign">Inventory ROP Analysis</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="marginTop">3pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="storeroom_colon">Storeroom:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="349">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">location</property>
+                                                <expression name="expression">if (BirtComp.notEqual(params["location"],null)) {
+params["location"].replace(/[=!,]/,"")
+}</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">location</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="site_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="350">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">site</property>
+                                                <expression name="expression">if (BirtComp.notEqual(params["site"],null)) {
+params["site"].replace(/[=!,]/,"")
+}</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">site</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="345">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">!(params["startdate"].value)</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="346">
+                                    <label id="348">
+                                        <text-property name="text" key="startdate_colon">Start Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="347">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="351">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="712">
+                    <property name="height">0.08in</property>
+                    <cell id="713">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="685">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="686">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="544">
+                            <text-property name="text" key="item">Item</text-property>
+                        </label>
+                    </cell>
+                    <cell id="687">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="546">
+                            <text-property name="text" key="description">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="688">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="548">
+                            <text-property name="text" key="orderunit">Order Unit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="689">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="550">
+                            <text-property name="text" key="conversion">Conversion Factor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="690">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="552">
+                            <text-property name="text" key="oldropvalue">Old ROP Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="691">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="554">
+                            <text-property name="text" key="newropvalue">New ROP Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="692">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="556">
+                            <text-property name="text" key="oldsafetystock">Old Safety Stock Value</text-property>
+                        </label>
+                    </cell>
+                    <cell id="693">
+                        <property name="style">tabledetailslabelcell</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="558">
+                            <text-property name="text" key="newsafetystock">New Safety Stock Value</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="658">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="659">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="562">
+                            <property name="resultSetColumn">itemnum</property>
+                        </data>
+                    </cell>
+                    <cell id="660">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="564">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="661">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="566">
+                            <property name="resultSetColumn">orderunit</property>
+                        </data>
+                    </cell>
+                    <cell id="662">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="568">
+                            <structure name="numberFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="resultSetColumn">cfactor</property>
+                        </data>
+                    </cell>
+                    <cell id="663">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="570">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">minlevel</property>
+                        </data>
+                    </cell>
+                    <cell id="664">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="572">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">newrop</property>
+                        </data>
+                    </cell>
+                    <cell id="665">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="574">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">sstock</property>
+                        </data>
+                    </cell>
+                    <cell id="666">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="576">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">Fixed</property>
+                            </structure>
+                            <property name="resultSetColumn">newsstock</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.24in</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <cell id="82">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <grid id="618">
+                            <property name="marginTop">1pt</property>
+                            <property name="marginBottom">1pt</property>
+                            <property name="width">100%</property>
+                            <column id="619">
+                                <property name="width">1.3in</property>
+                                <property name="style">summarylabel</property>
+                            </column>
+                            <column id="620">
+                                <property name="width">8.7in</property>
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="621">
+                                <cell id="622">
+                                    <label id="623">
+                                        <text-property name="text" key="numberofrecords_colon">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="624">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="694">
+                    <property name="height">0.08in</property>
+                    <cell id="695">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                    </cell>
+                </row>
+                <row id="676">
+                    <property name="height">0.12in</property>
+                    <cell id="677">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">left</property>
+                        <label id="428">
+                            <property name="fontWeight">bold</property>
+                            <property name="textAlign">left</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">always</property>
+                            <text-property name="text">Click To Update Database With New ROP and Safety Stock Values</text-property>
+                            <list-property name="action">
+                                <structure>
+                                    <property name="formatType">html</property>
+                                    <property name="linkType">drill-through</property>
+                                    <property name="reportName">inventory_rop_update.rptdesign</property>
+                                    <property name="targetWindow">_self</property>
+                                    <property name="targetFileType">report-design</property>
+                                    <list-property name="paramBindings">
+                                        <structure>
+                                            <property name="paramName">where</property>
+                                            <simple-property-list name="expression">
+                                                <value>" 1 = 1 "</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">appname</property>
+                                            <simple-property-list name="expression">
+                                                <value>"INVENTOR"</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">paramdelimiter</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["paramdelimiter"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">paramstring</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["paramstring"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">location</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["location"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">site</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["site"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                        <structure>
+                                            <property name="paramName">startdate</property>
+                                            <simple-property-list name="expression">
+                                                <value>params["startdate"]</value>
+                                            </simple-property-list>
+                                        </structure>
+                                    </list-property>
+                                </structure>
+                            </list-property>
+                        </label>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

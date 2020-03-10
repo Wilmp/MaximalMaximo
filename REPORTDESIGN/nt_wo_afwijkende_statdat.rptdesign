@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2008 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/temp/nt_wo_afwijkende_statdat.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="aantalDagen" id="587">
+            <text-property name="promptText">Aantal dagen</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">integer</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">10</value>
+            </simple-property-list>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ntserie</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">worktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">pmnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">worklocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">actstart</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">inuitvdatum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">inuitvmelder</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">displayinuitv</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">actfinish</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">gereeddatum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">gereedmelder</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">displaygereed</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">ntwontloctype</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntserie</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pmnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worklocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actstart</property>
+                </structure>
+                <structure>
+                    <property name="columnName">inuitvdatum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">inuitvmelder</property>
+                </structure>
+                <structure>
+                    <property name="columnName">displayinuitv</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">gereeddatum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">gereedmelder</property>
+                </structure>
+                <structure>
+                    <property name="columnName">displaygereed</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntwontloctype</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ntserie</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">worktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">pmnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">worklocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">actstart</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">inuitvdatum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">inuitvmelder</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">displayinuitv</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">actfinish</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">gereeddatum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">gereedmelder</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">displaygereed</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">ntwontloctype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+// 18-05-2015 MPI: S26.RAP08 Nieuwe rapportage met WO statusdatum <> gereeddatum t.b.v. antedateings issue
+
+var sqlText = new String();
+
+sqlText = " "
++ " select "
++ "   workorder.wonum, "	
++ "   workorder.ntserie, "	
++ "   workorder.worktype, "	
++ "   workorder.description, " 
++ "   workorder.assetnum, "	
++ "   workorder.pmnum, "
++ "   workorder.worklocation, " 
++ "   locations.ntwontloctype, "	
++ "   to_char(workorder.actstart, 'dd-mm-yyyy hh24:mi') as actstart, "	
++ "   to_char(ws1.changedate, 'dd-mm-yyyy hh24:mi') as inuitvdatum, "
++ "   p1.displayname as inuitvmelder, "
++ "     case "
++ "       when to_char(workorder.actstart, 'dd-mm-yyyy hh24:mi') <> to_char(ws1.changedate, 'dd-mm-yyyy hh24:mi') then "
++ "         1 "
++ "       else "
++ "         0 "
++ "       end as displayinuitv, "
++ "   to_char(workorder.actfinish, 'dd-mm-yyyy hh24:mi')as actfinish, " 
++ "   to_char(wostatus.changedate, 'dd-mm-yyyy hh24:mi') as gereeddatum, " 
++ "     case " 
++ "       when to_char(workorder.actfinish, 'dd-mm-yyyy hh24:mi') <> to_char(wostatus.changedate, 'dd-mm-yyyy hh24:mi') then "
++ "         1 "
++ "       else "
++ "         0 "
++ "       end as displaygereed, "
++ "   person.displayname as gereedmelder " 
++ " from workorder "
++ "   left join wostatus on wostatus.wonum=workorder.wonum and wostatus.siteid = workorder.siteid and wostatus.status = 'GEREED' "
++ "   left join locations on locations.location = workorder.worklocation "
++ "   join person on wostatus.changeby = person.personid "
++ "   left join wostatus ws1 on ws1.wonum=workorder.wonum and ws1.siteid = workorder.siteid and ws1.status = 'INUITV' "
++ "   join person p1 on ws1.changeby = p1.personid "
++ " where workorder.pmnum is not null "
++ "   and workorder.istask=0 "
++ "   and workorder.woclass='WORKORDER' "
++ "   and workorder.siteid ='9030' "
++ "   and workorder.ACTFINISH > sysdate - " + params["aantalDagen"]
++ "   and workorder.ACTFINISH < wostatus.changedate "
++ "   and workorder.status in ('GEREED', 'SLUITEN') "
++ " order by wostatus.changedate desc "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["wonum"] = maximoDataSet.getString("wonum");	
+row["ntserie"] = maximoDataSet.getString("ntserie");	
+row["worktype"] = maximoDataSet.getString("worktype");	
+row["description"] = maximoDataSet.getString("description");	
+row["assetnum"] = maximoDataSet.getString("assetnum");	
+row["pmnum"] = maximoDataSet.getString("pmnum");	
+row["worklocation"] = maximoDataSet.getString("worklocation");	
+row["actstart"] = maximoDataSet.getString("actstart");	
+row["inuitvdatum"] = maximoDataSet.getString("inuitvdatum");	
+row["inuitvmelder"] = maximoDataSet.getString("inuitvmelder");	
+row["displayinuitv"] = maximoDataSet.getString("displayinuitv");	
+row["actfinish"] = maximoDataSet.getString("actfinish");	
+row["gereeddatum"] = maximoDataSet.getString("gereeddatum");	
+row["gereedmelder"] = maximoDataSet.getString("gereedmelder");	
+row["displaygereed"] = maximoDataSet.getString("displaygereed");	
+row["ntwontloctype"] = maximoDataSet.getString("ntwontloctype");	
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">any</property>
+                </structure>
+                <structure>
+                    <property name="name">wonum</property>
+                    <text-property name="displayName">wonum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntserie</property>
+                    <text-property name="displayName">ntserie</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntserie"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worktype</property>
+                    <text-property name="displayName">worktype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worktype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <text-property name="displayName">assetnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pmnum</property>
+                    <text-property name="displayName">pmnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pmnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">worklocation</property>
+                    <text-property name="displayName">worklocation</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["worklocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">actstart</property>
+                    <text-property name="displayName">actstart</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["actstart"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">inuitvdatum</property>
+                    <text-property name="displayName">inuitvdatum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["inuitvdatum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">inuitvmelder</property>
+                    <text-property name="displayName">inuitvmelder</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["inuitvmelder"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">actfinish</property>
+                    <text-property name="displayName">actfinish</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["actfinish"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">gereeddatum</property>
+                    <text-property name="displayName">gereeddatum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["gereeddatum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">gereedmelder</property>
+                    <text-property name="displayName">gereedmelder</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["gereedmelder"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntwontloctype</property>
+                    <text-property name="displayName">ntwontloctype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntwontloctype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">displayinuitv</property>
+                    <text-property name="displayName">displayinuitv</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displayinuitv"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">displaygereed</property>
+                    <text-property name="displayName">displaygereed</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displaygereed"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="487"/>
+            <column id="477"/>
+            <column id="540"/>
+            <column id="517"/>
+            <column id="507"/>
+            <column id="497"/>
+            <column id="561">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="571">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">true</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="467"/>
+            <column id="457"/>
+            <column id="18"/>
+            <header>
+                <row id="346">
+                    <property name="style">title</property>
+                    <cell id="347">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <text id="447">
+                            <property name="fontSize">7pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[nt_wo_afwijkende_statdat v20150528]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <label id="345">
+                            <property name="textAlign">center</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Werkorders met verschil tussen werkelijke start en/of einde en moment van statuswijziging (tbv antedateren)</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkorder</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="574">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Omschrijving</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="575">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Mat. Serie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="576">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werktype</text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="577">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Asset</text-property>
+                        </label>
+                    </cell>
+                    <cell id="483">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="578">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">PM</text-property>
+                        </label>
+                    </cell>
+                    <cell id="473">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="579">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werklocatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="536">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="580">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="513">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="581">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkelijke start</text-property>
+                        </label>
+                    </cell>
+                    <cell id="503">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="582">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Inuitvoer datum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="493">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="583">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Inuitvoer melder</text-property>
+                        </label>
+                    </cell>
+                    <cell id="557">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="567">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="463">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="584">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Werkelijk einde</text-property>
+                        </label>
+                    </cell>
+                    <cell id="453">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="585">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Gereed datum</text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="586">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Gereed melder</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="518">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">wonum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="519">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="520">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntserie</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="521">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">worktype</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="522">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="484">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="523">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">pmnum</property>
+                        </data>
+                    </cell>
+                    <cell id="474">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="524">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">worklocation</property>
+                        </data>
+                    </cell>
+                    <cell id="537">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="541">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">ntwontloctype</property>
+                        </data>
+                    </cell>
+                    <cell id="514">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="525">
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["displayinuitv"] =="0"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">actstart</property>
+                        </data>
+                    </cell>
+                    <cell id="504">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="526">
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["displayinuitv"] =="0"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">inuitvdatum</property>
+                        </data>
+                    </cell>
+                    <cell id="494">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="527">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">inuitvmelder</property>
+                        </data>
+                    </cell>
+                    <cell id="558">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="572">
+                            <property name="resultSetColumn">displayinuitv</property>
+                        </data>
+                    </cell>
+                    <cell id="568">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="573">
+                            <property name="resultSetColumn">displaygereed</property>
+                        </data>
+                    </cell>
+                    <cell id="464">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="528">
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["displaygereed"] =="0"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">actfinish</property>
+                        </data>
+                    </cell>
+                    <cell id="454">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="529">
+                            <property name="textAlign">left</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["displaygereed"] =="0"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">gereeddatum</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="530">
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">gereedmelder</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="width">1.4in</property>
+                                <property name="style">summarylabel</property>
+                            </column>
+                            <column id="218">
+                                <property name="width">8.4895833333in</property>
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text">Number of Records:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

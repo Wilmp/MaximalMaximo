@@ -1,0 +1,1513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright (c) 2016 ZNAPZ</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130917-1035></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <property name="units">cm</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+     mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+     mxReportScriptContext.setDefaultLogLevel("DEBUG");
+     mxReportScriptContext.setDefaultLogFile("C:/Temp/nt_overstandstaat.log");
+     scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="maintlocation" id="1642">
+            <text-property name="promptText">Locatie</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="offset" id="2007">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="region" id="2152">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="fromdate" id="2153">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">transdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ntmaintdepdt</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">nttraindep</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ntposition</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">serialnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ntdeptrack</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">ntrighttime</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">ntrightmodel</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ntrighttrack</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">ntstatustc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">ntstatusher</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">ntstatusir</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">ntstatusur</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">ntdepreason</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">ntdepmemo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">ntstation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">ntstatuspo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">ntconfig</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">fromdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">transdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntmaintdepdt</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nttraindep</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntposition</property>
+                </structure>
+                <structure>
+                    <property name="columnName">serialnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntdeptrack</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntrighttime</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntrightmodel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntrighttrack</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntstatustc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntstatusher</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntstatusir</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntstatusur</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntdepreason</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntdepmemo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntstation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntstatuspo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ntconfig</property>
+                </structure>
+                <structure>
+                    <property name="columnName">fromdate</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">transdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ntmaintdepdt</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">nttraindep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ntposition</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">serialnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ntdeptrack</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">ntrighttime</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">ntrightmodel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ntrighttrack</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">ntstatustc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">ntstatusher</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">ntstatusir</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">ntstatusur</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">ntdepreason</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">ntdepmemo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">ntstation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">ntstatuspo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">ntconfig</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">fromdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+var whereclause 	= new String();
+
+var selectiondate = new Date();
+
+params["maintlocation"]=params["maintlocation"].replace("=","");
+
+if(params["maintlocation"].value) {
+	whereclause+= " and " + MXReportSqlFormat.createParamWhereClause("ntdeparturestatus.location", params["maintlocation"].toUpperCase()); 
+} 
+
+if(params["region"].value) {
+	whereclause+= " and ntdeparturestatus.location in"
+	+ "(select location from locancestor where "
+	+ MXReportSqlFormat.createParamWhereClause("ancestor", params["region"].toUpperCase())
+	+ " )"; 
+} 
+
+if(params["fromdate"].value) {
+	selectiondate=MXReportSqlFormat.getTimestampFunction(params["fromdate"]);
+} else {
+	if(params["offset"].value) {
+		if (isNaN(params["offset"])) {
+			params["offset"] = "-24";
+		}
+		selectiondate=BirtDateTime.addHour(selectiondate, parseFloat(params["offset"]));
+	}
+	selectiondate=MXReportSqlFormat.getTimestampFunction(selectiondate);
+}
+
+whereclause+= " and ( ntdeparturestatus.transdate > " + selectiondate + " ) "
+	
+// Add query to sqlText variable.
+sqlText = " "
++ " select  "
++ " ntdeparturestatus.location q_location, "
++ " ntdeparturestatus.ntmaintdepdt q_ntmaintdepdt, "
++ " ntdeparturestatus.transdate q_transdate, "
++ " ntdeparturestatus.nttraindep q_nttraindep, "
++ " alndomain.description q_ntposition, "
++ " ntdeparturestatus.serialnum q_serialnum, "
++ " ntplanarrival.ntdeptrack q_ntdeptrack, "
++ " ntdeparturestatus.ntrighttime q_ntrighttime, "
++ " ntdeparturestatus.ntrightmodel q_ntrightmodel, "
++ " ntdeparturestatus.ntrighttrack q_ntrighttrack, "
++ " ntdeparturestatus.ntstatustc q_ntstatustc, "
++ " ntdeparturestatus.ntstatusher q_ntstatusher, "
++ " ntdeparturestatus.ntstatusir q_ntstatusir, "
++ " ntdeparturestatus.ntstatusur q_ntstatusur, "
++ " ntdeparturestatus.ntstatuspo q_ntstatuspo, "
++ " ntdeparturestatus.ntconfig q_ntconfig, "
++ " ntdeparturestatus.ntdepreason q_ntdepreason, "
++ " ntdeparturestatus.ntdepmemo q_ntdepmemo, "
++ " ntplanarrival.ntstation q_ntstation, "
++ selectiondate + " q_fromdate "
++ " from ntdeparturestatus  "
++ " left outer join ntplanarrival on ntdeparturestatus.ntplanarrivalid = ntplanarrival.ntplanarrivalid "
++ " left outer join alndomain on alndomain.domainid = 'NTPOSITIEMATERIEEL' and ntplanarrival.ntpositiondep = alndomain.value"
++ " where 1=1 "  
++ whereclause
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+
+row["location"] = maximoDataSet.getString("q_location");
+row["ntmaintdepdt"] = maximoDataSet.getTimestamp("q_ntmaintdepdt");
+row["transdate"] = maximoDataSet.getTimestamp("q_transdate");
+row["nttraindep"] = maximoDataSet.getString("q_nttraindep");
+row["ntposition"] = maximoDataSet.getString("q_ntposition");
+row["serialnum"] = maximoDataSet.getString("q_serialnum");
+row["ntdeptrack"] = maximoDataSet.getString("q_ntdeptrack");
+row["ntrighttime"] = maximoDataSet.getBooleanString("q_ntrighttime");
+row["ntrightmodel"] = maximoDataSet.getBooleanString("q_ntrightmodel");
+row["ntrighttrack"] = maximoDataSet.getBooleanString("q_ntrighttrack");
+row["ntstatustc"] = maximoDataSet.getString("q_ntstatustc");
+row["ntstatusher"] = maximoDataSet.getString("q_ntstatusher");
+row["ntstatusir"] = maximoDataSet.getString("q_ntstatusir");
+row["ntstatusur"] = maximoDataSet.getString("q_ntstatusur");
+row["ntstatuspo"] = maximoDataSet.getString("q_ntstatuspo");
+row["ntconfig"] = maximoDataSet.getString("q_ntconfig");
+row["ntdepreason"] = maximoDataSet.getString("q_ntdepreason");
+row["ntdepmemo"] = maximoDataSet.getString("q_ntdepmemo");
+row["ntstation"] = maximoDataSet.getString("q_ntstation");
+row["fromdate"] = maximoDataSet.getString("q_fromdate");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="343">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="344">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape"/>
+    </page-setup>
+    <body>
+        <table id="1672">
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">location</property>
+                    <text-property name="displayName">location</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["location"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nttraindep</property>
+                    <text-property name="displayName">nttraindep</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nttraindep"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntdeptrack</property>
+                    <text-property name="displayName">ntdeptrack</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntdeptrack"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">ntmaintdepdt</property>
+                    <text-property name="displayName">ntmaintdepdt</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntmaintdepdt"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">ntposition</property>
+                    <text-property name="displayName">ntposition</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntposition"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntrighttime</property>
+                    <text-property name="displayName">ntrighttime</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntrighttime"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntrightmodel</property>
+                    <text-property name="displayName">ntrightmodel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntrightmodel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntrighttrack</property>
+                    <text-property name="displayName">ntrighttrack</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntrighttrack"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntstatustc</property>
+                    <text-property name="displayName">ntstatustc</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntstatustc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntstatusher</property>
+                    <text-property name="displayName">ntstatusher</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntstatusher"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntstatusir</property>
+                    <text-property name="displayName">ntstatusir</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntstatusir"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntstatusur</property>
+                    <text-property name="displayName">ntstatusur</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntstatusur"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntdepreason</property>
+                    <text-property name="displayName">ntdepreason</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntdepreason"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntdepmemo</property>
+                    <text-property name="displayName">ntdepmemo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntdepmemo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">serialnum</property>
+                    <text-property name="displayName">serialnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["serialnum"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">ntstation</property>
+                    <text-property name="displayName">ntstation</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntstation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ntstatuspo</property>
+                    <text-property name="displayName">ntstatuspo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntstatuspo"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">ntconfig</property>
+                    <text-property name="displayName">ntconfig</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ntconfig"]</expression>
+                    <property name="dataType">integer</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">transdate</property>
+                    <text-property name="displayName">transdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["transdate"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">fromdate</property>
+                    <expression name="expression" type="javascript">dataSetRow["fromdate"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key" type="javascript">row["ntstation"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["ntmaintdepdt"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["nttraindep"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+                <structure>
+                    <expression name="key" type="javascript">row["ntposition"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+            </list-property>
+            <column id="1868">
+                <property name="width">1.5cm</property>
+            </column>
+            <column id="1752">
+                <property name="width">3cm</property>
+            </column>
+            <column id="1753">
+                <property name="width">1.5cm</property>
+            </column>
+            <column id="1754">
+                <property name="width">1cm</property>
+            </column>
+            <column id="1755">
+                <property name="width">1.5cm</property>
+            </column>
+            <column id="1756">
+                <property name="width">0.75cm</property>
+            </column>
+            <column id="1757">
+                <property name="canShrink">true</property>
+                <property name="width">3cm</property>
+            </column>
+            <column id="1758">
+                <property name="width">0.875in</property>
+            </column>
+            <column id="1759">
+                <property name="width">1.5cm</property>
+            </column>
+            <column id="1760">
+                <property name="width">1.75cm</property>
+            </column>
+            <column id="1761">
+                <property name="width">1.75cm</property>
+            </column>
+            <column id="1762">
+                <property name="width">1.75cm</property>
+            </column>
+            <column id="1764">
+                <property name="width">1.75cm</property>
+            </column>
+            <column id="2090">
+                <property name="width">1.75cm</property>
+            </column>
+            <column id="2106">
+                <property name="width">1cm</property>
+            </column>
+            <column id="1765">
+                <property name="width">2.5cm</property>
+            </column>
+            <column id="2068">
+                <property name="width">4cm</property>
+            </column>
+            <header>
+                <row id="1830">
+                    <cell id="1831">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                    <cell id="2055">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="1919">
+                    <cell id="1921">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="1922">
+                        <property name="colSpan">15</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="416">
+                            <property name="fontSize">12pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">center</property>
+                            <property name="whiteSpace">nowrap</property>
+                            <text-property name="text">Status van de treinen op het moment van vertrek</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2056">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="1972">
+                    <cell id="1974"/>
+                    <cell id="1975">
+                        <label id="2004">
+                            <property name="color">white</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Locatie:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1976"/>
+                    <cell id="1977"/>
+                    <cell id="1978"/>
+                    <cell id="1979"/>
+                    <cell id="1980"/>
+                    <cell id="1981"/>
+                    <cell id="1982"/>
+                    <cell id="1983"/>
+                    <cell id="1984"/>
+                    <cell id="1985"/>
+                    <cell id="1986"/>
+                    <cell id="2079"/>
+                    <cell id="2095"/>
+                    <cell id="1987"/>
+                    <cell id="2057"/>
+                </row>
+                <row id="1871">
+                    <cell id="1873"/>
+                    <cell id="1874">
+                        <label id="118">
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Locatie:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1875">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <text-data id="1859">
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">left</property>
+                            <expression name="valueExpr">params["maintlocation"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                    <cell id="1882"/>
+                    <cell id="1883"/>
+                    <cell id="1884"/>
+                    <cell id="1885"/>
+                    <cell id="2080"/>
+                    <cell id="2096"/>
+                    <cell id="1886"/>
+                    <cell id="2058"/>
+                </row>
+                <row id="2112">
+                    <cell id="2113"/>
+                    <cell id="2114">
+                        <label id="2130">
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Regio:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2115">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <text-data id="2131">
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">left</property>
+                            <expression name="valueExpr">params["region"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                    <cell id="2122"/>
+                    <cell id="2123"/>
+                    <cell id="2124"/>
+                    <cell id="2125"/>
+                    <cell id="2126"/>
+                    <cell id="2127"/>
+                    <cell id="2128"/>
+                    <cell id="2129"/>
+                </row>
+                <row id="2132">
+                    <cell id="2133"/>
+                    <cell id="2134">
+                        <label id="2150">
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Gereed vanaf:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2135">
+                        <property name="colSpan">7</property>
+                        <property name="rowSpan">1</property>
+                        <text-data id="2151">
+                            <property name="color">#005D57</property>
+                            <property name="textAlign">left</property>
+                            <expression name="valueExpr">row["fromdate"]</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                    </cell>
+                    <cell id="2142"/>
+                    <cell id="2143"/>
+                    <cell id="2144"/>
+                    <cell id="2145"/>
+                    <cell id="2146"/>
+                    <cell id="2147"/>
+                    <cell id="2148"/>
+                    <cell id="2149"/>
+                </row>
+                <row id="1988">
+                    <cell id="1990"/>
+                    <cell id="1991"/>
+                    <cell id="1992"/>
+                    <cell id="1993"/>
+                    <cell id="1994"/>
+                    <cell id="1995"/>
+                    <cell id="1996"/>
+                    <cell id="1997"/>
+                    <cell id="1998"/>
+                    <cell id="1999"/>
+                    <cell id="2000"/>
+                    <cell id="2001"/>
+                    <cell id="2002"/>
+                    <cell id="2083"/>
+                    <cell id="2099"/>
+                    <cell id="2003"/>
+                    <cell id="2061"/>
+                </row>
+                <row id="1673">
+                    <cell id="1864">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1675">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Locatie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1676">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1677">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Tijd vertrek</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1678">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1679">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Nummer vertrek</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1680">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1681">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Positie</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1682">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1683">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Serienummer</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1684">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1685">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Spoor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1686">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1687">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Gereed</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1688">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1689">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Samenstelling</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1690">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1693">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Juiste plaats</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1692">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1695">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">TC</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1694">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1697">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">HER</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1696">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1699">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">IR</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1700">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1701">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">UR</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2085">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <text id="2091">
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[PO]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="2101">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <text id="2107">
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[CONF]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="1702">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="1703">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Reden voor afwijking</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2063">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <text id="2071">
+                            <property name="contentType">auto</property>
+                            <text-property name="content"><![CDATA[Opmerkingen]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </header>
+            <group id="1935">
+                <property name="groupName">Location</property>
+                <expression name="keyExpr" type="javascript">row["location"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["location"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always</property>
+                <footer>
+                    <row id="1953">
+                        <cell id="1955"/>
+                        <cell id="1956"/>
+                        <cell id="1957"/>
+                        <cell id="1958"/>
+                        <cell id="1959"/>
+                        <cell id="1961"/>
+                        <cell id="1962"/>
+                        <cell id="1963"/>
+                        <cell id="1964"/>
+                        <cell id="1965"/>
+                        <cell id="1966"/>
+                        <cell id="1967"/>
+                        <cell id="1968"/>
+                        <cell id="2087"/>
+                        <cell id="2103"/>
+                        <cell id="1969"/>
+                        <cell id="2065"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="1704">
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">dotted</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <cell id="1865">
+                        <data id="2075">
+                            <property name="resultSetColumn">ntstation</property>
+                        </data>
+                    </cell>
+                    <cell id="1707">
+                        <data id="2154">
+                            <property name="resultSetColumn">ntmaintdepdt</property>
+                        </data>
+                    </cell>
+                    <cell id="1709">
+                        <data id="2034">
+                            <property name="resultSetColumn">nttraindep</property>
+                        </data>
+                    </cell>
+                    <cell id="1711">
+                        <data id="2035">
+                            <property name="resultSetColumn">ntposition</property>
+                        </data>
+                    </cell>
+                    <cell id="1713">
+                        <data id="2036">
+                            <property name="resultSetColumn">serialnum</property>
+                        </data>
+                    </cell>
+                    <cell id="1715">
+                        <data id="2038">
+                            <property name="resultSetColumn">ntdeptrack</property>
+                        </data>
+                    </cell>
+                    <cell id="1717">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">lt</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["transdate"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">BirtDateTime.addMinute(row["ntmaintdepdt"], 3)</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">ge</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["transdate"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">BirtDateTime.addMinute(row["ntmaintdepdt"], 3)</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                        <data id="2033">
+                            <property name="resultSetColumn">transdate</property>
+                        </data>
+                    </cell>
+                    <cell id="1719">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">ne</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntrightmodel"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"N"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntrightmodel"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"N"</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="1721">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">ne</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntrighttrack"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"N"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntrighttrack"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"N"</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="1723">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatustc"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatustc"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"NIET INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#800080</property>
+                                <expression name="testExpr" type="javascript">row["ntstatustc"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"ONDER BEWAKING"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-null</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatustc"]</expression>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="1725">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusher"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusher"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"NIET INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#800080</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusher"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"ONDER BEWAKING"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-null</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusher"]</expression>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="1727">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusir"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusir"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"NIET INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#800080</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusir"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"ONDER BEWAKING"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-null</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusir"]</expression>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="1731">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusur"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusur"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"NIET INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#800080</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusur"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"ONDER BEWAKING"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-null</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatusur"]</expression>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="2086">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatuspo"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatuspo"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"NIET INZETBAAR"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#800080</property>
+                                <expression name="testExpr" type="javascript">row["ntstatuspo"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"ONDER BEWAKING"</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-null</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntstatuspo"]</expression>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="2102">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["ntconfig"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">gt</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["ntconfig"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                    </cell>
+                    <cell id="1733">
+                        <data id="2053">
+                            <property name="resultSetColumn">ntdepreason</property>
+                        </data>
+                    </cell>
+                    <cell id="2064">
+                        <data id="2070">
+                            <property name="resultSetColumn">ntdepmemo</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1735">
+                    <cell id="1736">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                    <cell id="2066">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="1766">
+                    <cell id="1767">
+                        <property name="colSpan">16</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="style">summarylabel</property>
+                                <property name="width">1.4in</property>
+                            </column>
+                            <column id="218">
+                                <property name="style">summarydata</property>
+                                <property name="width">8.4895833333in</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <property name="whiteSpace">nowrap</property>
+                                        <text-property name="text">Aantal regels:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">Column Binding</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                    <cell id="2067"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

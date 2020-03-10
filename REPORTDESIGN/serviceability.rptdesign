@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_v20090521 Build &lt;2.3.2.v20090601-0700></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>user</value>
+    </simple-property-list>
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/serviceability.log");
+
+if(params["language"].value){
+	params["language"] = params["language"].replace(/[!=]/gi,"");
+}
+
+if(params["explanation"].value){
+	params["explanation"] = params["explanation"].replace(/[!=]/gi,"");
+}
+
+if(params["adminresponse"].value){
+	params["adminresponse"] = params["adminresponse"].replace(/[!=]/gi,"");
+}
+
+if(params["operatorresponse"].value){
+	params["operatorresponse"] = params["operatorresponse"].replace(/[!=]/gi,"");
+}
+
+if(params["systemaction"].value){
+	params["systemaction"] = params["systemaction"].replace(/[!=]/gi,"");
+}
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+function getLanguage(language) {
+	var languageDS = MXReportDataSetProvider.create("maximoDataSource", "languageDS");
+	languageDS.open();
+	
+	var sqlText = new String();
+
+	sqlText = "select language.maxlangcode, language.languagename "
+	+ " from language "
+	+ " where language.maxlangcode = ?"
+	;
+	
+	languageDS.setQuery(sqlText);
+	languageDS.setQueryParameterValue(1, language.toUpperCase());
+	
+	var varvalue;
+	if(languageDS.fetch()) {
+		varvalue = new Object();
+		varvalue.langcode = languageDS.getString("maxlangcode");
+		varvalue.langname = languageDS.getString("languagename");
+	}
+	
+	languageDS.close();
+	
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug("getLanguage() returning " + varvalue.langcode + " " + varvalue.langname);
+	}
+
+	return varvalue;
+}
+
+function getSystemLanguage() {
+	var maxvarDS = MXReportDataSetProvider.create("maximoDataSource", "maxvarDS");
+	maxvarDS.open();
+		
+	var sqlText = new String();
+
+	sqlText = "select varvalue from maxvars where varname = 'BASELANGUAGE'";
+	
+	maxvarDS.setQuery(sqlText);
+	
+	var varvalue;
+	if(maxvarDS.fetch()) {
+		varvalue = maxvarDS.getString("varvalue");
+	}
+	
+	maxvarDS.close();
+	
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug("getSystemLanguage() returning " + varvalue);
+	}
+	return varvalue;
+}]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable", "childTable1", "childTable2"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Subreport Template</text-property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="829">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">true</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="language" id="833">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="explanation" id="834">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="adminresponse" id="835">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="operatorresponse" id="836">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="systemaction" id="837">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="mainDataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">langcode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">msggroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">msgid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">value</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">explanation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">adminresponse</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">operatorresponse</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">systemaction</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">langcode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">msggroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">msgid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">value</property>
+                </structure>
+                <structure>
+                    <property name="columnName">explanation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">adminresponse</property>
+                </structure>
+                <structure>
+                    <property name="columnName">operatorresponse</property>
+                </structure>
+                <structure>
+                    <property name="columnName">systemaction</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">langcode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">msggroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">msgid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">value</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">explanation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">adminresponse</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">operatorresponse</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">systemaction</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">baseLangcode</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">true</property>
+                </structure>
+                <structure>
+                    <property name="name">tmpLangcode</property>
+                    <property name="dataType">string</property>
+                    <property name="position">2</property>
+                    <expression name="defaultValue">""</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">true</property>
+                </structure>
+                <structure>
+                    <property name="name">tmpLangname</property>
+                    <property name="dataType">string</property>
+                    <property name="position">3</property>
+                    <expression name="defaultValue">""</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">true</property>
+                </structure>
+            </list-property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+//cleaning params where
+params["where"] = " 1=1 ";
+
+var sqlText = new String();
+
+//getSystemLanguage() method defined on root element's initialize()
+outputParams["baseLangcode"] = getSystemLanguage();
+
+//getLanguage(language) method defined on root element's initialize()
+var tmplang;
+if(params["language"].value) {
+	tmplang = getLanguage(params["language"]);
+}
+else {
+	tmplang = getLanguage(outputParams["baseLangcode"]);
+}
+outputParams["tmpLangcode"] = tmplang.langcode;
+outputParams["tmpLangname"] = tmplang.langname;
+	
+var onMaxlanguagesTable = ((!params["language"].value) || (BirtComp.equalTo(params["language"], outputParams["baseLangcode"])));
+
+//param explanation
+if(params["explanation"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params["explanation"]) != 1 )) {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> params[\"explanation\"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params[\"explanation\"]))");
+	}
+	if(onMaxlanguagesTable) {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and maxmessages.explanation is not null ";
+		}
+ 		else {
+			params["where"] += " and maxmessages.explanation != '' ";
+		}		
+	}
+	else {
+		if(maximoDataSet.isOracle()){
+			params["where"] += " and l_maxmessages.explanation is not null ";
+		}
+		else {
+			params["where"] += " and l_maxmessages.explanation != '' ";
+		}
+	}
+}
+
+//param adminresponse
+if(params["adminresponse"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params["adminresponse"]) != 1 )) {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> params[\"adminresponse\"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params[\"adminresponse\"]))");
+	}
+	if(onMaxlanguagesTable) {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and maxmessages.adminresponse is not null ";
+		}
+		else{
+			params["where"] += " and maxmessages.adminresponse != '' ";
+		}
+	}
+	else {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and l_maxmessages.adminresponse is not null ";
+		}
+		else{
+			params["where"] += " and l_maxmessages.adminresponse != '' ";
+		}
+	}
+}
+
+//param operatorresponse
+if(params["operatorresponse"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params["operatorresponse"]) != 1 )) {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> params[\"operatorresponse\"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params[\"operatorresponse\"]))");
+	}
+	if(onMaxlanguagesTable) {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and maxmessages.operatorresponse is not null ";
+		}
+		else{
+			params["where"] += " and maxmessages.operatorresponse != '' ";
+		}
+	}
+	else {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and l_maxmessages.operatorresponse is not null ";
+		}
+		else{
+			params["where"] += " and l_maxmessages.operatorresponse != '' ";
+		}
+	}
+}
+
+//param systemaction
+if(params["systemaction"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params["systemaction"]) != 1 )) {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> params[\"systemaction\"].value &amp;&amp; (maximoDataSet.getBooleanInteger(params[\"systemaction\"]))");
+	}
+	if(onMaxlanguagesTable) {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and maxmessages.systemaction is not null ";
+		}
+		else{
+			params["where"] += " and maxmessages.systemaction != '' ";
+		}
+	}
+	else {
+		if(maximoDataSet.isOracle()) {
+			params["where"] += " and l_maxmessages.systemaction is not null ";			
+		}
+		else{
+			params["where"] += " and l_maxmessages.systemaction != '' ";
+		}
+	}
+}
+
+if(onMaxlanguagesTable) {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> (!params[\"language\"].value) || (BirtComp.equalTo(params[\"language\"], outputParams[\"baseLangcode\"]))");
+	}
+	
+	sqlText = "select (select varvalue from maxvars where varname = 'BASELANGUAGE') as langcode, maxmessages.msggroup, maxmessages.msgid, "
+	+ " maxmessages.value, maxmessages.explanation, maxmessages.adminresponse, "
+	+ " maxmessages.operatorresponse, maxmessages.systemaction "
+	+ " from maxmessages "
+	+ " where " + params["where"]
+	+ " order by maxmessages.msggroup, maxmessages.msgid "
+	;
+}
+else {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug("ELSE on params[\"language\"]");
+	}
+	
+	sqlText = "select l_maxmessages.langcode, maxmessages.msggroup, maxmessages.msgid, "
+	+ " l_maxmessages.value, l_maxmessages.explanation, l_maxmessages.adminresponse, "
+	+ " l_maxmessages.operatorresponse, l_maxmessages.systemaction "
+	+ " from l_maxmessages inner join "
+	+ " maxmessages on "
+	+ " l_maxmessages.ownerid = maxmessages.maxmessagesid "
+	+ " where " + params["where"]
+	+ " order by maxmessages.msggroup, maxmessages.msgid"
+	;
+}
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["langcode"] = maximoDataSet.getString("langcode");
+row["msggroup"] = maximoDataSet.getString("msggroup");
+row["msgid"] = maximoDataSet.getString("msgid");
+row["value"] = maximoDataSet.getString("value");
+row["explanation"] = maximoDataSet.getString("explanation");
+row["adminresponse"] = maximoDataSet.getString("adminresponse");
+row["operatorresponse"] = maximoDataSet.getString("operatorresponse");
+row["systemaction"] = maximoDataSet.getString("systemaction");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="830">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="831">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">mainDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">langcode</property>
+                    <expression name="expression">dataSetRow["langcode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">msggroup</property>
+                    <expression name="expression">dataSetRow["msggroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">msgid</property>
+                    <expression name="expression">dataSetRow["msgid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value</property>
+                    <expression name="expression">dataSetRow["value"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">explanation</property>
+                    <expression name="expression">dataSetRow["explanation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">adminresponse</property>
+                    <expression name="expression">dataSetRow["adminresponse"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">operatorresponse</property>
+                    <expression name="expression">dataSetRow["operatorresponse"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">systemaction</property>
+                    <expression name="expression">dataSetRow["systemaction"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">baseLangcode</property>
+                    <expression name="expression">outputParams["baseLangcode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">langname</property>
+                    <expression name="expression">outputParams["tmpLangname"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">explanation_param</property>
+                    <expression name="expression">(params["explanation"].value).toUpperCase()</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">adminresponse_param</property>
+                    <expression name="expression">(params["adminresponse"].value).toUpperCase()</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">operatorresponse_param</property>
+                    <expression name="expression">(params["operatorresponse"].value).toUpperCase()</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">systemaction_param</property>
+                    <expression name="expression">(params["systemaction"].value).toUpperCase()</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="79">
+                <property name="width">2.1in</property>
+            </column>
+            <column id="91">
+                <property name="width">2.1in</property>
+            </column>
+            <column id="87">
+                <property name="width">1.7in</property>
+            </column>
+            <column id="17">
+                <property name="width">1.7in</property>
+            </column>
+            <column id="18">
+                <property name="width">1.7in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="940">
+                            <property name="marginTop">0pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="serviceability.title">Serviceability</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="marginTop">3pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">3in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="946">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="949">
+                                <property name="width">3in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="952">
+                                <property name="width">2in</property>
+                            </column>
+                            <row id="962">
+                                <cell id="963">
+                                    <label id="968">
+                                        <text-property name="text" key="languagecode_colon"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="964">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="969">
+                                        <property name="resultSetColumn">langname</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="explanation.param"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="944">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="970">
+                                        <property name="resultSetColumn">explanation_param</property>
+                                    </data>
+                                </cell>
+                                <cell id="947">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="119">
+                                        <text-property name="text" key="adminresponse.param"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="971">
+                                        <property name="resultSetColumn">adminresponse_param</property>
+                                    </data>
+                                </cell>
+                                <cell id="950">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="960">
+                                        <text-property name="text" key="operatorresponse.param"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="945">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="972">
+                                        <property name="resultSetColumn">operatorresponse_param</property>
+                                    </data>
+                                </cell>
+                                <cell id="948">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="961">
+                                        <text-property name="text" key="systemaction.param"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="973">
+                                        <property name="resultSetColumn">systemaction_param</property>
+                                    </data>
+                                </cell>
+                                <cell id="951">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="975">
+                <property name="groupName">msggroupGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["msggroup"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["msggroup"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="1024">
+                        <property name="height">0.08in</property>
+                        <cell id="1025">
+                            <property name="colSpan">6</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="976">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="977">
+                            <property name="colSpan">6</property>
+                            <property name="rowSpan">1</property>
+                            <grid id="1005">
+                                <property name="width">100%</property>
+                                <column id="1006">
+                                    <property name="width">1in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="1007">
+                                    <property name="width">9in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <row id="1008">
+                                    <cell id="1009">
+                                        <label id="1011">
+                                            <text-property name="text" key="messagegroup_colon"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1010">
+                                        <data id="990">
+                                            <property name="resultSetColumn">msggroup</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="991">
+                        <property name="height">0.08in</property>
+                        <cell id="992">
+                            <property name="colSpan">6</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="998">
+                        <property name="style">tabledetailslabel</property>
+                        <cell id="999">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1018">
+                                <text-property name="text" key="id"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="1000">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1019">
+                                <text-property name="text" key="value"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="1001">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1020">
+                                <text-property name="text" key="explanation"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="1002">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1021">
+                                <text-property name="text" key="administratorresponse"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="1003">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1022">
+                                <text-property name="text" key="userresponse"></text-property>
+                            </label>
+                        </cell>
+                        <cell id="1004">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="1023">
+                                <text-property name="text" key="systemaction"></text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1012">
+                            <property name="resultSetColumn">msgid</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1013">
+                            <property name="resultSetColumn">value</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1014">
+                            <property name="resultSetColumn">explanation</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1015">
+                            <property name="resultSetColumn">adminresponse</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1016">
+                            <property name="resultSetColumn">operatorresponse</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1017">
+                            <property name="resultSetColumn">systemaction</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="953">
+                    <property name="height">0.12in</property>
+                    <cell id="954">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

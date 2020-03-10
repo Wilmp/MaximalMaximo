@@ -1,0 +1,1193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <simple-property-list name="includeResource">
+        <value>asset</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+importClass(Packages.java.util.ArrayList);
+importClass(Packages.java.util.Hashtable);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogLevel("ERROR");
+//mxReportScriptContext.setDefaultLogLevel("INFO");
+//mxReportScriptContext.setDefaultLogFile("C:/temp/asset_costrollup.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+// ===========================================================================v
+var updateRun = false;
+var arrayCounter = 0;
+var assetArrayCounter = 0;
+
+var assetMasterList = new Array();
+var assetList = new Array();
+
+function fetchParentCost(datasource, siteid, assetnum, labcost, toolcost, matcost, servcost, returncost, wonum) {
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> entering fetchParentCost()");
+	}
+	var assetFound = false;
+	var i = 0;
+	var newParent = "";
+	var site = "";
+	while ((i<assetArrayCounter) &amp;&amp; (!(assetFound))) {
+			if (scriptLogger.isDebugEnabled()) {
+				scriptLogger.debug(">>> site compare: " + siteid + " :: " + assetList[i + "A"]);
+				scriptLogger.debug(">>> asset compare: " + assetnum + " :: " + assetList[i + "B"]);
+			}
+		if (BirtComp.equalTo(assetList[i + "A"],siteid) &amp;&amp; BirtComp.equalTo(assetList[i + "B"],assetnum)) {
+			assetList[i + "G"] = assetList[i + "G"] + labcost;
+			assetList[i + "H"] = assetList[i + "H"] + toolcost;
+			assetList[i + "I"] = assetList[i + "I"] + matcost;
+			assetList[i + "K"] = assetList[i + "K"] + servcost;
+			newParent = assetList[i + "L"];
+			site = assetList[i + "A"];
+			assetFound = true;
+		}
+		i++;
+	}
+	
+	if (!(assetFound)) {
+				
+			if (scriptLogger.isDebugEnabled()) {
+				scriptLogger.debug(">>> assetArrayCounter: " + assetArrayCounter);
+				scriptLogger.debug(">>> createNewAsset: " + assetnum);
+			}
+		var parentDS = MXReportDataSetProvider.create("maximoDataSource", "parentDS");
+		parentDS.open();
+		
+		var parentSQL = new String();
+		parentSQL = "select distinct asset.siteid, asset.assetnum, assethierarchy.parent, "
+		+ " asset.description, asset.ytdcost, asset.budgetcost, asset.totalcost "
+		+ " from asset, assethierarchy"
+		+ " where asset.siteid = '" + siteid + "'"
+		+ " and asset.assetnum = '" + assetnum + "'"
+		+ " and assethierarchy.wonum = '" + wonum + "'"
+		+ " and assethierarchy.assetnum = asset.assetnum"
+		+ " and assethierarchy.siteid = asset.siteid"
+		;
+		
+		parentDS.setQuery(parentSQL);
+		
+		while(parentDS.fetch()) {
+			if (scriptLogger.isDebugEnabled()) {
+				scriptLogger.debug("... on fetch in fetchParentCost()");
+			}
+			site = parentDS.getString("siteid");
+			newParent = parentDS.getString("parent");
+			var asset = parentDS.getString("assetnum");
+			var ytdcost = parentDS.getDouble("ytdcost");
+			if (BirtComp.equalTo(ytdcost,null) || BirtComp.equalTo(ytdcost,Number.NaN)) {
+				ytdcost = 0;
+			}
+			var budgetcost = parentDS.getDouble("budgetcost");
+			if (BirtComp.equalTo(budgetcost,null) || BirtComp.equalTo(budgetcost,Number.NaN)) {
+				budgetcost = 0;
+			}
+			var totalcost = parentDS.getDouble("totalcost");
+			if (BirtComp.equalTo(totalcost,null) || BirtComp.equalTo(totalcost,Number.NaN)) {
+				totalcost = 0;
+			}
+			assetList[assetArrayCounter + "A"] = site;
+			assetList[assetArrayCounter + "B"] = asset;
+			assetList[assetArrayCounter + "C"] = parentDS.getString("description");
+			assetList[assetArrayCounter + "D"] = ytdcost;
+			assetList[assetArrayCounter + "E"] = budgetcost;
+			assetList[assetArrayCounter + "F"] = totalcost;
+			assetList[assetArrayCounter + "G"] = labcost;
+			assetList[assetArrayCounter + "H"] = toolcost;
+			assetList[assetArrayCounter + "I"] = matcost;
+			assetList[assetArrayCounter + "J"] = returncost;
+			assetList[assetArrayCounter + "K"] = servcost;
+			assetList[assetArrayCounter + "L"] = newParent;
+			assetArrayCounter = assetArrayCounter + 1;
+		}
+		parentDS.close();
+	}
+	if ((BirtComp.notEqual(newParent,null)) &amp;&amp; (BirtComp.notEqual(newParent,""))) {
+		fetchParentCost(datasource, site, newParent, labcost, toolcost, matcost, servcost, returncost, wonum);
+	}
+}
+
+function fetchMaintenanceCost(datasource) {
+
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug(">>> entering fetchMaintenanceCost()");
+	}
+	var maintcostDS = MXReportDataSetProvider.create("maximoDataSource", "maintcostDS");
+	maintcostDS.open();
+
+	var maintcostSQL = new String();
+	
+	maintcostSQL = "select distinct asset.siteid, asset.assetnum, assethierarchy.parent, "
+	+ " asset.description, asset.ytdcost, asset.budgetcost, asset.totalcost, workorder.wonum, "
+	+ " (select sum(abs(matusetrans.linecost)) from matusetrans "
+	+ " where matusetrans.assetnum is not null "
+	+ " and matusetrans.refwo = workorder.wonum "
+	+ " and matusetrans.tositeid = asset.siteid "
+	+ " and " + params["where"]
+	+ " and matusetrans.assetnum = asset.assetnum "
+	+ " and (matusetrans.rollup = 0 or matusetrans.rollup is null) and (matusetrans.linecost <> 0 and matusetrans.linecost is not null) "
+	+ " and matusetrans.issuetype in (select value from synonymdomain where domainid = 'ISSUETYP' and maxvalue = 'RETURN') "
+	+ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN')) ) as returncost, "
+	+ " (select sum(abs(matusetrans.linecost)) from matusetrans "
+	+ " where matusetrans.assetnum is not null "
+	+ " and matusetrans.refwo = workorder.wonum "
+	+ " and matusetrans.tositeid = asset.siteid "
+	+ " and " + params["where"]
+	+ " and matusetrans.assetnum = asset.assetnum "
+	+ " and (matusetrans.rollup = 0 or matusetrans.rollup is null) "
+	+ " and (matusetrans.linecost <> 0 and matusetrans.linecost is not null) "
+	+ " and matusetrans.issuetype in (select value from synonymdomain where domainid = 'ISSUETYP' and maxvalue = 'ISSUE') "
+	+ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN')) ) as matcost, "
+	+ " (select sum(labtrans.linecost) from labtrans "
+	+ " where labtrans.refwo = workorder.wonum "
+	+ " and labtrans.siteid = workorder.siteid "
+	+ " and labtrans.assetnum is not null "
+	+ " and labtrans.assetnum = asset.assetnum "
+	+ " and labtrans.siteid = asset.siteid "
+	+ " and " + params["where"]
+	+ " and (labtrans.rollup = 0 or labtrans.rollup is null) "
+	+ " and (labtrans.linecost <> 0 and labtrans.linecost is not null) "
+	+ " and labtrans.genapprservreceipt = 1 "
+	+ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN')) ) as labcost, "
+	+ " (select sum(tooltrans.linecost) from tooltrans "
+	+ " where tooltrans.refwo = workorder.wonum "
+	+ " and tooltrans.siteid = workorder.siteid "
+	+ " and workorder.assetnum = asset.assetnum "
+	+ " and tooltrans.assetnum is not null "
+	+ " and tooltrans.assetnum = asset.assetnum "
+	+ " and tooltrans.siteid = asset.siteid "
+	+ " and " + params["where"]
+	+ " and (tooltrans.rollup = 0 or tooltrans.rollup IS NULL) "
+	+ " and (tooltrans.linecost <> 0 and tooltrans.linecost is not null) "
+	+ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN')) ) as toolcost, "
+	+ " (select sum(servrectrans.linecost) as linecost from servrectrans "
+	+ " where servrectrans.refwo = workorder.wonum "
+	+ " and servrectrans.siteid = workorder.siteid "
+	+ " and workorder.assetnum = asset.assetnum "
+	+ " and servrectrans.assetnum is not null "
+	+ " and servrectrans.assetnum = asset.assetnum "
+	+ " and servrectrans.siteid = asset.siteid "
+	+ " and " + params["where"]
+	+ " and (servrectrans.rollup = 0 or servrectrans.rollup IS NULL) "
+	+ " and (servrectrans.linecost <> 0 and servrectrans.linecost is not null) "
+	+ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN')) ) as servcost "
+	+ " from workorder, assethierarchy, asset left outer join "
+	+ " labtrans labtrans on "
+	+ " labtrans.rollup = 0 "
+	+ " and labtrans.genapprservreceipt = 1 "
+	+ " and asset.siteid = labtrans.siteid "
+	+ " and asset.assetnum = labtrans.assetnum "
+	+ " and " + params["where"]
+	+ " and (labtrans.linecost <> 0 and labtrans.linecost is not null) left outer join "
+	+ " tooltrans tooltrans on "
+	+ " tooltrans.rollup = 0 "
+	+ " and asset.siteid = tooltrans.siteid "
+	+ " and asset.assetnum = tooltrans.assetnum "
+	+ " and " + params["where"]
+	+ " and (tooltrans.linecost <> 0 and tooltrans.linecost is not null) left outer join "
+	+ " matusetrans matusetrans on "
+	+ " matusetrans.rollup = 0 "
+	+ " and asset.siteid = matusetrans.tositeid "
+	+ " and asset.assetnum = matusetrans.assetnum "
+	+ " and " + params["where"]
+	+ " and (matusetrans.linecost <> 0 and matusetrans.linecost is not null) left outer join "
+	+ " servrectrans servrectrans on "
+	+ " servrectrans.rollup = 0 "
+	+ " and asset.siteid = servrectrans.siteid "
+	+ " and asset.assetnum = servrectrans.assetnum "
+	+ " and " + params["where"]
+	+ " and (servrectrans.linecost <> 0 and servrectrans.linecost is not null) "
+	+ " where ( "
+	+ " labtrans.labtransid is not null "
+	+ " or tooltrans.tooltransid is not null "
+	+ " or matusetrans.matusetransid is not null "
+	+ " or servrectrans.servrectransid is not null "
+	+ " ) "
+	+ " and ( "
+	+ " labtrans.refwo = workorder.wonum "
+	+ " or tooltrans.refwo = workorder.wonum "
+	+ " or matusetrans.refwo = workorder.wonum "
+	+ " or servrectrans.refwo = workorder.wonum) "
+	+ " and workorder.status in (select value from synonymdomain where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN')) "
+	+ " and assethierarchy.wonum = workorder.wonum "
+	+ " and assethierarchy.assetnum = asset.assetnum "
+	+ " and assethierarchy.siteid = asset.siteid "
+	+ " and " + params["where"]
+	+ " order by asset.siteid, asset.assetnum "
+	;
+
+	maintcostDS.setQuery(maintcostSQL);
+	
+	while(maintcostDS.fetch()) {
+		if (scriptLogger.isDebugEnabled()) {
+			scriptLogger.debug("... on fetch()");
+		}
+		
+		var siteid = maintcostDS.getString("siteid");
+		var assetnum = maintcostDS.getString("assetnum");
+		var parent = maintcostDS.getString("parent");
+		var wonum = maintcostDS.getString("wonum");
+		
+		var assetFound = false;
+		var newCounter = 0;
+		var tempAssetArrayCounter = 0;
+		while ((newCounter<=assetArrayCounter) &amp;&amp; (!(assetFound))) {
+			if ((BirtComp.equalTo(assetList[newCounter+"A"],siteid)) &amp;&amp; (BirtComp.equalTo(assetList[newCounter+"B"],assetnum))) {
+				assetFound = true;
+				tempAssetArrayCounter = assetArrayCounter;
+				assetArrayCounter = newCounter;
+			}
+			newCounter++;
+		}
+
+		var labcost = maintcostDS.getDouble("labcost");
+		if (BirtComp.equalTo(labcost,null) || BirtComp.equalTo(labcost,Number.NaN)) {
+			labcost = 0;
+		}
+		var toolcost = maintcostDS.getDouble("toolcost");
+		if (BirtComp.equalTo(toolcost,null) || BirtComp.equalTo(toolcost,Number.NaN)) {
+			toolcost = 0;
+		}
+		var matcost = maintcostDS.getDouble("matcost");
+		if (BirtComp.equalTo(matcost,null) || BirtComp.equalTo(matcost,Number.NaN)) {
+			matcost = 0;
+		}
+		var returncost = maintcostDS.getDouble("returncost");
+		if (BirtComp.equalTo(returncost,null) || BirtComp.equalTo(returncost,Number.NaN)) {
+			returncost = 0;
+		}
+		var servcost = maintcostDS.getDouble("servcost");
+		if (BirtComp.equalTo(servcost,null) || BirtComp.equalTo(servcost,Number.NaN)) {
+			servcost = 0;
+		}
+		
+		//subtract return costs from material costs
+		matcost = matcost - returncost;
+		
+			if (scriptLogger.isDebugEnabled()) {
+				scriptLogger.debug("... COST ANALYSIS()");
+				scriptLogger.debug("... labcost: " + labcost);
+				scriptLogger.debug("... toolcost: " + toolcost);
+				scriptLogger.debug("... matcost: " + matcost);
+				scriptLogger.debug("... servcost: " + servcost);
+				scriptLogger.debug("... returncost: " + returncost);
+			}
+	
+	
+		var ytdcost = maintcostDS.getDouble("ytdcost");
+		if (BirtComp.equalTo(ytdcost,null) || BirtComp.equalTo(ytdcost,Number.NaN)) {
+			ytdcost = 0;
+		}
+		var budgetcost = maintcostDS.getDouble("budgetcost");
+		if (BirtComp.equalTo(budgetcost,null) || BirtComp.equalTo(budgetcost,Number.NaN)) {
+			budgetcost = 0;
+		}
+		var totalcost = maintcostDS.getDouble("totalcost");
+		if (BirtComp.equalTo(totalcost,null) || BirtComp.equalTo(totalcost,Number.NaN)) {
+			totalcost = 0;
+		}
+		assetList[assetArrayCounter + "A"] = siteid;
+		assetList[assetArrayCounter + "B"] = assetnum;
+		assetList[assetArrayCounter + "C"] = maintcostDS.getString("description");
+		assetList[assetArrayCounter + "D"] = ytdcost;
+		assetList[assetArrayCounter + "E"] = budgetcost;
+		assetList[assetArrayCounter + "F"] = totalcost;
+		if (assetFound) {
+			assetList[assetArrayCounter + "G"] = assetList[assetArrayCounter + "G"] + labcost;
+			assetList[assetArrayCounter + "H"] = assetList[assetArrayCounter + "H"] + toolcost;
+			assetList[assetArrayCounter + "I"] = assetList[assetArrayCounter + "I"] + matcost;
+			assetList[assetArrayCounter + "J"] = assetList[assetArrayCounter + "J"] + returncost;
+			assetList[assetArrayCounter + "K"] = assetList[assetArrayCounter + "K"] + servcost;
+			assetArrayCounter = tempAssetArrayCounter;
+		} else {
+			if (scriptLogger.isDebugEnabled()) {
+				scriptLogger.debug(">>> assetArrayCounter: " + assetArrayCounter);
+				scriptLogger.debug(">>> createNewAsset: " + assetnum);
+			}
+			assetList[assetArrayCounter + "G"] = labcost;
+			assetList[assetArrayCounter + "H"] = toolcost;
+			assetList[assetArrayCounter + "I"] = matcost;
+			assetList[assetArrayCounter + "J"] = returncost;
+			assetList[assetArrayCounter + "K"] = servcost;
+			assetList[assetArrayCounter + "L"] = parent;
+			assetArrayCounter = assetArrayCounter + 1;
+		}
+		
+		if ((BirtComp.notEqual(parent,null)) &amp;&amp; (BirtComp.notEqual(parent,""))) {
+			fetchParentCost(datasource, siteid, parent, labcost, toolcost, matcost, servcost, returncost, wonum);
+		}
+	}
+	maintcostDS.close();
+	
+	if (scriptLogger.isDebugEnabled()) {
+		scriptLogger.debug("<<< exiting fetchMaintenanceCost()");
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Subreport Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="siteid" id="1467">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <list-property name="selectionList"/>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="mainDataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">budgetcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">totalcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">labtranscost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">tooltranscost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">matusetranscost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">servrectranscost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">ytdcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">budgetcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">totalcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">labtranscost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tooltranscost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">matusetranscost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">servrectranscost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ytdcost</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">budgetcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">totalcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">labtranscost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">tooltranscost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">matusetranscost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">servrectranscost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">ytdcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="beforeClose"><![CDATA[if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug(">>> entering beforeClose()");
+}
+
+var transTbls = ["labtrans","tooltrans","matusetrans","servrectrans"];
+
+var myTxn = MXReportTxnProvider.create("maximoDataSource");
+
+arrayCounter = 0;
+
+while(arrayCounter < assetArrayCounter) {
+	var ytdcostTest = assetList[arrayCounter + "D"] + assetList[arrayCounter + "G"] + assetList[arrayCounter + "I"] + assetList[arrayCounter + "H"] + assetList[arrayCounter + "K"];
+	var totalcostTest = assetList[arrayCounter + "F"] + assetList[arrayCounter + "G"] + assetList[arrayCounter + "I"] + assetList[arrayCounter + "H"] + assetList[arrayCounter + "K"];
+	if (BirtComp.notEqual(ytdcostTest,Number.NaN) &amp;&amp; BirtComp.notEqual(totalcostTest,Number.NaN) &amp;&amp; BirtComp.notEqual(assetList[arrayCounter + "A"],null) &amp;&amp; BirtComp.notEqual(assetList[arrayCounter + "B"],null)) {
+		var assetUpdt = "update asset set "
+		+ " asset.ytdcost = ? "
+		+ " , "
+		+ " asset.totalcost = ? "
+		+ " where asset.siteid = ? " 
+		+ " and asset.assetnum = ? "
+		
+		var assetStmt = myTxn.createStatement();
+		assetStmt.setQuery(assetUpdt);
+		assetStmt.setQueryParameterValue(1, (assetList[arrayCounter + "D"] + assetList[arrayCounter + "G"] + assetList[arrayCounter + "I"] + assetList[arrayCounter + "H"] + assetList[arrayCounter + "K"]));
+		assetStmt.setQueryParameterValue(2, (assetList[arrayCounter + "F"] + assetList[arrayCounter + "G"] + assetList[arrayCounter + "I"] + assetList[arrayCounter + "H"] + assetList[arrayCounter + "K"]));
+		assetStmt.setQueryParameterValue(3, assetList[arrayCounter + "A"]);
+		assetStmt.setQueryParameterValue(4, assetList[arrayCounter + "B"]);
+		
+		for each(var table in transTbls) {
+			var transUpdt = new String();
+			
+			switch (table) {
+	   		case "labtrans":
+				transUpdt = "update labtrans "
+				+ " set labtrans.rollup = 1 "
+				+ " where (labtrans.rollup = 0 or labtrans.rollup is null) "
+				+ " and labtrans.genapprservreceipt = 1 "
+				+ " and labtrans.siteid = ? "
+				+ " and labtrans.assetnum = ? "
+				+ " and labtrans.refwo in ( "
+				+ "  select workorder.wonum from workorder inner join "
+				+ "  asset on "
+				+ "   workorder.assetnum = asset.assetnum "
+				+ "  where labtrans.siteid = workorder.siteid "
+				+ "  and labtrans.refwo = workorder.wonum "
+				+ "  and labtrans.siteid = asset.siteid "
+				+ "  and labtrans.assetnum = asset.assetnum "
+				+ "  and workorder.status in ( "
+				+ "   select value from synonymdomain "
+				+ "   where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN') "
+				+ "  ) "
+				+ " ) "
+				;
+				break;
+			case "matusetrans":
+				transUpdt = "update matusetrans "
+				+ " set matusetrans.rollup = 1 "
+				+ " where (matusetrans.rollup = 0 or matusetrans.rollup is null) "
+				+ " and matusetrans.issuetype in ( "
+				+ "  select value from synonymdomain where domainid = 'ISSUETYP' "
+				+ "  and (maxvalue = 'RETURN' or maxvalue = 'ISSUE') "
+				+ " ) "
+				+ " and matusetrans.tositeid = ? "
+				+ " and matusetrans.assetnum = ? "
+				+ " and matusetrans.refwo in ( "
+				+ "  select workorder.wonum from workorder inner join "
+				+ "  asset on "
+				+ "   workorder.assetnum = asset.assetnum "
+				+ "  where matusetrans.tositeid = workorder.siteid "
+				+ "  and matusetrans.tositeid = asset.siteid "
+				+ "  and matusetrans.refwo = workorder.wonum "
+				+ "  and matusetrans.assetnum = asset.assetnum "
+				+ "  and workorder.status in ( "
+				+ "   select value from synonymdomain "
+				+ "   where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN') "
+				+ "  ) "
+				+ " ) "
+				;
+				break;
+			case "tooltrans":
+				transUpdt = "update tooltrans "
+				+ " set tooltrans.rollup = 1 "
+				+ " where (tooltrans.rollup = 0 or tooltrans.rollup is null) "
+				+ " and tooltrans.siteid = ? "
+				+ " and tooltrans.assetnum = ? "
+				+ " and tooltrans.refwo in ( "
+				+ "  select workorder.wonum from workorder inner join "
+				+ "  asset on "
+				+ "   workorder.assetnum = asset.assetnum "
+				+ "  where tooltrans.siteid = workorder.siteid "
+				+ "  and tooltrans.refwo = workorder.wonum "
+				+ "  and tooltrans.siteid = asset.siteid "
+				+ "  and tooltrans.assetnum = asset.assetnum "
+				+ "  and workorder.status in ( "
+				+ "   select value from synonymdomain "
+				+ "   where domainid = 'WOSTATUS' and maxvalue in ('CLOSE', 'CAN') "
+				+ "  ) "
+				+ " ) "
+				;
+				break;
+			case "servrectrans":
+				transUpdt = "update servrectrans "
+				+ " set servrectrans.rollup = 1 "
+				+ " where (servrectrans.rollup = 0 or servrectrans.rollup is null) "
+				+ " and servrectrans.siteid = ? "
+				+ " and servrectrans.assetnum = ? "
+				+ " and servrectrans.refwo in ( "
+				+ "  select workorder.wonum from workorder inner join "
+				+ "  asset on "
+				+ "   workorder.assetnum = asset.assetnum "
+				+ "  where servrectrans.siteid = workorder.siteid "
+				+ "  and servrectrans.refwo = workorder.wonum "
+				+ "  and servrectrans.siteid = asset.siteid "
+				+ "  and servrectrans.assetnum = asset.assetnum "
+				+ "  and workorder.status in ( "
+				+ "   select value from synonymdomain where domainid = 'WOSTATUS' "
+				+ "   and maxvalue in ('CLOSE', 'CAN') "
+				+ "  ) "
+				+ " ) " 
+				;
+				break;
+			default:
+				scriptLogger.warn("[mainDataSet] beforeClose() - No table as " + table);
+				break;
+			}
+			
+			var transStmt = myTxn.createStatement();
+			transStmt.setQuery(transUpdt);
+			transStmt.setQueryParameterValue(1, assetList[arrayCounter + "A"]);
+			transStmt.setQueryParameterValue(2, assetList[arrayCounter + "B"]);
+		}
+	}
+	arrayCounter = arrayCounter + 1;
+}
+if (assetArrayCounter > 0) {
+	try {
+		myTxn.save();
+		updateRun = true;
+	} catch(e) {
+		scriptLogger.error("EXCEPTION " + e );
+	}
+}]]></method>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug(">> entering maximoDataSet open()");
+}
+
+fetchMaintenanceCost(this.getDataSource().getName());]]></method>
+            <method name="fetch"><![CDATA[if (scriptLogger.isDebugEnabled()) {
+	scriptLogger.debug(">>> entering maximoDataSet fetch()");
+}
+
+if (arrayCounter < assetArrayCounter) {
+
+	row["siteid"] = assetList[arrayCounter + "A"];
+	row["assetnum"] = assetList[arrayCounter + "B"];
+	row["description"] = assetList[arrayCounter + "C"];
+	row["ytdcost"] = assetList[arrayCounter + "D"];
+	row["budgetcost"] = assetList[arrayCounter + "E"];
+	row["totalcost"] = assetList[arrayCounter + "F"];
+	row["labtranscost"] = assetList[arrayCounter + "G"];
+	row["tooltranscost"] = assetList[arrayCounter + "H"];
+	row["matusetranscost"] = assetList[arrayCounter + "I"];
+	row["servrectranscost"] = assetList[arrayCounter + "K"];
+	arrayCounter = arrayCounter + 1;
+	
+} else {
+	return false;
+}
+
+return true;]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab" id="830">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab-cell" id="831">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="comments">09-19764@000</property>
+            <property name="width">100%</property>
+            <property name="dataSet">mainDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">siteid</property>
+                    <text-property name="displayName">siteid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">assetnum</property>
+                    <text-property name="displayName">assetnum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["assetnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">budgetcost</property>
+                    <text-property name="displayName">budgetcost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["budgetcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">totalcost</property>
+                    <text-property name="displayName">totalcost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["totalcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">labtranscost</property>
+                    <text-property name="displayName">labtranscost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["labtranscost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">tooltranscost</property>
+                    <text-property name="displayName">tooltranscost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["tooltranscost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">matusetranscost</property>
+                    <text-property name="displayName">matusetranscost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["matusetranscost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">servrectranscost</property>
+                    <text-property name="displayName">servrectranscost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["servrectranscost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <text-property name="displayName">description</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ytdcost</property>
+                    <text-property name="displayName">ytdcost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ytdcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">new_ytdcost</property>
+                    <expression name="expression" type="javascript">dataSetRow["ytdcost"]+dataSetRow["labtranscost"]+dataSetRow["matusetranscost"]+dataSetRow["tooltranscost"]+dataSetRow["servrectranscost"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">new_totalcost</property>
+                    <expression name="expression" type="javascript">dataSetRow["totalcost"]+dataSetRow["labtranscost"]+dataSetRow["matusetranscost"]+dataSetRow["tooltranscost"]+dataSetRow["servrectranscost"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key">row["siteid"]</expression>
+                    <property name="direction">asc</property>
+                </structure>
+                <structure>
+                    <expression name="key">row["assetnum"]</expression>
+                    <property name="direction">asc</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr">(BirtComp.equalTo(row["matusetranscost"],0)
+&amp;&amp; BirtComp.equalTo(row["labtranscost"],0) 
+&amp;&amp; BirtComp.equalTo(row["tooltranscost"],0) 
+&amp;&amp; BirtComp.equalTo(row["servrectranscost"],0))</expression>
+                    <simple-property-list name="value1">
+                        <value>false</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <column id="83">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="79">
+                <property name="width">2.1in</property>
+            </column>
+            <column id="91">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="87">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="1397">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="1459">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="1390">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="1383">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="17">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="1415">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="1408">
+                <property name="width">0.8in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <label id="1365">
+                            <property name="marginTop">0pt</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="maint_costrollup_title_update">Maintenance Cost Rollup Update</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1418">
+                            <text-property name="text" key="asset"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1419">
+                            <text-property name="text" key="description"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1420">
+                            <text-property name="text" key="new_ytd_cost"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1421">
+                            <text-property name="text" key="previous_ytd_cost"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="1393">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1422">
+                            <text-property name="text" key="budget_cost"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="1456">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1460">
+                            <text-property name="text" key="new_total_cost"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="1386">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1423">
+                            <text-property name="text" key="previous_total_cost"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="1379">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1424">
+                            <text-property name="text" key="new_labor_costs"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1425">
+                            <text-property name="text" key="new_mat_costs"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="1411">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1426">
+                            <text-property name="text" key="new_tool_costs"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="1404">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="1427">
+                            <text-property name="text" key="new_serv_costs"></text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1374">
+                            <property name="resultSetColumn">assetnum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1375">
+                            <property name="resultSetColumn">description</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1463">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">new_ytdcost</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1466">
+                            <property name="resultSetColumn">ytdcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1394">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1398">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">budgetcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1457">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1462">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">new_totalcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1387">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1399">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">totalcost</property>
+                        </data>
+                    </cell>
+                    <cell id="1380">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1400">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">labtranscost</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1401">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">matusetranscost</property>
+                        </data>
+                    </cell>
+                    <cell id="1412">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1416">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">tooltranscost</property>
+                        </data>
+                    </cell>
+                    <cell id="1405">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="1417">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">servrectranscost</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1464">
+                    <property name="height">0.12in</property>
+                    <cell id="1465">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <property name="style">footer</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">assetArrayCounter > 0</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="82">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">summarylabel</property>
+                        <label id="367">
+                            <property name="marginTop">3pt</property>
+                            <text-property name="text" key="no_new_asset_maintenance_cost"></text-property>
+                            <list-property name="action">
+                                <structure>
+                                    <property name="linkType">none</property>
+                                </structure>
+                            </list-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="1366">
+                    <property name="style">footer</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">assetArrayCounter==0</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="1367">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="style">summarylabel</property>
+                        <label id="355">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">updateRun</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="update_success"></text-property>
+                        </label>
+                        <label id="359">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">!updateRun</expression>
+                                </structure>
+                            </list-property>
+                            <text-property name="text" key="update_error">Problems Encountered with Database Update</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

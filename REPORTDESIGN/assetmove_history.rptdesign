@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>asset</value>
+    </simple-property-list>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("c:/temp/assetmove_history.txt");]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="assetnum" id="398">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Asset</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="mrosite" id="399">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Current Site</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="fromsite" id="400">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">From Site</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="fromlocation" id="401">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">From Location</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="tosite" id="402">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">To Site</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="tolocation" id="403">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">To Location</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">asset_siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">isleased</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">datemoved</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">assettrans_siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">fromlocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">fromparent</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">tositeid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">tolocation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">toparent</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">asset_siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">isleased</property>
+                </structure>
+                <structure>
+                    <property name="columnName">datemoved</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assettrans_siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">fromlocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">fromparent</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tositeid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tolocation</property>
+                </structure>
+                <structure>
+                    <property name="columnName">toparent</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">asset_siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">isleased</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">datemoved</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">assettrans_siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">fromlocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">fromparent</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">tositeid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">tolocation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">toparent</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+var where = new String(params["where"]);
+
+if(params["tolocation"].value)
+	where += " and assettrans.toloc = '" + params["tolocation"] + "' ";
+ 
+if(params["tosite"].value)
+	where += " and assettrans.tositeid = '" + params["tosite"] + "' ";
+	
+if(params["fromsite"].value)
+	where += " and assettrans.siteid = '" + params["fromsite"] + "' ";
+	
+if(params["fromlocation"].value)
+	where += " and assettrans.fromloc = '" + params["fromlocation"] + "' ";
+	
+sqlText = "select asset.description, assettrans.datemoved, assettrans.siteid as assettrans_siteid, "
++ " assettrans.fromloc, assettrans.fromparent, assettrans.tositeid, asset.siteid as asset_siteid, "
++ " assettrans.toloc, assettrans.toparent, "
++ " (select 1 from contractasset "
++ " join contract on contractasset.contractnum = contract.contractnum "
++ " and contractasset.revisionnum = contract.revisionnum "
++ " and contractasset.orgid = contract.orgid "
++ " where asset.assetid = contractasset.assetid and contract.contracttype = 'LEASE' ) as isleased " 
++ " FROM assettrans, asset "
++ " where asset.assetid = assettrans.assetid and " + where
++ " order by assettrans.datemoved desc "
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["description"] = maximoDataSet.getString("description");	
+row["datemoved"] = maximoDataSet.getTimestamp("datemoved");	
+row["assettrans_siteid"] = maximoDataSet.getString("assettrans_siteid");	
+row["asset_siteid"] = maximoDataSet.getString("asset_siteid");	
+row["fromlocation"] = maximoDataSet.getString("fromloc");	
+row["fromparent"] = maximoDataSet.getString("fromparent");
+row["tositeid"] = maximoDataSet.getString("tositeid");
+row["tolocation"] = maximoDataSet.getString("toloc");
+row["toparent"] = maximoDataSet.getString("toparent");
+row["isleased"] = maximoDataSet.getBooleanString("isleased");
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="height">1.8333333333in</property>
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">datemoved</property>
+                    <expression name="expression">dataSetRow["datemoved"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">assettrans_siteid</property>
+                    <expression name="expression">dataSetRow["assettrans_siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">fromlocation</property>
+                    <expression name="expression">dataSetRow["fromlocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">fromparent</property>
+                    <expression name="expression">dataSetRow["fromparent"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">tositeid</property>
+                    <expression name="expression">dataSetRow["tositeid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">tolocation</property>
+                    <expression name="expression">dataSetRow["tolocation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">toparent</property>
+                    <expression name="expression">dataSetRow["toparent"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">asset_siteid</property>
+                    <expression name="expression">dataSetRow["asset_siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">isleased</property>
+                    <expression name="expression">dataSetRow["isleased"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="79">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="388">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="91">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="87">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="17">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="438">
+                <property name="width">1.3in</property>
+            </column>
+            <column id="18">
+                <property name="width">0.9in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <label id="390">
+                            <text-property name="text" key="asset_move_history"></text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="asset_colon">Parameter 1:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="404">
+                                        <structure name="stringFormat">
+                                            <property name="category">></property>
+                                            <property name="pattern">></property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">assetnum</property>
+                                                <expression name="expression">params["assetnum"].replace(/[=!]/, "")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">assetnum</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="description_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="405">
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="342">
+                                <cell id="343">
+                                    <label id="351">
+                                        <text-property name="text" key="current_site_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="344">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="406">
+                                        <property name="resultSetColumn">asset_siteid</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="345">
+                                <cell id="346">
+                                    <label id="352">
+                                        <text-property name="text" key="from_site_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="347">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="408">
+                                        <structure name="stringFormat">
+                                            <property name="category">></property>
+                                            <property name="pattern">></property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">fromsite</property>
+                                                <expression name="expression">params["fromsite"].replace(/[=!]/, "")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">fromsite</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="348">
+                                <cell id="349">
+                                    <label id="353">
+                                        <text-property name="text" key="from_location_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="350">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="407">
+                                        <structure name="stringFormat">
+                                            <property name="category">></property>
+                                            <property name="pattern">></property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">fromlocation</property>
+                                                <expression name="expression">params["fromlocation"].replace(/[=!]/, "")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">fromlocation</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="354">
+                                <cell id="355">
+                                    <label id="357">
+                                        <text-property name="text" key="to_site_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="356">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="409">
+                                        <structure name="stringFormat">
+                                            <property name="category">></property>
+                                            <property name="pattern">></property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">tosite</property>
+                                                <expression name="expression">params["tosite"].replace(/[=!]/, "")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">tosite</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="358">
+                                <cell id="359">
+                                    <label id="364">
+                                        <text-property name="text" key="to_location_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="360">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="410">
+                                        <structure name="stringFormat">
+                                            <property name="category">></property>
+                                            <property name="pattern">></property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">tolocation</property>
+                                                <expression name="expression">params["tolocation"].replace(/[=!]/, "")</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">tolocation</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="361">
+                                <cell id="362">
+                                    <label id="365">
+                                        <text-property name="text" key="leased_asset_colon">Parameter 2:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="363">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="411">
+                                        <property name="resultSetColumn">isleased</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <text-property name="text" key="date_moved"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="366">
+                            <text-property name="text" key="from_site"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="384">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="367">
+                            <text-property name="text" key="from_location"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="369">
+                            <text-property name="text" key="from_parent"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="368">
+                            <text-property name="text" key="to_site"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="370">
+                            <text-property name="text" key="to_location"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="434">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="389">
+                            <text-property name="text" key="to_parent"></text-property>
+                        </label>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="391">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Short Date</property>
+                                <property name="pattern">Short Date</property>
+                            </structure>
+                            <property name="resultSetColumn">datemoved</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="392">
+                            <property name="resultSetColumn">assettrans_siteid</property>
+                        </data>
+                    </cell>
+                    <cell id="385">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="393">
+                            <property name="resultSetColumn">fromlocation</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="394">
+                            <property name="resultSetColumn">fromparent</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="395">
+                            <property name="resultSetColumn">tositeid</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="396">
+                            <property name="resultSetColumn">tolocation</property>
+                        </data>
+                    </cell>
+                    <cell id="435">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="397">
+                            <property name="resultSetColumn">toparent</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">8</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="width">1.865in</property>
+                                <property name="style">summarylabel</property>
+                            </column>
+                            <column id="218">
+                                <property name="width">8.042in</property>
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text" key="records_selected"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="223">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

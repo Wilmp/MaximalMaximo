@@ -1,0 +1,2256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.6" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.1.1.v20060922-1058 Build &lt;20060926-0959></property>
+    <property name="units">in</property>
+    <property name="includeResource">item</property>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report with one or more groups, each having identical data fields.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/commodity_anlys.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Maximo Grouped Report Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="240">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="241">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="242">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="commoditygroup" id="388">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Commodity Group</text-property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="vendor" id="390">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Vendor</text-property>
+            <property name="allowBlank">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="buyer" id="392">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Buyer</text-property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="glaccount" id="403">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="405">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">Start Date</text-property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="406">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">End Date</text-property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">commoditygroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">vendor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">name</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ponum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">po_desc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">itemnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">item_desc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">commodity</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">purchaseagent</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">gldebitacct</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">receivedqty</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">receivedtotalcost</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">enterdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">orderunit</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">comm_desc</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">commoditygroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vendor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ponum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">po_desc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">item_desc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commodity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">purchaseagent</property>
+                </structure>
+                <structure>
+                    <property name="columnName">gldebitacct</property>
+                </structure>
+                <structure>
+                    <property name="columnName">receivedqty</property>
+                </structure>
+                <structure>
+                    <property name="columnName">receivedtotalcost</property>
+                </structure>
+                <structure>
+                    <property name="columnName">enterdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">orderunit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">comm_desc</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">commoditygroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">vendor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ponum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">po_desc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">itemnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">item_desc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">commodity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">purchaseagent</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">gldebitacct</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">receivedqty</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">receivedtotalcost</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">enterdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">orderunit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">comm_desc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+
+var sqlText = new String();
+
+if(params["commoditygroup"].value) {
+	params["where"]+=" and " + MXReportSqlFormat.createParamWhereClause("poline.commoditygroup", params["commoditygroup"].toUpperCase());
+}
+
+if(params["vendor"].value) {
+	params["where"]+=" and " + MXReportSqlFormat.createParamWhereClause("po.vendor", params["vendor"].toUpperCase());
+}
+
+if(params["buyer"].value) {
+	params["where"]+=" and " + MXReportSqlFormat.createParamWhereClause("po.purchaseagent", params["buyer"].toUpperCase());
+}
+
+if(params["glaccount"].value) {
+	params["where"]+=" and " + MXReportSqlFormat.createParamWhereClause("poline.gldebitacct", params["glaccount"].toUpperCase());
+}
+
+// Add query to sqlText variable.
+sqlText = "select poline.commoditygroup, po.vendor, companies.name, po.ponum, po.description po_desc, "
++ " poline.itemnum, item.description item_desc, poline.commodity, po.purchaseagent, poline.gldebitacct, "
++ " poline.receivedqty, poline.receivedtotalcost, poline.enterdate, poline.orderunit, po.siteid, "
++ " commodities.description as comm_desc "
++ " from item, poline, commodities, po left outer join "
++ " companies on po.vendor = companies.company "
++ " and po.orgid = companies.orgid "
+// Include the Maximo where clause
++ " where po.ponum = poline.ponum "
++ " and po.siteid = poline.siteid "
++ " and poline.commoditygroup = commodities.commodity "
++ " and poline.itemsetid = commodities.itemsetid "
++ " and poline.itemnum = item.itemnum "
++ " and poline.itemsetid = item.itemsetid "
++ " and poline.commoditygroup is not null "
++ " and (poline.receivedqty is not null or poline.receivedqty!=0) "
++ " and poline.enterdate between " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]) 
++ " and " + MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
++ " and " + params["where"]
++ " order by poline.enterdate desc "
+;
+
+maximoDataSet.setQuery(sqlText);
+maximoDataSet.open();]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["commoditygroup"] = maximoDataSet.getString("commoditygroup");
+row["vendor"] = maximoDataSet.getString("vendor");
+row["name"] = maximoDataSet.getString("name");
+row["ponum"] = maximoDataSet.getString("ponum");
+row["po_desc"] = maximoDataSet.getString("po_desc");
+row["itemnum"] = maximoDataSet.getString("itemnum");
+row["item_desc"] = maximoDataSet.getString("item_desc");
+row["commodity"] = maximoDataSet.getString("commodity");
+row["purchaseagent"] = maximoDataSet.getString("purchaseagent");
+row["gldebitacct"] = maximoDataSet.getString("gldebitacct");
+row["receivedqty"] = maximoDataSet.getInteger("receivedqty");
+row["receivedtotalcost"] = maximoDataSet.getDouble("receivedtotalcost");
+row["enterdate"] = maximoDataSet.getTimestamp("enterdate");
+row["orderunit"] = maximoDataSet.getString("orderunit");
+row["siteid"] = maximoDataSet.getString("siteid");
+row["comm_desc"] = maximoDataSet.getString("comm_desc");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2"/>
+                <ref-entry baseId="340" name="NewImage1"/>
+                <ref-entry baseId="310" name="NewImage"/>
+                <ref-entry baseId="322" name="NewGrid"/>
+                <ref-entry baseId="328" name="NewText"/>
+                <ref-entry baseId="329" name="NewGrid1"/>
+                <ref-entry baseId="335" name="NewAutoText"/>
+                <ref-entry baseId="337" name="NewText1"/>
+                <ref-entry baseId="339" name="NewAutoText1"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">commoditygroup</property>
+                    <expression name="expression">dataSetRow["commoditygroup"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vendor</property>
+                    <expression name="expression">dataSetRow["vendor"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">name</property>
+                    <expression name="expression">dataSetRow["name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item_desc</property>
+                    <expression name="expression">dataSetRow["item_desc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity</property>
+                    <expression name="expression">dataSetRow["commodity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">purchaseagent</property>
+                    <expression name="expression">dataSetRow["purchaseagent"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ponum</property>
+                    <expression name="expression">dataSetRow["ponum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">po_desc</property>
+                    <expression name="expression">dataSetRow["po_desc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemnum</property>
+                    <expression name="expression">dataSetRow["itemnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">gldebitacct</property>
+                    <expression name="expression">dataSetRow["gldebitacct"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">receivedqty</property>
+                    <expression name="expression">dataSetRow["receivedqty"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">orderunit</property>
+                    <expression name="expression">dataSetRow["orderunit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">receivedtotalcost</property>
+                    <expression name="expression">dataSetRow["receivedtotalcost"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">enterdate</property>
+                    <expression name="expression">dataSetRow["enterdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">comm_desc</property>
+                    <expression name="expression">dataSetRow["comm_desc"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">vendor.totalqty</property>
+                    <expression name="expression">Total.sum(row["receivedqty"])</expression>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateOn">vendor</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity.totalqty</property>
+                    <expression name="expression">Total.sum(row["receivedqty"])</expression>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateOn">CommodityGroup</property>
+                </structure>
+                <structure>
+                    <property name="name">commodity.totalcost</property>
+                    <expression name="expression">Total.sum(row["receivedtotalcost"])</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="aggregateOn">CommodityGroup</property>
+                </structure>
+                <structure>
+                    <property name="name">vendor.totalcost</property>
+                    <expression name="expression">Total.sum(row["receivedtotalcost"])</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="aggregateOn">vendor</property>
+                </structure>
+                <structure>
+                    <property name="name">chart_key</property>
+                    <expression name="expression">1</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">siteid</property>
+                    <expression name="expression">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="83">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="79">
+                <property name="width">1.5in</property>
+            </column>
+            <column id="91">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="87">
+                <property name="width">1.5in</property>
+            </column>
+            <column id="17">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="483">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="493">
+                <property name="width">0.6in</property>
+            </column>
+            <column id="503">
+                <property name="width">0.5in</property>
+            </column>
+            <column id="513">
+                <property name="width">0.6in</property>
+            </column>
+            <column id="523">
+                <property name="width">0.8in</property>
+            </column>
+            <column id="18">
+                <property name="width">1.4in</property>
+            </column>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <label id="604">
+                            <text-property name="text" key="commodity_anlys.reportname">Commodity Analysis</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="202">
+                    <cell id="203">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="marginTop">2pt</property>
+                            <property name="marginBottom">2pt</property>
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1.5in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.5in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="112">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">!(params["commoditygroup"].length>0)</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="commoditygroup">Comodity Group</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="607">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">commoditygroup</property>
+                                                <expression name="expression">params["commoditygroup"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">commoditygroup</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">!(params["vendor"].length>0)</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="vendor">Vendor</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="608">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">vendor</property>
+                                                <expression name="expression">params["vendor"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">vendor</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="396">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">!(params["buyer"].length>0)</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="397">
+                                    <label id="399">
+                                        <text-property name="text" key="buyer">buyer</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="398">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="609">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">buyer</property>
+                                                <expression name="expression">params["buyer"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">buyer</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="393">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">!(params["glaccount"].length>0)</expression>
+                                    </structure>
+                                </list-property>
+                                <cell id="394">
+                                    <label id="410">
+                                        <text-property name="text" key="glaccount">G/L Account</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="395">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="610">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">glaccount</property>
+                                                <expression name="expression">params["glaccount"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">glaccount</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="407">
+                                <cell id="408">
+                                    <label id="400">
+                                        <text-property name="text" key="startdate">Start Date</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="409">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="611">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="625">
+                                <cell id="626">
+                                    <label id="628">
+                                        <text-property name="text" key="enddate"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="627">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="629">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">enddate</property>
+                                                <expression name="expression">params["enddate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">enddate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="1318">
+                    <property name="height">0.06in</property>
+                    <cell id="1319">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="1355">
+                    <property name="style">summarylabel</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr">Total.count()!=0</expression>
+                        </structure>
+                    </list-property>
+                    <cell id="1356">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1342">
+                            <text-property name="text" key="commodity_anlys_warning">There is no information for the selected parameters.</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <group id="1015">
+                <property name="groupName">chartGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["chart_key"]</expression>
+                <expression name="toc">""</expression>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="1016">
+                        <property name="style">chart</property>
+                        <cell id="1017">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <extended-item extensionName="Chart" name="Bar Chart" id="273">
+                                <property name="marginTop">15px</property>
+                                <property name="marginLeft">15px</property>
+                                <property name="height">3in</property>
+                                <property name="width">7in</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">commoditygroup_1</property>
+                                        <expression name="expression">dataSetRow["commoditygroup"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">vendor_1</property>
+                                        <expression name="expression">dataSetRow["vendor"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name_1</property>
+                                        <expression name="expression">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">ponum_1</property>
+                                        <expression name="expression">dataSetRow["ponum"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">po_desc_1</property>
+                                        <expression name="expression">dataSetRow["po_desc"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">itemnum_1</property>
+                                        <expression name="expression">dataSetRow["itemnum"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">item_desc_1</property>
+                                        <expression name="expression">dataSetRow["item_desc"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">commodity_1</property>
+                                        <expression name="expression">dataSetRow["commodity"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">purchaseagent_1</property>
+                                        <expression name="expression">dataSetRow["purchaseagent"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">gldebitacct_1</property>
+                                        <expression name="expression">dataSetRow["gldebitacct"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">receivedqty_1</property>
+                                        <expression name="expression">dataSetRow["receivedqty"]</expression>
+                                        <property name="dataType">integer</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">receivedtotalcost_1</property>
+                                        <expression name="expression">dataSetRow["receivedtotalcost"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">enterdate_1</property>
+                                        <expression name="expression">dataSetRow["enterdate"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">orderunit_1</property>
+                                        <expression name="expression">dataSetRow["orderunit"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">siteid_1</property>
+                                        <expression name="expression">dataSetRow["siteid"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">comm_desc_1</property>
+                                        <expression name="expression">dataSetRow["comm_desc"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Bar Chart</Type>
+  <SubType>Side-by-side</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>recievedtotal_dolar_bycommoditygroup=&lt;Value of key 'recievedtotal_dolar_bycommoditygroup'></Value>
+          <Font>
+            <Size>16.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>false</Visible>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>2.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Categories</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>504.0</Width>
+      <Height>216.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>false</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>10.0</SeriesThickness>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>A, B, C</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity>
+    <LegendBehavior>None</LegendBehavior>
+  </Interactivity>
+  <Axes>
+    <Type>Text</Type>
+    <Title>
+      <Caption>
+        <Value>X-Axis Title</Value>
+        <Font>
+          <Size>14.0</Size>
+          <Bold>true</Bold>
+          <Alignment>
+            <horizontalAlignment>Center</horizontalAlignment>
+            <verticalAlignment>Center</verticalAlignment>
+          </Alignment>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>false</Visible>
+    </Title>
+    <TitlePosition>Below</TitlePosition>
+    <AssociatedAxes>
+      <Type>Linear</Type>
+      <Title>
+        <Caption>
+          <Value>Y-Axis Title</Value>
+          <Font>
+            <Size>14.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+            <Rotation>90.0</Rotation>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Left</TitlePosition>
+      <SeriesDefinitions>
+        <Query>
+          <Definition></Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>80</Red>
+            <Green>166</Green>
+            <Blue>218</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>242</Red>
+            <Green>88</Green>
+            <Blue>106</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>232</Red>
+            <Green>172</Green>
+            <Blue>57</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>255</Green>
+            <Blue>128</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>64</Red>
+            <Green>128</Green>
+            <Blue>128</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>128</Green>
+            <Blue>192</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>170</Red>
+            <Green>85</Green>
+            <Blue>85</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>128</Red>
+            <Green>128</Green>
+            <Blue>0</Blue>
+          </Entries>
+        </SeriesPalette>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>10.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>false</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>row[&quot;receivedtotalcost_1&quot;]</Definition>
+          </DataDefinition>
+          <SeriesIdentifier></SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>, </Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Triggers>
+            <Condition>onmouseover</Condition>
+            <Action>
+              <Type>Show_Tooltip</Type>
+              <Value xsi:type="attribute:TooltipValue">
+                <Text></Text>
+                <Delay>200</Delay>
+              </Value>
+            </Action>
+          </Triggers>
+          <Triggers>
+            <Condition>onclick</Condition>
+            <Action>
+              <Type>Highlight</Type>
+              <Value xsi:type="attribute:SeriesValue">
+                <Name></Name>
+              </Value>
+            </Action>
+          </Triggers>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>false</Enabled>
+          <GroupingInterval>2</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+        <Sorting>Ascending</Sorting>
+      </SeriesDefinitions>
+      <Orientation>Vertical</Orientation>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Name>SansSerif</Name>
+            <Size>10.0</Size>
+            <Alignment/>
+            <Rotation>0.0</Rotation>
+          </Font>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+      <LabelPosition>Left</LabelPosition>
+      <Interval>1</Interval>
+      <MajorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </TickAttributes>
+      </MajorGrid>
+      <MinorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </TickAttributes>
+      </MinorGrid>
+      <Scale>
+        <Min xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Min>
+        <Step>10000.0</Step>
+        <MinorGridsPerUnit>5</MinorGridsPerUnit>
+      </Scale>
+      <Origin>
+        <Type>Value</Type>
+        <Value xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Value>
+      </Origin>
+      <PrimaryAxis>true</PrimaryAxis>
+      <Percent>false</Percent>
+    </AssociatedAxes>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>34</Red>
+          <Green>89</Green>
+          <Blue>114</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>72</Red>
+          <Green>153</Green>
+          <Blue>119</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>221</Red>
+          <Green>205</Green>
+          <Blue>93</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>199</Red>
+          <Green>134</Green>
+          <Blue>57</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>152</Red>
+          <Green>96</Green>
+          <Blue>48</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>141</Red>
+          <Green>134</Green>
+          <Blue>142</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>131</Red>
+          <Green>162</Green>
+          <Blue>176</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>187</Red>
+          <Green>217</Green>
+          <Blue>0</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series>
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>false</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;comm_desc_1&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Orthogonal_Value</Type>
+          </Components>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+      </Series>
+      <Grouping>
+        <Enabled>true</Enabled>
+        <GroupingInterval>0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+    </SeriesDefinitions>
+    <Orientation>Horizontal</Orientation>
+    <LineAttributes>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </LineAttributes>
+    <Label>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+          <Rotation>-45.0</Rotation>
+        </Font>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>true</Visible>
+    </Label>
+    <LabelPosition>Below</LabelPosition>
+    <Interval>1</Interval>
+    <MajorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </TickAttributes>
+    </MajorGrid>
+    <MinorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </TickAttributes>
+    </MinorGrid>
+    <Scale>
+      <MinorGridsPerUnit>5</MinorGridsPerUnit>
+    </Scale>
+    <Origin>
+      <Type>Value</Type>
+      <Value xsi:type="data:NumberDataElement">
+        <Value>0.0</Value>
+      </Value>
+    </Origin>
+    <PrimaryAxis>true</PrimaryAxis>
+    <CategoryAxis>true</CategoryAxis>
+    <Percent>false</Percent>
+  </Axes>
+  <Orientation>Vertical</Orientation>
+  <UnitSpacing>0.0</UnitSpacing>
+  <Rotation/>
+</model:ChartWithAxes>
+]]></xml-property>
+                                <property name="outputFormat">SVG</property>
+                                <list-property name="filter">
+                                    <structure>
+                                        <property name="operator">ne</property>
+                                        <expression name="expr">row["receivedtotalcost_1"]</expression>
+                                        <expression name="value1">0</expression>
+                                    </structure>
+                                </list-property>
+                            </extended-item>
+                        </cell>
+                    </row>
+                    <row id="1343">
+                        <property name="height">0.08in</property>
+                        <property name="style">chart</property>
+                        <cell id="1344">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="1028">
+                        <property name="height">0.06in</property>
+                        <cell id="1029">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <group id="300">
+                <property name="groupName">CommodityGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["commoditygroup"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">always</property>
+                <list-property name="sort">
+                    <structure>
+                        <expression name="key">row["commoditygroup"]</expression>
+                        <property name="direction">asc</property>
+                    </structure>
+                </list-property>
+                <header>
+                    <row id="301">
+                        <property name="height">0.09in</property>
+                        <cell id="302">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="paddingBottom">2pt</property>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="1316">
+                        <property name="height">0.1in</property>
+                        <cell id="1317">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <grid id="663">
+                                <property name="canShrink">false</property>
+                                <property name="width">100%</property>
+                                <column id="665">
+                                    <property name="width">6.7in</property>
+                                    <property name="style">summarylabel</property>
+                                </column>
+                                <column id="666">
+                                    <property name="width">0.5in</property>
+                                    <property name="style">summarydata</property>
+                                    <property name="textAlign">right</property>
+                                </column>
+                                <column id="667">
+                                    <property name="width">0.6in</property>
+                                </column>
+                                <column id="668">
+                                    <property name="width">0.8in</property>
+                                    <property name="style">summarydata</property>
+                                    <property name="textAlign">right</property>
+                                </column>
+                                <column id="669">
+                                    <property name="width">1.4in</property>
+                                </column>
+                                <row id="670">
+                                    <cell id="672">
+                                        <property name="paddingLeft">4px</property>
+                                        <text id="622">
+                                            <property name="style">summarylabel</property>
+                                            <property name="textAlign">right</property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<VALUE-OF>reportContext.getMessage("totalforcommoditygroup", reportContext.getLocale())</VALUE-OF>&nbsp; <VALUE-OF>row["comm_desc"]</VALUE-OF>:]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="674">
+                                        <property name="paddingLeft">4px</property>
+                                        <data id="602">
+                                            <structure name="numberFormat">
+                                                <property name="category">Fixed</property>
+                                                <property name="pattern">###0</property>
+                                            </structure>
+                                            <property name="resultSetColumn">commodity.totalqty</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="676">
+                                        <property name="paddingLeft">4px</property>
+                                    </cell>
+                                    <cell id="677">
+                                        <property name="paddingLeft">4px</property>
+                                        <property name="textAlign">right</property>
+                                        <data id="603">
+                                            <property name="style">summarydata</property>
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00</property>
+                                            </structure>
+                                            <property name="textAlign">right</property>
+                                            <property name="resultSetColumn">commodity.totalcost</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="679">
+                                        <property name="paddingLeft">4px</property>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <group id="372">
+                <property name="groupName">vendor</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["vendor"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <list-property name="sort">
+                    <structure>
+                        <expression name="key">row["vendor"]</expression>
+                        <property name="direction">asc</property>
+                    </structure>
+                </list-property>
+                <header>
+                    <row id="373">
+                        <cell id="374">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <grid id="417">
+                                <property name="width">100%</property>
+                                <column id="418">
+                                    <property name="width">1.5in</property>
+                                    <property name="style">reportheaderlabel</property>
+                                </column>
+                                <column id="434">
+                                    <property name="width">1.2in</property>
+                                    <property name="style">reportheaderdata</property>
+                                </column>
+                                <column id="436">
+                                    <property name="width">3in</property>
+                                    <property name="style">reportheaderdata</property>
+                                    <property name="textAlign">left</property>
+                                </column>
+                                <column id="438">
+                                    <property name="width">4.3in</property>
+                                </column>
+                                <row id="421">
+                                    <cell id="422">
+                                        <label id="354">
+                                            <text-property name="text" key="commoditygroup">Commodity Group</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="433">
+                                        <property name="textAlign">left</property>
+                                        <data id="356">
+                                            <property name="resultSetColumn">commoditygroup</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="435">
+                                        <data id="539">
+                                            <property name="resultSetColumn">comm_desc</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="437"/>
+                                </row>
+                                <row id="451">
+                                    <cell id="452">
+                                        <label id="460">
+                                            <text-property name="text" key="vendor">Vendor</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="453">
+                                        <property name="textAlign">left</property>
+                                        <data id="458">
+                                            <property name="resultSetColumn">vendor</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="454">
+                                        <data id="459">
+                                            <property name="resultSetColumn">name</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="455"/>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="564">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="565">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="529">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="po">PO</text-property>
+                            </label>
+                        </cell>
+                        <cell id="566">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="530">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="podescription">PO Description</text-property>
+                            </label>
+                        </cell>
+                        <cell id="567">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="531">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="item">Item</text-property>
+                            </label>
+                        </cell>
+                        <cell id="568">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="532">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="itemdescription">Item Description</text-property>
+                            </label>
+                        </cell>
+                        <cell id="569">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="533">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="commoditycode">Commodity Code</text-property>
+                            </label>
+                        </cell>
+                        <cell id="570">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="535">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="glaccount_co_colon">G/L Account</text-property>
+                            </label>
+                        </cell>
+                        <cell id="571">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="534">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="buyer_no_colon">Buyer</text-property>
+                            </label>
+                        </cell>
+                        <cell id="572">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="540">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="recdqty">Recd	Qty</text-property>
+                            </label>
+                        </cell>
+                        <cell id="573">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="537">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="orderunit">Order Unity</text-property>
+                            </label>
+                        </cell>
+                        <cell id="574">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="538">
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="recdtotalcost">Recd Total Cost</text-property>
+                            </label>
+                        </cell>
+                        <cell id="575">
+                            <property name="style">tableheaderlabel</property>
+                            <label id="536">
+                                <property name="paddingRight">1pt</property>
+                                <property name="textAlign">right</property>
+                                <text-property name="text" key="orderdate">order date</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="630">
+                        <property name="height">0.06in</property>
+                        <cell id="631">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                    <row id="380">
+                        <cell id="381">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <grid id="649">
+                                <property name="canShrink">false</property>
+                                <property name="width">100%</property>
+                                <column id="662">
+                                    <property name="width">6.7in</property>
+                                    <property name="style">summarylabel</property>
+                                </column>
+                                <column id="651">
+                                    <property name="width">0.5in</property>
+                                    <property name="style">summarydata</property>
+                                    <property name="textAlign">right</property>
+                                </column>
+                                <column id="652">
+                                    <property name="width">0.6in</property>
+                                </column>
+                                <column id="653">
+                                    <property name="width">0.8in</property>
+                                    <property name="style">summarydata</property>
+                                    <property name="textAlign">right</property>
+                                </column>
+                                <column id="654">
+                                    <property name="width">1.4in</property>
+                                </column>
+                                <row id="655">
+                                    <cell id="661">
+                                        <property name="paddingLeft">4px</property>
+                                        <label id="549">
+                                            <property name="textAlign">right</property>
+                                            <text-property name="text">Subtotal:</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="657">
+                                        <property name="paddingLeft">4px</property>
+                                        <data id="600">
+                                            <structure name="numberFormat">
+                                                <property name="category">Fixed</property>
+                                                <property name="pattern">###0</property>
+                                            </structure>
+                                            <property name="resultSetColumn">vendor.totalqty</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="658">
+                                        <property name="paddingLeft">4px</property>
+                                    </cell>
+                                    <cell id="659">
+                                        <property name="paddingLeft">4px</property>
+                                        <property name="textAlign">right</property>
+                                        <data id="601">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00</property>
+                                            </structure>
+                                            <property name="resultSetColumn">vendor.totalcost</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="660">
+                                        <property name="paddingLeft">4px</property>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="680">
+                        <property name="height">0.08in</property>
+                        <cell id="681">
+                            <property name="colSpan">11</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="461">
+                            <property name="resultSetColumn">ponum</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="469">
+                            <property name="resultSetColumn">po_desc</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="470">
+                            <property name="resultSetColumn">itemnum</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="471">
+                            <property name="resultSetColumn">item_desc</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="472">
+                            <property name="resultSetColumn">commodity</property>
+                        </data>
+                    </cell>
+                    <cell id="480">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="473">
+                            <property name="resultSetColumn">gldebitacct</property>
+                        </data>
+                    </cell>
+                    <cell id="490">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="524">
+                            <property name="resultSetColumn">purchaseagent</property>
+                        </data>
+                    </cell>
+                    <cell id="500">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="525">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0</property>
+                            </structure>
+                            <property name="resultSetColumn">receivedqty</property>
+                        </data>
+                    </cell>
+                    <cell id="510">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="526">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0</property>
+                            </structure>
+                            <property name="resultSetColumn">orderunit</property>
+                        </data>
+                    </cell>
+                    <cell id="520">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="527">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">receivedtotalcost</property>
+                        </data>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                        <property name="paddingLeft">0px</property>
+                        <grid id="642">
+                            <property name="width">100%</property>
+                            <column id="643">
+                                <property name="width">0.55in</property>
+                                <property name="textAlign">right</property>
+                            </column>
+                            <column id="644">
+                                <property name="width">0.85in</property>
+                            </column>
+                            <row id="645">
+                                <cell id="646">
+                                    <data id="528">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <property name="resultSetColumn">enterdate</property>
+                                    </data>
+                                </cell>
+                                <cell id="647">
+                                    <property name="paddingLeft">0pt</property>
+                                    <property name="textAlign">right</property>
+                                    <data id="648">
+                                        <property name="marginLeft">1pt</property>
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Medium Time</property>
+                                            <property name="pattern">Medium Time</property>
+                                        </structure>
+                                        <property name="resultSetColumn">enterdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="576">
+                    <property name="height">0.06in</property>
+                    <cell id="577">
+                        <property name="colSpan">11</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

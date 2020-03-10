@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.6" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.1.1.v20060922-1058 Build &lt;20060926-0959></property>
+    <property name="units">in</property>
+    <property name="includeResource">relation</property>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report with one or more groups, each having identical data fields.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("c:/temp/relation_rule.txt");
+
+function getPath(classification, dataSource){
+	var path = new String();
+	var query = new String();
+	if(classification == "") return path;
+	parent = classification;	
+	pathDataSet = null;
+	do{
+		if(pathDataSet != null){	
+			path = pathDataSet.getString("classificationid") + ( path == "" ? "" : " \\ " + path ) ;
+			parent = pathDataSet.getString("parent");
+			pathDataSet.close();
+		}
+		pathDataSet = MXReportDataSetProvider.create(dataSource, "pathDataSet");
+		pathDataSet.open();
+	    query = "select classificationid, parent from classstructure where classstructureid = '" + parent + "' ";
+ 	    pathDataSet.setQuery(query);
+	}while(pathDataSet.fetch());
+	return path;
+
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Maximo Grouped Report Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="240">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="241">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="242">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="relation" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">relationnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">type</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">sourceclass</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">targetclass</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">relationnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">type</property>
+                </structure>
+                <structure>
+                    <property name="columnName">sourceclass</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targetclass</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">relationnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">type</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">sourceclass</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">targetclass</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+sqlText = "select relation.relationnum, relation.description, "
++ " relation.type, relationrules.sourceclass, relationrules.targetclass"
++ " from relation LEFT OUTER JOIN relationrules ON"
++ " relation.relationnum = relationrules.relationnum"
++ " where " + params["where"]
++ " order by relation.relationnum"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+row["relationnum"] = maximoDataSet.getString("relationnum");	
+row["description"] = maximoDataSet.getString("description");	
+row["type"] = maximoDataSet.getString("type");	
+row["targetclass"] = getPath(maximoDataSet.getString("targetclass"), this.getDataSource().getName());
+row["sourceclass"] = getPath(maximoDataSet.getString("sourceclass"), this.getDataSource().getName());
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2"/>
+                <ref-entry baseId="340" name="NewImage1"/>
+                <ref-entry baseId="310" name="NewImage"/>
+                <ref-entry baseId="322" name="NewGrid"/>
+                <ref-entry baseId="328" name="NewText"/>
+                <ref-entry baseId="329" name="NewGrid1"/>
+                <ref-entry baseId="335" name="NewAutoText"/>
+                <ref-entry baseId="337" name="NewText1"/>
+                <ref-entry baseId="339" name="NewAutoText1"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">relation</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">relationnum</property>
+                    <expression name="expression">dataSetRow["relationnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">type</property>
+                    <expression name="expression">dataSetRow["type"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">sourceclass</property>
+                    <expression name="expression">dataSetRow["sourceclass"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">targetclass</property>
+                    <expression name="expression">dataSetRow["targetclass"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="83">
+                <property name="width">4.5in</property>
+            </column>
+            <column id="79">
+                <property name="width">4.5in</property>
+            </column>
+            <column id="18">
+                <property name="width">1in</property>
+            </column>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <label id="290">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="relationship_rule.reportname">Relationship Rule</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="138">
+                <property name="groupName">tableGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["relationnum"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="139">
+                        <property name="style">tableheaderrow</property>
+                        <property name="backgroundColor">#FFFFFF</property>
+                        <cell id="140">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tableheaderlabel</property>
+                            <grid id="255">
+                                <property name="width">100%</property>
+                                <column id="256">
+                                    <property name="width">0.9in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="257">
+                                    <property name="width">3.1in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <column id="258">
+                                    <property name="width">6in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <row id="260">
+                                    <cell id="261">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="180">
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="relationship">Relationship</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="262">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderdata</property>
+                                        <data id="325">
+                                            <property name="color">#000000</property>
+                                            <property name="resultSetColumn">relationnum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="327">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderdata</property>
+                                        <data id="339">
+                                            <property name="color">#000000</property>
+                                            <property name="resultSetColumn">description</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="317">
+                                    <cell id="318">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="324">
+                                            <property name="color">#444E68</property>
+                                            <text-property name="text" key="type">Type</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="319">
+                                        <property name="style">tableheaderdata</property>
+                                        <data id="326">
+                                            <property name="color">#000000</property>
+                                            <property name="resultSetColumn">type</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="320">
+                                        <property name="style">tableheaderdata</property>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="280">
+                        <property name="height">0.08in</property>
+                        <cell id="281">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                    <row id="160">
+                        <property name="style">tabledetailslabel</property>
+                        <cell id="161">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="96">
+                                <text-property name="text" key="sourceclassification">Source Classification</text-property>
+                            </label>
+                        </cell>
+                        <cell id="162">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="291">
+                                <text-property name="text" key="targetclassification">Target Classification</text-property>
+                            </label>
+                        </cell>
+                        <cell id="166">
+                            <property name="style">tabledetailslabelcell</property>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <data id="337">
+                            <property name="resultSetColumn">sourceclass</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <data id="338">
+                            <property name="resultSetColumn">targetclass</property>
+                        </data>
+                    </cell>
+                    <cell id="13"/>
+                </row>
+                <row id="348">
+                    <property name="height">0.08in</property>
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="349">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="350">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="354">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

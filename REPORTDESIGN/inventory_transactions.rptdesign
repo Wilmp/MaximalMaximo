@@ -1,0 +1,963 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>inventory</value>
+    </simple-property-list>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report having a single header with multiple rows of data.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("./temp/inventory_transactions.log");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();
+
+]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Maximo List Report Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="siteid" id="228">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Site</text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="storeroom" id="227">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Storeroom</text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="itemnum" id="226">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <text-property name="promptText">Item</text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="229">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">Start Date</text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="230">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <text-property name="promptText">End Date</text-property>
+            <property name="isRequired">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="invtrans" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">type</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">transid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">date</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">itemnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">linktable</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">type</property>
+                </structure>
+                <structure>
+                    <property name="columnName">transid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">date</property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">linktable</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">type</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">transid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">date</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">itemnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">linktable</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var invtrans_sqlText = new String();
+
+var invtrans_where = params["where"];
+
+params["siteid"] = params["siteid"].toUpperCase();
+params["storeroom"] = params["storeroom"].toUpperCase();
+params["itemnum"] = params["itemnum"].toUpperCase();
+
+//shifting times
+
+if( BirtComp.notEqual(params["startdate"], null) ) {
+	invtrans_where += " and invtrans.transdate >= " 
+	+ MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+}
+
+if( BirtComp.notEqual(params["enddate"], null) ) {
+	invtrans_where += " and invtrans.transdate <= " 
+	+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+}
+
+// Add query to invtrans_sqlText variable.
+invtrans_sqlText = "select distinct (invtrans.transtype) as transtype, invtrans.invtransid as transid, "
++ " invtrans.transdate as transdate, item.itemnum, item.description "
++ " from invtrans, item, inventory, locations "
+// Include the Maximo where clause
++ " where invtrans.transdate is not null "
++ " and invtrans.itemnum = item.itemnum "
++ " and invtrans.itemsetid = item.itemsetid "
++ " and invtrans.itemnum = inventory.itemnum "
++ " and invtrans.itemsetid = inventory.itemsetid "
++ " and invtrans.storeloc = inventory.location "
++ " and invtrans.siteid = inventory.siteid "
++ " and inventory.location = locations.location "
++ " and inventory.siteid = locations.siteid "
++ " and invtrans.siteid= '" + params["siteid"] + "' "
++ " and invtrans.storeloc = '" + params["storeroom"] + "' "
++ " and item.itemnum = '" + params["itemnum"] + "' "
++ " and " + invtrans_where
+;
+
+maximoDataSet.setQuery(invtrans_sqlText);
+
+//scriptLogger.debug("invtrans_sqlText => " + invtrans_sqlText);
+
+//MATRECTRANS
+matrectransDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "matrectransDS");
+matrectransDS.open();
+
+var matrectrans_sqlText = new String();
+
+var matrectrans_where = params["where"];
+
+if( BirtComp.notEqual(params["startdate"], null) ) {
+	matrectrans_where+= " and matrectrans.actualdate >= "
+	+ MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+}
+
+if( BirtComp.notEqual(params["enddate"], null) ) {
+	matrectrans_where+= " and matrectrans.actualdate <= "
+	+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+}
+
+// Add query to matrectrans_sqlText variable.
+matrectrans_sqlText = "select distinct (matrectrans.issuetype), matrectrans.matrectransid as transid,  "
++ " matrectrans.actualdate, item.itemnum, item.description  "
++ " from matrectrans, item, inventory  "
+// Include the Maximo where clause
++ " where matrectrans.issuetype is not null  "
++ " and matrectrans.itemnum = item.itemnum  "
++ " and matrectrans.itemsetid = item.itemsetid  "
++ " and matrectrans.itemnum = inventory.itemnum "
++ " and matrectrans.itemsetid = inventory.itemsetid "
++ " and matrectrans.tostoreloc = inventory.location "
++ " and matrectrans.siteid = inventory.siteid "
++ " and matrectrans.siteid= '" + params["siteid"] + "' "
++ " and matrectrans.tostoreloc = '" + params["storeroom"] + "' "
++ " and item.itemnum = '" + params["itemnum"] + "' "
++ " and " + matrectrans_where
+;
+
+matrectransDS.setQuery(matrectrans_sqlText);
+
+//scriptLogger.debug("matrectrans_sqlText => " + matrectrans_sqlText);
+
+//MATUSETRANS
+matusetransDS = MXReportDataSetProvider.create(this.getDataSource().getName(), "matusetransDS");
+matusetransDS.open();
+
+var mateusetrans_sqlText = new String();
+
+var matusetrans_where = params["where"];
+
+if( BirtComp.notEqual(params["startdate"], null) ) {
+	matusetrans_where+= " and matusetrans.actualdate >= "
+	+ MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]);
+}
+
+if( BirtComp.notEqual(params["enddate"], null) ) {
+	matusetrans_where+= " and matusetrans.actualdate <= "
+	+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]);
+}
+
+// Add query to mateusetrans_sqlText variable.
+mateusetrans_sqlText = "select distinct (matusetrans.issuetype), matusetrans.matusetransid as transid,  "
++ " matusetrans.actualdate, item.itemnum, item.description  "
++ " from matusetrans, item, inventory  "
+// Include the Maximo where clause
++ " where matusetrans.issuetype is not null  "
++ " and matusetrans.itemnum = item.itemnum  "
++ " and matusetrans.itemsetid = item.itemsetid  "
++ " and matusetrans.itemnum = inventory.itemnum "
++ " and matusetrans.itemsetid = inventory.itemsetid "
++ " and matusetrans.storeloc = inventory.location "
++ " and matusetrans.siteid = inventory.siteid "
++ " and matusetrans.siteid= '" + params["siteid"] + "' "
++ " and matusetrans.storeloc = '" + params["storeroom"] + "' "
++ " and item.itemnum = '" + params["itemnum"] + "' "
++ " and " + matusetrans_where
+;
+
+matusetransDS.setQuery(mateusetrans_sqlText);
+
+//scriptLogger.debug("mateusetrans_sqlText => " + mateusetrans_sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch()) {
+
+	if(!matusetransDS.fetch()) {
+		if(!matrectransDS.fetch()) {
+		
+			return (false);
+			
+		}
+		else {
+			//workwith matrectrans
+			// Add a line for each output column
+			// The specific get method should match the data type of the output column.
+			row["type"] = matrectransDS.getString("issuetype");
+			row["transid"] = matrectransDS.getString("transid");
+			row["date"] = matrectransDS.getString("actualdate");
+			row["itemnum"] = matrectransDS.getString("itemnum");
+			row["description"] = matrectransDS.getString("description");
+			row["linktable"] = "matrectrans";
+		}
+	}
+	else {
+		//workwith matrectrans
+		// Add a line for each output column
+		// The specific get method should match the data type of the output column.
+		row["type"] = matusetransDS.getString("issuetype");
+		row["transid"] = matusetransDS.getString("transid");
+		row["date"] = matusetransDS.getString("actualdate");
+		row["itemnum"] = matusetransDS.getString("itemnum");
+		row["description"] = matusetransDS.getString("description");
+		row["whereclause"] = "matusetrans.matusetransid = " + matusetransDS.getString("transid");
+		row["linktable"] = "matusetrans";
+	}
+	
+}
+else {
+	// Add a line for each output column
+	// The specific get method should match the data type of the output column.
+	row["type"] = maximoDataSet.getString("transtype");
+	row["transid"] = maximoDataSet.getString("transid");
+	row["date"] = maximoDataSet.getString("transdate");
+	row["itemnum"] = maximoDataSet.getString("itemnum");
+	row["description"] = maximoDataSet.getString("description");
+	row["whereclause"] = "invtrans.invtransid = " + maximoDataSet.getString("transid");
+	row["linktable"] = "invtrans";
+}
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">invtrans</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">date</property>
+                    <expression name="expression">dataSetRow["date"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">type</property>
+                    <expression name="expression">dataSetRow["type"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemnum</property>
+                    <expression name="expression">dataSetRow["itemnum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">description</property>
+                    <expression name="expression">dataSetRow["description"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">total_rec</property>
+                    <expression name="expression">Total.count()</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">transid</property>
+                    <expression name="expression">dataSetRow["transid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">linktable</property>
+                    <expression name="expression">dataSetRow["linktable"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key">row["date"]</expression>
+                    <property name="direction">desc</property>
+                </structure>
+            </list-property>
+            <column id="83">
+                <property name="width">1.4in</property>
+            </column>
+            <column id="79">
+                <property name="width">1.7in</property>
+            </column>
+            <column id="91">
+                <property name="width">3.9in</property>
+            </column>
+            <column id="87">
+                <property name="width">1in</property>
+            </column>
+            <column id="17">
+                <property name="width">1in</property>
+            </column>
+            <column id="18">
+                <property name="width">1in</property>
+            </column>
+            <header>
+                <row id="180">
+                    <property name="style">title</property>
+                    <cell id="181">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="231">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="inventorytransactions.reportname">Inventory Transactions List</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="173">
+                    <property name="height">0.08in</property>
+                    <cell id="174">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="166">
+                    <cell id="167">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="141">
+                                <property name="height">0.06in</property>
+                                <cell id="142"/>
+                                <cell id="143">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="storeroom_colon">Storeroom:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="240">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">storeroom</property>
+                                                <expression name="expression">params["storeroom"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">storeroom</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="site_colon">Site:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="465">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">siteid</property>
+                                                <expression name="expression">params["siteid"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">siteid</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="235">
+                                <cell id="236">
+                                    <label id="238">
+                                        <text-property name="text" key="startdate_colon">Start Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="237">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="242">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="232">
+                                <cell id="233">
+                                    <label id="239">
+                                        <text-property name="text" key="enddate_colon">End Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="234">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="243">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">enddate</property>
+                                                <expression name="expression">params["enddate"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">enddate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="144">
+                    <property name="height">0.06in</property>
+                    <cell id="145">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="244">
+                    <property name="style">tableheaderrow</property>
+                    <cell id="245">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="252">
+                            <property name="width">100%</property>
+                            <column id="253">
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="254">
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="255">
+                                <property name="width">1.5in</property>
+                            </column>
+                            <column id="256">
+                                <property name="width">6.5in</property>
+                            </column>
+                            <row id="258">
+                                <property name="style">tableheaderlabel</property>
+                                <cell id="259">
+                                    <label id="264">
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text" key="item_colon">Item:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="260">
+                                    <data id="462">
+                                        <property name="resultSetColumn">itemnum</property>
+                                    </data>
+                                </cell>
+                                <cell id="261">
+                                    <label id="266">
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text" key="description_colon">Description:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="262">
+                                    <data id="463">
+                                        <property name="resultSetColumn">description</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="8">
+                    <property name="style">tabledetailslabel</property>
+                    <cell id="80">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="96">
+                            <text-property name="text" key="transactiondate">Transaction Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="76">
+                        <property name="style">tabledetailslabelcell</property>
+                        <label id="446">
+                            <text-property name="text" key="transactiontype">Transaction Type</text-property>
+                        </label>
+                    </cell>
+                    <cell id="88">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="84">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="9">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                    <cell id="10">
+                        <property name="style">tabledetailslabelcell</property>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <grid id="466">
+                            <property name="width">100%</property>
+                            <column id="467">
+                                <property name="width">0.6in</property>
+                            </column>
+                            <column id="468">
+                                <property name="width">0.8in</property>
+                            </column>
+                            <row id="469">
+                                <cell id="470">
+                                    <data id="472">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <property name="resultSetColumn">date</property>
+                                    </data>
+                                </cell>
+                                <cell id="471">
+                                    <data id="473">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Medium Time</property>
+                                            <property name="pattern">Medium Time</property>
+                                        </structure>
+                                        <property name="textAlign">right</property>
+                                        <property name="resultSetColumn">date</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="461">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">row["linktable"] != "matrectrans"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">type</property>
+                            <structure name="action">
+                                <property name="formatType">html</property>
+                                <property name="linkType">drill-through</property>
+                                <property name="reportName">inventory_transactions_receipt_transfers.rptdesign</property>
+                                <property name="targetWindow">_self</property>
+                                <property name="targetFileType">report-design</property>
+                                <list-property name="paramBindings">
+                                    <structure>
+                                        <property name="paramName">where</property>
+                                        <expression name="expression">"matrectrans.matrectransid="+row["transid"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">appname</property>
+                                        <expression name="expression">params["appname"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">itemnum</property>
+                                        <expression name="expression">params["itemnum"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">siteid</property>
+                                        <expression name="expression">params["siteid"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">storeroom</property>
+                                        <expression name="expression">params["storeroom"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">startdate</property>
+                                        <expression name="expression">params["startdate"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">enddate</property>
+                                        <expression name="expression">params["enddate"]</expression>
+                                    </structure>
+                                </list-property>
+                            </structure>
+                        </data>
+                        <data id="474">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">row["linktable"] != "matusetrans"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">type</property>
+                            <structure name="action">
+                                <property name="formatType">html</property>
+                                <property name="linkType">drill-through</property>
+                                <property name="reportName">inventory_transactions_issues_returns.rptdesign</property>
+                                <property name="targetWindow">_self</property>
+                                <property name="targetFileType">report-design</property>
+                                <list-property name="paramBindings">
+                                    <structure>
+                                        <property name="paramName">where</property>
+                                        <expression name="expression">"matusetrans.matusetransid="+row["transid"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">site</property>
+                                        <expression name="expression">params["siteid"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">storeroom</property>
+                                        <expression name="expression">params["storeroom"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">startdate</property>
+                                        <expression name="expression">params["startdate"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">enddate</property>
+                                        <expression name="expression">params["enddate"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">item</property>
+                                        <expression name="expression">params["itemnum"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">paramstring</property>
+                                        <expression name="expression">params["paramstring"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">paramdelimiter</property>
+                                        <expression name="expression">params["paramdelimiter"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">appname</property>
+                                        <expression name="expression">params["appname"]</expression>
+                                    </structure>
+                                </list-property>
+                            </structure>
+                        </data>
+                        <data id="475">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">row["linktable"] != "invtrans"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">type</property>
+                            <structure name="action">
+                                <property name="formatType">html</property>
+                                <property name="linkType">drill-through</property>
+                                <property name="reportName">inventory_transactions_adjustments.rptdesign</property>
+                                <property name="targetWindow">_self</property>
+                                <property name="targetFileType">report-design</property>
+                                <list-property name="paramBindings">
+                                    <structure>
+                                        <property name="paramName">where</property>
+                                        <expression name="expression">"invtrans.invtransid="+row["transid"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">appname</property>
+                                        <expression name="expression">params["appname"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">itemnum</property>
+                                        <expression name="expression">params["itemnum"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">storeroom</property>
+                                        <expression name="expression">params["storeroom"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">siteid</property>
+                                        <expression name="expression">params["siteid"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">startdate</property>
+                                        <expression name="expression">params["startdate"]</expression>
+                                    </structure>
+                                    <structure>
+                                        <property name="paramName">enddate</property>
+                                        <expression name="expression">params["enddate"]</expression>
+                                    </structure>
+                                </list-property>
+                            </structure>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                    <cell id="13">
+                        <property name="style">tabledetailsdatacell</property>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="14">
+                    <property name="height">0.12in</property>
+                    <cell id="82">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                    </cell>
+                </row>
+                <row id="207">
+                    <cell id="208">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="216">
+                            <property name="width">100%</property>
+                            <column id="217">
+                                <property name="width">1.3in</property>
+                                <property name="style">summarylabel</property>
+                            </column>
+                            <column id="218">
+                                <property name="width">8.7in</property>
+                                <property name="style">summarydata</property>
+                            </column>
+                            <row id="219">
+                                <cell id="220">
+                                    <label id="222">
+                                        <text-property name="text" key="numberofrecords_colon">Total Transactions:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="221">
+                                    <data id="464">
+                                        <property name="resultSetColumn">total_rec</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

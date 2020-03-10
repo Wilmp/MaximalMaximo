@@ -1,0 +1,1177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110913-1734></property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields.</html-property>
+    <simple-property-list name="includeResource">
+        <value>pluspbill</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable", "childTable1", "childTable2"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Portrait Subreport Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="829">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="mainDataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">customer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">name</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">minenddate</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">maxenddate</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">pretaxtotalsum</property>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">customer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">minenddate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxenddate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pretaxtotalsum</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">customer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">minenddate</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">maxenddate</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">pretaxtotalsum</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+sqlText = " select distinct(pluspbillbatch.customer), pluspcustomer.name , sum(pluspbillbatch.pretaxtotal) as pretaxtotalsum, min(billenddate) as minenddate, max(billenddate) as maxenddate "
++ " from pluspbillbatch "
++ " left outer join pluspcustomer on pluspbillbatch.customer = pluspcustomer.customer "
++ " left outer join pluspagreement on pluspbillbatch.orgid = pluspagreement.orgid "
++ " and pluspbillbatch.customer = pluspagreement.customer "
++ " and pluspbillbatch.agreement = pluspagreement.agreement "	
++ " where pluspagreement.status in (select value from synonymdomain where domainid='PLUSPAGREESTATUS' and maxvalue='APPR') " 
++ " and " + params["where"] 
++ " group by pluspbillbatch.customer, name ";
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["customer"] = maximoDataSet.getString("customer");	
+row["name"] = maximoDataSet.getString("name");	
+
+row["minenddate"] = maximoDataSet.getDate("minenddate");	
+row["maxenddate"] = maximoDataSet.getDate("maxenddate");	
+
+row["pretaxtotalsum"] = maximoDataSet.getDouble("pretaxtotalsum");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="subDataSet" id="239">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">customer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">billbatchnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">pretaxtotal</property>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">customer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">billbatchnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pretaxtotal</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">customer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">billbatchnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">pretaxtotal</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[subDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+subDataSet.open();
+
+var sqlText = new String();
+
+sqlText = 
+  " select pluspbillbatch.customer, pluspbillbatch.billbatchnum, pluspbillbatch.description, pluspbillbatch.status, pluspbillbatch.pretaxtotal "
++ " from pluspbillbatch  "
++ " left outer join pluspagreement on pluspbillbatch.orgid = pluspagreement.orgid " 
++ " 	and pluspbillbatch.customer = pluspagreement.customer " 
++ " 	and pluspbillbatch.agreement = pluspagreement.agreement " 
++ " where "
++ " 	pluspagreement.status in (select value from synonymdomain where domainid='PLUSPAGREESTATUS' and maxvalue='APPR') " 
++ " 	and pluspbillbatch.billingschedule is not null "
++ " 	and pluspbillbatch.customer = '"+rows[0]["customer"].replace(/'/g,"''") + "' and "+ params["where"] ;
+
+subDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!subDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["customer"] = subDataSet.getString("customer");
+row["billbatchnum"] = subDataSet.getString("billbatchnum");
+row["description"] = subDataSet.getString("description");
+row["status"] = subDataSet.getString("status");
+	
+row["pretaxtotal"] = subDataSet.getDouble("pretaxtotal");	
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="subDataSet1" id="1325">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">customer</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">billbatchnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">pretaxtotal</property>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">customer</property>
+                </structure>
+                <structure>
+                    <property name="columnName">billbatchnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">pretaxtotal</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">customer</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">billbatchnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">pretaxtotal</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[subDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+subDataSet.open();
+
+var sqlText = new String();
+
+sqlText = 
+  " select pluspbillbatch.customer, pluspbillbatch.billbatchnum, pluspbillbatch.description, pluspbillbatch.status, pluspbillbatch.pretaxtotal "
++ " from pluspbillbatch  "
++ " left outer join pluspagreement on pluspbillbatch.orgid = pluspagreement.orgid " 
++ " 	and pluspbillbatch.customer = pluspagreement.customer " 
++ " 	and pluspbillbatch.agreement = pluspagreement.agreement " 
++ " where "
++ " 	pluspagreement.status in (select value from synonymdomain where domainid='PLUSPAGREESTATUS' and maxvalue='APPR') " 
++ " 	and pluspbillbatch.billingschedule is null "
++ " 	and pluspbillbatch.customer = '"+rows[0]["customer"].replace(/'/g,"''") + "' and "+ params["where"] ;
+
+subDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!subDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["customer"] = subDataSet.getString("customer");
+row["billbatchnum"] = subDataSet.getString("billbatchnum");
+row["description"] = subDataSet.getString("description");
+row["status"] = subDataSet.getString("status");
+	
+row["pretaxtotal"] = subDataSet.getDouble("pretaxtotal");	
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="831">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="832">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoPortrait" id="830" extends="MaximoSystemLibrary.maximoPortrait">
+            <overridden-values>
+                <ref-entry baseId="342" name="NewGrid21" id="342"/>
+                <ref-entry baseId="343" id="343"/>
+                <ref-entry baseId="344" id="344"/>
+                <ref-entry baseId="345" id="345"/>
+                <ref-entry baseId="346" id="346"/>
+                <ref-entry baseId="347" name="NewImage11" id="347"/>
+                <ref-entry baseId="348" id="348"/>
+                <ref-entry baseId="349" name="NewImage2" id="349"/>
+                <ref-entry baseId="350" name="NewGrid3" id="350"/>
+                <ref-entry baseId="351" id="351"/>
+                <ref-entry baseId="352" id="352"/>
+                <ref-entry baseId="353" id="353"/>
+                <ref-entry baseId="354" id="354"/>
+                <ref-entry baseId="355" name="NewText2" id="355"/>
+                <ref-entry baseId="356" id="356"/>
+                <ref-entry baseId="357" name="NewGrid11" id="357"/>
+                <ref-entry baseId="358" id="358"/>
+                <ref-entry baseId="359" id="359"/>
+                <ref-entry baseId="360" id="360"/>
+                <ref-entry baseId="361" id="361"/>
+                <ref-entry baseId="362" id="362"/>
+                <ref-entry baseId="363" name="NewAutoText2" id="363"/>
+                <ref-entry baseId="364" id="364"/>
+                <ref-entry baseId="365" name="NewText11" id="365"/>
+                <ref-entry baseId="366" id="366"/>
+                <ref-entry baseId="367" name="NewAutoText11" id="367"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">mainDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">customer</property>
+                    <text-property name="displayName">customer</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["customer"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">name</property>
+                    <text-property name="displayName">name</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">minenddate</property>
+                    <text-property name="displayName">minenddate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["minenddate"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">maxenddate</property>
+                    <text-property name="displayName">maxenddate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["maxenddate"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">pretaxtotalsum</property>
+                    <text-property name="displayName">pretaxtotalsum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pretaxtotalsum"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1281">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text">Totals by Schedule Type</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="891">
+                <property name="groupName">Customer</property>
+                <expression name="keyExpr" type="javascript">row["customer"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["customer"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="892">
+                        <property name="fontSize">8pt</property>
+                        <cell id="893">
+                            <property name="colSpan">6</property>
+                            <property name="rowSpan">1</property>
+                            <grid id="653">
+                                <property name="width">100%</property>
+                                <column id="654">
+                                    <property name="width">10%</property>
+                                    <property name="style">reportheaderlabel</property>
+                                </column>
+                                <column id="655">
+                                    <property name="width">40%</property>
+                                    <property name="style">reportheaderdata</property>
+                                </column>
+                                <column id="1356">
+                                    <property name="width">17%</property>
+                                    <property name="style">reportheaderdata</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                </column>
+                                <column id="1362">
+                                    <property name="width">17%</property>
+                                    <property name="style">reportheaderdata</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                </column>
+                                <column id="1165">
+                                    <property name="width">16%</property>
+                                    <property name="style">reportheaderdata</property>
+                                    <property name="fontSize">10pt</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">center</property>
+                                </column>
+                                <row id="1090">
+                                    <property name="height">0.06in</property>
+                                    <cell id="1091">
+                                        <property name="colSpan">5</property>
+                                        <property name="rowSpan">1</property>
+                                        <label id="1194">
+                                            <property name="fontSize">120%</property>
+                                            <property name="fontWeight">normal</property>
+                                            <property name="textAlign">left</property>
+                                        </label>
+                                    </cell>
+                                </row>
+                                <row id="656">
+                                    <property name="height">0.06in</property>
+                                    <property name="style">tableheaderrow</property>
+                                    <cell id="657">
+                                        <property name="colSpan">5</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="fontSize">120%</property>
+                                        <data id="1294">
+                                            <property name="display">inline</property>
+                                            <property name="resultSetColumn">customer</property>
+                                        </data>
+                                        <label id="1172">
+                                            <property name="display">inline</property>
+                                            <text-property name="text"> - </text-property>
+                                        </label>
+                                        <data id="1295">
+                                            <property name="display">inline</property>
+                                            <property name="resultSetColumn">name</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="1185">
+                                    <cell id="1186">
+                                        <property name="colSpan">5</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="textAlign">left</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <label id="1283">
+                                            <property name="fontWeight">normal</property>
+                                        </label>
+                                    </cell>
+                                </row>
+                                <row id="659">
+                                    <cell id="660">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">2</property>
+                                        <property name="textAlign">left</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <label id="671">
+                                            <property name="style">reportheaderlabel</property>
+                                            <text-property name="text" key="billrvtotal_billingperiod_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="662">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">2</property>
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="textAlign">left</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <data id="1308">
+                                            <property name="display">inline</property>
+                                            <property name="resultSetColumn">minenddate</property>
+                                        </data>
+                                        <label id="1034">
+                                            <property name="style">reportheaderlabel</property>
+                                            <property name="display">inline</property>
+                                            <text-property name="text" key="billrvtotal_enddate_field"></text-property>
+                                        </label>
+                                        <data id="1309">
+                                            <property name="display">inline</property>
+                                            <property name="resultSetColumn">maxenddate</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1354">
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="verticalAlign">middle</property>
+                                    </cell>
+                                    <cell id="1360">
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="verticalAlign">middle</property>
+                                    </cell>
+                                    <cell id="1162">
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <label id="1011">
+                                            <property name="style">reportheaderlabel</property>
+                                            <property name="textAlign">center</property>
+                                            <text-property name="text" key="billrvtotal_customer_totalbilled_field"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                                <row id="1202">
+                                    <cell id="1355">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="color">black</property>
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                    </cell>
+                                    <cell id="1361">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="color">black</property>
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                    </cell>
+                                    <cell id="1291">
+                                        <property name="fontSize">10pt</property>
+                                        <property name="color">black</property>
+                                        <property name="paddingLeft">2px</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="verticalAlign">middle</property>
+                                        <label id="1292">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="textAlign">center</property>
+                                            <property name="display">inline</property>
+                                            <text-property name="text" key="billrvtotal_currency_field"></text-property>
+                                        </label>
+                                        <data id="1311">
+                                            <property name="fontWeight">bold</property>
+                                            <property name="color">black</property>
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00{RoundingMode=UNNECESSARY}</property>
+                                            </structure>
+                                            <property name="display">inline</property>
+                                            <property name="resultSetColumn">pretaxtotalsum</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="899">
+                        <cell id="900">
+                            <property name="colSpan">6</property>
+                            <property name="rowSpan">1</property>
+                            <label id="1257"/>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="615">
+                    <cell id="616">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1196"/>
+                    </cell>
+                </row>
+                <row id="539">
+                    <cell id="540">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">right</property>
+                        <grid id="1187">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="width">98%</property>
+                            <column id="1188"/>
+                            <row id="1189">
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <property name="fontSize">8pt</property>
+                                <property name="fontWeight">bold</property>
+                                <cell id="1190">
+                                    <label id="979">
+                                        <text-property name="text" key="billschedules"></text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="1023">
+                    <cell id="1024">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">right</property>
+                        <table id="1124">
+                            <property name="textAlign">left</property>
+                            <property name="width">98%</property>
+                            <property name="dataSet">subDataSet</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">customer</property>
+                                    <text-property name="displayName">customer</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["customer"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">billbatchnum</property>
+                                    <text-property name="displayName">billbatchnum</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["billbatchnum"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <text-property name="displayName">description</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">status</property>
+                                    <text-property name="displayName">status</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">pretaxtotal</property>
+                                    <text-property name="displayName">pretaxtotal</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["pretaxtotal"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">BillingScheduleTotalPreTaxTotal</property>
+                                    <property name="dataType">float</property>
+                                    <property name="aggregateFunction">SUM</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                            <expression name="value" type="javascript">dataSetRow["pretaxtotal"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="1137">
+                                <property name="width">15%</property>
+                            </column>
+                            <column id="1138">
+                                <property name="width">60%</property>
+                            </column>
+                            <column id="1200">
+                                <property name="width">10%</property>
+                            </column>
+                            <column id="1299">
+                                <property name="width">15%</property>
+                            </column>
+                            <header>
+                                <row id="1125">
+                                    <property name="style">tabledetailslabel</property>
+                                    <cell id="1126">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <property name="textAlign">left</property>
+                                        <label id="1179">
+                                            <text-property name="text" key="billrvtotal_billbatch_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1127">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <property name="textAlign">left</property>
+                                        <label id="1207">
+                                            <text-property name="text" key="billrvtotal_billbatch_desc_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1197">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <property name="textAlign">left</property>
+                                        <label id="1208">
+                                            <text-property name="text" key="billrvtotal_billbatch_status_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1296">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1181">
+                                            <text-property name="text" key="billrvtotal_billbatch_pretax_field"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="1129">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="1130">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="textAlign">left</property>
+                                        <data id="1180">
+                                            <property name="resultSetColumn">billbatchnum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1131">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="textAlign">left</property>
+                                        <data id="1209">
+                                            <property name="resultSetColumn">description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1198">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="textAlign">left</property>
+                                        <data id="1210">
+                                            <property name="resultSetColumn">status</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1297">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1182">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00{RoundingMode=UNNECESSARY}</property>
+                                            </structure>
+                                            <property name="resultSetColumn">pretaxtotal</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                            <footer>
+                                <row id="1365">
+                                    <property name="style">summarydata</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">right</property>
+                                    <cell id="1366"/>
+                                    <cell id="1367"/>
+                                    <cell id="1368">
+                                        <label id="1206">
+                                            <text-property name="text" key="billrvtotal_billbatch_totals_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1369">
+                                        <data id="1363">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00{RoundingMode=UNNECESSARY}</property>
+                                            </structure>
+                                            <property name="resultSetColumn">BillingScheduleTotalPreTaxTotal</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </table>
+                    </cell>
+                </row>
+                <row id="959">
+                    <cell id="960">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1195"/>
+                    </cell>
+                </row>
+                <row id="966">
+                    <cell id="967">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">right</property>
+                        <grid id="1218">
+                            <property name="fontSize">8pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="width">98%</property>
+                            <column id="1219"/>
+                            <row id="1220">
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <property name="fontSize">8pt</property>
+                                <property name="fontWeight">bold</property>
+                                <cell id="1221">
+                                    <label id="1222">
+                                        <text-property name="text" key="priceschedules"></text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="909">
+                    <cell id="910">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="textAlign">right</property>
+                        <table id="1223">
+                            <property name="textAlign">left</property>
+                            <property name="width">98%</property>
+                            <property name="dataSet">subDataSet1</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">customer</property>
+                                    <text-property name="displayName">customer</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["customer"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">billbatchnum</property>
+                                    <text-property name="displayName">billbatchnum</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["billbatchnum"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">description</property>
+                                    <text-property name="displayName">description</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">status</property>
+                                    <text-property name="displayName">status</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">pretaxtotal</property>
+                                    <text-property name="displayName">pretaxtotal</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["pretaxtotal"]</expression>
+                                    <property name="dataType">float</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">PriceScheduleTotalPreTaxTotal</property>
+                                    <property name="dataType">float</property>
+                                    <property name="aggregateFunction">SUM</property>
+                                    <list-property name="arguments">
+                                        <structure>
+                                            <property name="name">Expression</property>
+                                            <expression name="value" type="javascript">dataSetRow["pretaxtotal"]</expression>
+                                        </structure>
+                                    </list-property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <column id="1252">
+                                <property name="width">15%</property>
+                            </column>
+                            <column id="1253">
+                                <property name="width">60%</property>
+                            </column>
+                            <column id="1254">
+                                <property name="width">10%</property>
+                            </column>
+                            <column id="1255">
+                                <property name="width">15%</property>
+                            </column>
+                            <header>
+                                <row id="1224">
+                                    <property name="style">tabledetailslabel</property>
+                                    <cell id="1225">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <property name="textAlign">left</property>
+                                        <label id="1226">
+                                            <text-property name="text" key="billrvtotal_billbatch_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1227">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <property name="textAlign">left</property>
+                                        <label id="1228">
+                                            <text-property name="text" key="billrvtotal_billbatch_desc_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1229">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <property name="textAlign">left</property>
+                                        <label id="1230">
+                                            <text-property name="text" key="billrvtotal_billbatch_status_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1231">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1232">
+                                            <text-property name="text" key="billrvtotal_billbatch_pretax_field"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="1233">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="1234">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="textAlign">left</property>
+                                        <data id="1235">
+                                            <property name="resultSetColumn">billbatchnum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1236">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="textAlign">left</property>
+                                        <data id="1237">
+                                            <property name="resultSetColumn">description</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1238">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <property name="textAlign">left</property>
+                                        <data id="1239">
+                                            <property name="resultSetColumn">status</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1240">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1241">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00{RoundingMode=UNNECESSARY}</property>
+                                            </structure>
+                                            <property name="resultSetColumn">pretaxtotal</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                            <footer>
+                                <row id="1370">
+                                    <property name="style">summarydata</property>
+                                    <property name="fontWeight">bold</property>
+                                    <property name="textAlign">right</property>
+                                    <cell id="1371"/>
+                                    <cell id="1372"/>
+                                    <cell id="1373">
+                                        <label id="1339">
+                                            <text-property name="text" key="billrvtotal_billbatch_totals_field"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1374">
+                                        <data id="1364">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">#,##0.00{RoundingMode=UNNECESSARY}</property>
+                                            </structure>
+                                            <property name="resultSetColumn">PriceScheduleTotalPreTaxTotal</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </table>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1265">
+                    <cell id="1266">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="1272">
+                            <column id="1273">
+                                <property name="width">20%</property>
+                            </column>
+                            <column id="1274"/>
+                            <row id="1275">
+                                <cell id="1276">
+                                    <property name="style">reportheaderlabel</property>
+                                    <label id="1277">
+                                        <text-property name="text" key="billrvtotal_whereclause"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="1278">
+                                    <property name="style">reportheaderdata</property>
+                                    <data id="1280">
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">where</property>
+                                                <expression name="expression" type="javascript">params["where"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">where</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

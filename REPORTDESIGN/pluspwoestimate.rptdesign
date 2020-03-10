@@ -1,0 +1,1969 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.
+
+09-19764@000</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.1.v201309091055 Build &lt;4.3.1.v20130918-1142></property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields.</html-property>
+    <simple-property-list name="includeResource">
+        <value>pluspwo</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable", "childTable1", "childTable2"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Portrait Subreport Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="829">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">true</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="mainDataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">wodescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">customername</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">woserviceaddress</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">onbehalfof</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">phone</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">createby</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">createdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">gooduntil</property>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">estimatetype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">targetstartdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">targetfinishdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">priceestimate</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">currencycode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">planestlab</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">planestmat</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">planestsrv</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">planesttool</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">planestfees</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">acceptedby</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">acceptedon</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wodescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">customername</property>
+                </structure>
+                <structure>
+                    <property name="columnName">woserviceaddress</property>
+                </structure>
+                <structure>
+                    <property name="columnName">onbehalfof</property>
+                </structure>
+                <structure>
+                    <property name="columnName">phone</property>
+                </structure>
+                <structure>
+                    <property name="columnName">createby</property>
+                </structure>
+                <structure>
+                    <property name="columnName">createdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">gooduntil</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estimatetype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targetstartdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targetfinishdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">priceestimate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">currencycode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">planestlab</property>
+                </structure>
+                <structure>
+                    <property name="columnName">planestmat</property>
+                </structure>
+                <structure>
+                    <property name="columnName">planestsrv</property>
+                </structure>
+                <structure>
+                    <property name="columnName">planesttool</property>
+                </structure>
+                <structure>
+                    <property name="columnName">planestfees</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acceptedby</property>
+                </structure>
+                <structure>
+                    <property name="columnName">acceptedon</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">wodescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">customername</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">woserviceaddress</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">onbehalfof</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">phone</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">createby</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">createdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">gooduntil</property>
+                        <property name="dataType">date</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">estimatetype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">targetstartdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">targetfinishdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">priceestimate</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">currencycode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">planestlab</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">planestmat</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">planestsrv</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">planesttool</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">planestfees</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">acceptedby</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">acceptedon</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "select " +
+"workorder.wonum, workorder.description, pluspcustomer.name, woserviceaddress.formattedaddress, workorder.onbehalfof, " +
+"workorder.phone, worklog.createby, worklog.createdate, worklog.pluspestenddt, worklog.pluspesttype, " +
+"workorder.targstartdate, workorder.targcompdate, worklog.plusppriceest, pluspcustomer.currencycode, " +
+"(select sum(wplabor.laborhrs) * sum(wplabor.rate) * sum(wplabor.quantity) from wplabor where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planestlab, " +
+"(select sum(wpmaterial.linecost) from wpmaterial where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planestmat, " +
+"(select sum(wpservice.linecost) from wpservice where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planestsrv, " +
+"(select sum(wptool.linecost) from wptool where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planesttool, " +
+"(select sum(pluspwpgenbill.lineprice) from pluspwpgenbill where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid and type in (select value from synonymdomain where domainid='PLUSPGBTRANSTYPE' and maxvalue='ACTUAL') and addedbyprsched=0) as planestfees, " +
+"worklog.pluspeststatusr, worklog.pluspeststatdt, workorder.siteid, worklog.pluspeststat " +
+"from workorder " +
+"inner join worklog on workorder.wonum=worklog.recordkey and workorder.woclass=worklog.class and workorder.siteid=worklog.siteid " +
+"left outer join pluspcustomer on workorder.pluspcustomer=pluspcustomer.customer " +
+"left outer join woserviceaddress on workorder.wonum =woserviceaddress.wonum and workorder.siteid=woserviceaddress.siteid " +
+"where " +
+"worklog.logtype in (select value from synonymdomain where domainid='LOGTYPE' and maxvalue='PLUSPESTIMATE') " +
+"and worklog.pluspeststat not in (select value from synonymdomain where domainid='PLUSPESTSTAT' and maxvalue='REWORKED') " +
+"and " + params["where"];
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["wonum"] = maximoDataSet.getString("wonum");
+row["wodescription"] = maximoDataSet.getString("description");
+row["customername"] = maximoDataSet.getString("name");
+row["woserviceaddress"] = maximoDataSet.getString("formattedaddress");
+row["onbehalfof"] = maximoDataSet.getString("onbehalfof");
+row["phone"] = maximoDataSet.getString("phone");
+row["createby"] = maximoDataSet.getString("createby");
+row["createdate"] = maximoDataSet.getTimestamp("createdate");
+row["gooduntil"] = maximoDataSet.getDate("pluspestenddt");
+row["estimatetype"] = maximoDataSet.getString("pluspesttype");
+row["targetstartdate"] = maximoDataSet.getTimestamp("targstartdate");
+row["targetfinishdate"] = maximoDataSet.getTimestamp("targcompdate");
+row["priceestimate"] = maximoDataSet.getDouble("plusppriceest");
+row["currencycode"] = maximoDataSet.getString("currencycode");
+row["planestlab"] = maximoDataSet.getDouble("planestlab");
+row["planestmat"] = maximoDataSet.getDouble("planestmat");
+row["planestsrv"] = maximoDataSet.getDouble("planestsrv");
+row["planesttool"] = maximoDataSet.getDouble("planesttool");
+row["planestfees"] = maximoDataSet.getDouble("planestfees");
+row["acceptedby"] = maximoDataSet.getString("pluspeststatusr");
+row["acceptedon"] = maximoDataSet.getTimestamp("pluspeststatdt");
+row["siteid"] = maximoDataSet.getString("siteid");
+row["status"] = maximoDataSet.getString("pluspeststat");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="subDataSet" id="239">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">taskid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">taskdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">taskestdur</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">taskid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taskdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">taskestdur</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">taskid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">taskdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">taskestdur</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[subDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+subDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "select " +
+"woactivity.taskid, woactivity.description, woactivity.estdur " +
+"from woactivity " +
+"left outer join workorder on woactivity.parent = workorder.wonum and woactivity.siteid = workorder.siteid " +
+"where woactivity.parent = '"+rows[0]["wonum"].replace(/'/g,"''") + "'" +
+"and woactivity.siteid = '"+rows[0]["siteid"].replace(/'/g,"''") + "'" +
+"and " + params["where"];
+
+subDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!subDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["taskid"] = subDataSet.getString("taskid");
+row["taskdesc"] = subDataSet.getString("description");
+row["taskestdur"] = subDataSet.getDuration("estdur");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="childDataSet" id="1063">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">childwo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">childwodescription</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">childwoduration</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">childwoplanestlab</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">childwoplanestmat</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">childwoplanestsrv</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">childwoplanesttool</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">childwoplanestfees</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">childwo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwodescription</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwoduration</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwoplanestlab</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwoplanestmat</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwoplanestsrv</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwoplanesttool</property>
+                </structure>
+                <structure>
+                    <property name="columnName">childwoplanestfees</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">childwo</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">childwodescription</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">childwoduration</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">childwoplanestlab</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">childwoplanestmat</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">childwoplanestsrv</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">childwoplanesttool</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">childwoplanestfees</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[childDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+childDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "select " +
+"workorder.wonum, workorder.description, workorder.estdur, " +
+"(select sum(wplabor.laborhrs) * sum(wplabor.rate) * sum(wplabor.quantity) from wplabor where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planestlab, " +
+"(select sum(wpmaterial.linecost) from wpmaterial where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planestmat, " +
+"(select sum(wpservice.linecost) from wpservice where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planestsrv, " +
+"(select sum(wptool.linecost) from wptool where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid) as planesttool, " +
+"(select sum(pluspwpgenbill.lineprice) from pluspwpgenbill where (wonum=workorder.wonum or wonum in (select wonum from woactivity where parent=workorder.wonum)) and siteid=workorder.siteid and type in (select value from synonymdomain where domainid='PLUSPGBTRANSTYPE' and maxvalue='ACTUAL') and addedbyprsched=0) as planestfees " +
+"from workorder " +
+"where workorder.parent = '"+rows[0]["wonum"].replace(/'/g,"''") + "'" +
+"and workorder.siteid = '"+rows[0]["siteid"].replace(/'/g,"''") + "'"
+
+childDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!childDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["childwo"] = childDataSet.getString("wonum");
+row["childwodescription"] = childDataSet.getString("description");
+row["childwoduration"] = childDataSet.getDuration("estdur");
+row["childwoplanestlab"] = childDataSet.getString("planestlab");
+row["childwoplanestmat"] = childDataSet.getString("planestmat");
+row["childwoplanestsrv"] = childDataSet.getString("planestsrv");
+row["childwoplanesttool"] = childDataSet.getString("planesttool");
+row["childwoplanestfees"] = childDataSet.getString("planestfees");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="831">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="832">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="maximoPortrait" id="830" extends="MaximoSystemLibrary.maximoPortrait">
+            <overridden-values>
+                <ref-entry baseId="342" name="NewGrid21" id="342"/>
+                <ref-entry baseId="343" id="343"/>
+                <ref-entry baseId="344" id="344"/>
+                <ref-entry baseId="345" id="345"/>
+                <ref-entry baseId="346" id="346"/>
+                <ref-entry baseId="348" id="348"/>
+                <ref-entry baseId="349" name="NewImage2" id="349"/>
+                <ref-entry baseId="350" name="NewGrid3" id="350"/>
+                <ref-entry baseId="351" id="351"/>
+                <ref-entry baseId="352" id="352"/>
+                <ref-entry baseId="353" id="353"/>
+                <ref-entry baseId="354" id="354"/>
+                <ref-entry baseId="355" name="NewText2" id="355"/>
+                <ref-entry baseId="356" id="356"/>
+                <ref-entry baseId="357" name="NewGrid11" id="357"/>
+                <ref-entry baseId="358" id="358"/>
+                <ref-entry baseId="359" id="359"/>
+                <ref-entry baseId="360" id="360"/>
+                <ref-entry baseId="361" id="361"/>
+                <ref-entry baseId="362" id="362"/>
+                <ref-entry baseId="363" name="NewAutoText2" id="363"/>
+                <ref-entry baseId="364" id="364"/>
+                <ref-entry baseId="365" name="NewText11" id="365"/>
+                <ref-entry baseId="366" id="366"/>
+                <ref-entry baseId="367" name="NewAutoText11" id="367"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table name="mainTable" id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">mainDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">wonum</property>
+                    <text-property name="displayName">wonum</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">wodescription</property>
+                    <text-property name="displayName">wodescription</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["wodescription"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">customername</property>
+                    <expression name="expression" type="javascript">dataSetRow["customername"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">woserviceaddress</property>
+                    <text-property name="displayName">woserviceaddress</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["woserviceaddress"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">onbehalfof</property>
+                    <text-property name="displayName">onbehalfof</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["onbehalfof"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">phone</property>
+                    <text-property name="displayName">phone</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["phone"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">createby</property>
+                    <text-property name="displayName">createby</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["createby"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">createdate</property>
+                    <text-property name="displayName">createdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["createdate"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">gooduntil</property>
+                    <text-property name="displayName">gooduntil</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["gooduntil"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">estimatetype</property>
+                    <text-property name="displayName">estimatetype</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["estimatetype"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">targetstartdate</property>
+                    <text-property name="displayName">targetstartdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["targetstartdate"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">targetfinishdate</property>
+                    <text-property name="displayName">targetfinishdate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["targetfinishdate"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">priceestimate</property>
+                    <text-property name="displayName">priceestimate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["priceestimate"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">currencycode</property>
+                    <text-property name="displayName">currencycode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["currencycode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">planestlab</property>
+                    <text-property name="displayName">planestlab</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["planestlab"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">planestmat</property>
+                    <text-property name="displayName">planestmat</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["planestmat"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">planestsrv</property>
+                    <text-property name="displayName">planestsrv</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["planestsrv"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">planesttool</property>
+                    <text-property name="displayName">planesttool</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["planesttool"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">planestfees</property>
+                    <text-property name="displayName">planestfees</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["planestfees"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">acceptedby</property>
+                    <text-property name="displayName">acceptedby</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["acceptedby"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">acceptedon</property>
+                    <text-property name="displayName">acceptedon</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["acceptedon"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">siteid</property>
+                    <text-property name="displayName">siteid</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">table_customername</property>
+                    <expression name="expression" type="javascript">dataSetRow["customername"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_woserviceaddress</property>
+                    <expression name="expression" type="javascript">dataSetRow["woserviceaddress"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_onbehalfof</property>
+                    <expression name="expression" type="javascript">dataSetRow["onbehalfof"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_phone</property>
+                    <expression name="expression" type="javascript">dataSetRow["phone"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_createby</property>
+                    <expression name="expression" type="javascript">dataSetRow["createby"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_createdate</property>
+                    <expression name="expression" type="javascript">dataSetRow["createdate"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_gooduntil</property>
+                    <expression name="expression" type="javascript">dataSetRow["gooduntil"]</expression>
+                    <property name="dataType">date</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_estimatetype</property>
+                    <expression name="expression" type="javascript">dataSetRow["estimatetype"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_targetstartdate</property>
+                    <expression name="expression" type="javascript">dataSetRow["targetstartdate"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_targetfinishdate</property>
+                    <expression name="expression" type="javascript">dataSetRow["targetfinishdate"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_priceestimate</property>
+                    <expression name="expression" type="javascript">dataSetRow["priceestimate"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_currencycode</property>
+                    <expression name="expression" type="javascript">dataSetRow["currencycode"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_wonum</property>
+                    <expression name="expression" type="javascript">dataSetRow["wonum"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_wodescription</property>
+                    <expression name="expression" type="javascript">dataSetRow["wodescription"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_planestlab</property>
+                    <expression name="expression" type="javascript">dataSetRow["planestlab"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_planestmat</property>
+                    <expression name="expression" type="javascript">dataSetRow["planestmat"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_planestsrv</property>
+                    <expression name="expression" type="javascript">dataSetRow["planestsrv"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_planesttool</property>
+                    <expression name="expression" type="javascript">dataSetRow["planesttool"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_planestfees</property>
+                    <expression name="expression" type="javascript">dataSetRow["planestfees"]</expression>
+                    <property name="dataType">decimal</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_status</property>
+                    <expression name="expression" type="javascript">dataSetRow["status"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_acceptedby</property>
+                    <expression name="expression" type="javascript">dataSetRow["acceptedby"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">table_acceptedon</property>
+                    <expression name="expression" type="javascript">dataSetRow["acceptedon"]</expression>
+                    <property name="dataType">date-time</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83"/>
+            <column id="79"/>
+            <column id="91"/>
+            <column id="87"/>
+            <column id="17"/>
+            <column id="18"/>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <label id="1062">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="custest_title"></text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="202">
+                    <cell id="203">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="style">reportheaderlabel</property>
+                                <property name="width">1in</property>
+                            </column>
+                            <column id="111">
+                                <property name="style">reportheaderdata</property>
+                                <property name="width">6.375in</property>
+                            </column>
+                            <row id="112">
+                                <cell id="113">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="828">
+                <property name="groupName">tableGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["wonum"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["wonum"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always-excluding-last</property>
+                <property name="pageBreakBefore">auto</property>
+            </group>
+            <detail>
+                <row id="615">
+                    <cell id="616">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="653">
+                            <property name="width">100%</property>
+                            <column id="654">
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="844">
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="838">
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="841">
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="847">
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <column id="655">
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="659">
+                                <cell id="660">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                    <property name="style">tableheaderrow</property>
+                                    <property name="fontSize">120%</property>
+                                    <property name="textAlign">left</property>
+                                    <label id="892">
+                                        <property name="style">title</property>
+                                        <property name="display">inline</property>
+                                        <text-property name="text" key="custest_wo_wonum"></text-property>
+                                    </label>
+                                    <data id="890">
+                                        <property name="style">title</property>
+                                        <property name="display">inline</property>
+                                        <property name="resultSetColumn">table_wonum</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="875">
+                                <cell id="876">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                    <data id="891">
+                                        <property name="style">summarydata</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="color">#000000</property>
+                                        <property name="resultSetColumn">table_wodescription</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="1039">
+                                <cell id="1040">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                </cell>
+                            </row>
+                            <row id="664">
+                                <cell id="665">
+                                    <label id="925">
+                                        <text-property name="text" key="custest_cust_name"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="843">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="871">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_customername</property>
+                                    </data>
+                                </cell>
+                                <cell id="837">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="930">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_log_createby"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="840">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="882">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_createby</property>
+                                    </data>
+                                </cell>
+                                <cell id="846">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="934">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_wo_targetstart"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="667">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="886">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_targetstartdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="848">
+                                <cell id="849">
+                                    <label id="926">
+                                        <text-property name="text" key="custest_wosrvaddr_addr"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="850">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="872">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_woserviceaddress</property>
+                                    </data>
+                                </cell>
+                                <cell id="851">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="931">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_log_createdate"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="852">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="883">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_createdate</property>
+                                    </data>
+                                </cell>
+                                <cell id="853">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="935">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_wo_targetfinish"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="854">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="887">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_targetfinishdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="855">
+                                <cell id="856">
+                                    <label id="927">
+                                        <text-property name="text" key="custest_wo_onbehalfof"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="857">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="873">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_onbehalfof</property>
+                                    </data>
+                                </cell>
+                                <cell id="858">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="932">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_log_enddt"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="859">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="884">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_gooduntil</property>
+                                    </data>
+                                </cell>
+                                <cell id="860">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="936">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_log_priceest"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="861">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="888">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_priceestimate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="862">
+                                <cell id="863">
+                                    <label id="928">
+                                        <text-property name="text" key="custest_wo_phone"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="864">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="874">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_phone</property>
+                                    </data>
+                                </cell>
+                                <cell id="865">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="933">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_log_esttp"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="866">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="885">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_estimatetype</property>
+                                    </data>
+                                </cell>
+                                <cell id="867">
+                                    <property name="paddingLeft">2px</property>
+                                    <label id="937">
+                                        <property name="style">tabledetailslabel</property>
+                                        <text-property name="text" key="custest_cust_currcode"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="868">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="889">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_currencycode</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="1041">
+                                <cell id="1042">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="539">
+                    <cell id="540">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <table name="childTable1" id="546">
+                            <property name="comments">09-19764@000</property>
+                            <property name="width">100%</property>
+                            <property name="dataSet">subDataSet</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">taskid</property>
+                                    <text-property name="displayName">taskid</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["taskid"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">taskdesc</property>
+                                    <text-property name="displayName">taskdesc</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["taskdesc"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">taskestdur</property>
+                                    <text-property name="displayName">taskestdur</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["taskestdur"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_taskid</property>
+                                    <expression name="expression" type="javascript">dataSetRow["taskid"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_taskdesc</property>
+                                    <expression name="expression" type="javascript">dataSetRow["taskdesc"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_taskestdur</property>
+                                    <expression name="expression" type="javascript">dataSetRow["taskestdur"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="568"/>
+                            <column id="569"/>
+                            <column id="570"/>
+                            <column id="571"/>
+                            <column id="572"/>
+                            <column id="573"/>
+                            <header>
+                                <row id="675">
+                                    <property name="style">tableheaderrow</property>
+                                    <cell id="676">
+                                        <property name="colSpan">6</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderlabel</property>
+                                        <label id="684">
+                                            <property name="style">tableheaderlabel</property>
+                                            <text-property name="text" key="custest_title_tasks"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                                <row id="547">
+                                    <property name="style">tabledetailslabel</property>
+                                    <cell id="548">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="575">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_task_taskid"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="549">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="938">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_task_desc"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="552">
+                                        <property name="colSpan">2</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="939">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_task_estdur"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="554">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="555">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="940">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_taskid</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="556">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="941">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_taskdesc</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="559">
+                                        <property name="colSpan">2</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="942">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_taskestdur</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                            <footer>
+                                <row id="1032">
+                                    <cell id="1033">
+                                        <property name="colSpan">6</property>
+                                        <property name="rowSpan">1</property>
+                                    </cell>
+                                </row>
+                            </footer>
+                        </table>
+                        <table name="childTable2" id="777">
+                            <property name="comments">09-19764@000</property>
+                            <property name="width">100%</property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="806"/>
+                            <column id="807"/>
+                            <column id="808"/>
+                            <column id="809"/>
+                            <column id="810"/>
+                            <column id="811"/>
+                            <header>
+                                <row id="780">
+                                    <property name="style">tableheaderrow</property>
+                                    <cell id="781">
+                                        <property name="colSpan">6</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderlabel</property>
+                                        <label id="782">
+                                            <property name="style">tableheaderlabel</property>
+                                            <text-property name="text" key="custest_title_planres"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                                <row id="788">
+                                    <property name="style">tabledetailslabel</property>
+                                    <cell id="789">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="790">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_title_planres_res"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="793">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="982">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_title_planres_pric"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="796">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="797">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <label id="971">
+                                            <property name="style">summarydata</property>
+                                            <text-property name="text" key="custest_planprice_lab"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="801">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="976">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_planestlab</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="964">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="965">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <label id="972">
+                                            <property name="style">summarydata</property>
+                                            <text-property name="text" key="custest_planprice_mat"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="968">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="977">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_planestmat</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="957">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="958">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <label id="973">
+                                            <property name="style">summarydata</property>
+                                            <text-property name="text" key="custest_planprice_srv"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="961">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="978">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_planestsrv</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="950">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="951">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <label id="974">
+                                            <property name="style">summarydata</property>
+                                            <text-property name="text" key="custest_planprice_tool"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="954">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="979">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_planesttool</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="943">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="944">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <label id="975">
+                                            <property name="style">summarydata</property>
+                                            <text-property name="text" key="custest_planprice_fees"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="947">
+                                        <property name="colSpan">3</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="980">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_planestfees</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                        <table name="childTable11" id="1078">
+                            <property name="comments">09-19764@000</property>
+                            <property name="width">100%</property>
+                            <property name="dataSet">childDataSet</property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">childwo</property>
+                                    <text-property name="displayName">childwo</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwo"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwodescription</property>
+                                    <text-property name="displayName">childwodescription</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwodescription"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwoduration</property>
+                                    <text-property name="displayName">childwoduration</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoduration"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwoplanestlab</property>
+                                    <text-property name="displayName">childwoplanestlab</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestlab"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwoplanestmat</property>
+                                    <text-property name="displayName">childwoplanestmat</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestmat"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwoplanestsrv</property>
+                                    <text-property name="displayName">childwoplanestsrv</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestsrv"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwoplanesttool</property>
+                                    <text-property name="displayName">childwoplanesttool</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanesttool"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">childwoplanestfees</property>
+                                    <text-property name="displayName">childwoplanestfees</text-property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestfees"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_wonum</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwo"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_descr</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwodescription"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_duration</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoduration"]</expression>
+                                    <property name="dataType">string</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_planestlab</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestlab"]</expression>
+                                    <property name="dataType">decimal</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_planest</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestmat"]</expression>
+                                    <property name="dataType">decimal</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_planestsrv</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestsrv"]</expression>
+                                    <property name="dataType">decimal</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_planesttool</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanesttool"]</expression>
+                                    <property name="dataType">decimal</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">table_child_planestfees</property>
+                                    <expression name="expression" type="javascript">dataSetRow["childwoplanestfees"]</expression>
+                                    <property name="dataType">decimal</property>
+                                    <property name="allowExport">true</property>
+                                </structure>
+                            </list-property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="1098"/>
+                            <column id="1099"/>
+                            <column id="1100"/>
+                            <column id="1101"/>
+                            <column id="1102"/>
+                            <column id="1103"/>
+                            <column id="1108"/>
+                            <column id="1126"/>
+                            <header>
+                                <row id="1079">
+                                    <property name="style">tableheaderrow</property>
+                                    <cell id="1080">
+                                        <property name="colSpan">8</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderlabel</property>
+                                        <label id="1081">
+                                            <property name="style">tableheaderlabel</property>
+                                            <text-property name="text" key="custest_title_childwo"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                                <row id="1082">
+                                    <property name="style">tabledetailslabel</property>
+                                    <cell id="1083">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1084">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_wo"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1085">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1086">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_description"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1109">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1113">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_duration"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1110">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1114">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_labor"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1087">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1088">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_material"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1116">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1117">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_service"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1105">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1118">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_tools"></text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1124">
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="1127">
+                                            <property name="style">summarylabel</property>
+                                            <text-property name="text" key="custest_childwo_feesandcharges"></text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <detail>
+                                <row id="1089">
+                                    <property name="style">tabledetailsdatarow</property>
+                                    <cell id="1090">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1091">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_wonum</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1092">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1093">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_descr</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1111">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1119">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_duration</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1112">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1120">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_planestlab</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1094">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1095">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_planest</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1115">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1121">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_planestsrv</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1106">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1122">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_planesttool</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="1125">
+                                        <property name="style">tabledetailsdatacell</property>
+                                        <data id="1128">
+                                            <property name="style">summarydata</property>
+                                            <property name="resultSetColumn">table_child_planestfees</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+                <row id="991">
+                    <cell id="992">
+                        <property name="colSpan">6</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="998">
+                            <column id="999"/>
+                            <column id="1000"/>
+                            <column id="1001"/>
+                            <column id="1002"/>
+                            <column id="1003"/>
+                            <column id="1004"/>
+                            <row id="1005">
+                                <cell id="1006">
+                                    <property name="colSpan">6</property>
+                                    <property name="rowSpan">1</property>
+                                </cell>
+                            </row>
+                            <row id="1012">
+                                <cell id="1013">
+                                    <property name="colSpan">4</property>
+                                    <property name="rowSpan">3</property>
+                                </cell>
+                                <cell id="1017">
+                                    <label id="1019">
+                                        <property name="style">tabledetailslabel</property>
+                                        <property name="color">#444E68</property>
+                                        <text-property name="text" key="custest_log_status"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="1018">
+                                    <data id="1022">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_status</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="1055">
+                                <cell id="1060">
+                                    <label id="1020">
+                                        <property name="style">tabledetailslabel</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["table_acceptedby"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text" key="custest_log_changedby"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="1061">
+                                    <data id="1023">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_acceptedby</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="1048">
+                                <cell id="1053">
+                                    <label id="1021">
+                                        <property name="style">tabledetailslabel</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["table_acceptedon"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text" key="custest_log_statusdate"></text-property>
+                                    </label>
+                                </cell>
+                                <cell id="1054">
+                                    <data id="1024">
+                                        <property name="style">summarydata</property>
+                                        <property name="resultSetColumn">table_acceptedon</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

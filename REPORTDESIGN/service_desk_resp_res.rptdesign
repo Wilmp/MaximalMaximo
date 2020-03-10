@@ -1,0 +1,2478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+    <html-property name="description">This template will create a report with one or more groups, each having identical data fields.</html-property>
+    <simple-property-list name="includeResource">
+        <value>sla</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+//mxReportScriptContext.setDefaultLogFile("c:/temp/service_desk_resp_res.txt");
+
+scriptLogger = mxReportScriptContext.getReportScriptLogger();]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Grouped Template</text-property>
+    <property name="layoutPreference">auto layout</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <template-parameter-definitions>
+        <template-parameter-definition name="NewTemplateParameterDefinition" id="71">
+            <property name="allowedType">Label</property>
+            <text-property name="description">Double-click to enter the report title.</text-property>
+            <default>
+                <label id="72">
+                    <text-property name="text">Report Title</text-property>
+                </label>
+            </default>
+        </template-parameter-definition>
+    </template-parameter-definitions>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">1=1</value>
+            </simple-property-list>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="240">
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="241">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="242">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="siteid" id="342">
+            <text-property name="promptText">Site</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">></property>
+                <property name="pattern">></property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="343">
+            <text-property name="promptText">Start Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="344">
+            <text-property name="promptText">End Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="341">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">class</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">internalpriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ticket_count</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">avg_contact</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">max_contact</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">avg_response</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">max_response</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">avg_resolution</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">max_resolution</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">class</property>
+                </structure>
+                <structure>
+                    <property name="columnName">internalpriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ticket_count</property>
+                </structure>
+                <structure>
+                    <property name="columnName">avg_contact</property>
+                </structure>
+                <structure>
+                    <property name="columnName">max_contact</property>
+                </structure>
+                <structure>
+                    <property name="columnName">avg_response</property>
+                </structure>
+                <structure>
+                    <property name="columnName">max_response</property>
+                </structure>
+                <structure>
+                    <property name="columnName">avg_resolution</property>
+                </structure>
+                <structure>
+                    <property name="columnName">max_resolution</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">class</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">internalpriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ticket_count</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">avg_contact</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">max_contact</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">avg_response</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">max_response</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">avg_resolution</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">max_resolution</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+if(params["siteid"].value) {
+	params["where"] += " and " 
+	+ MXReportSqlFormat.createParamWhereClause("ticket.siteid", params["siteid"].toUpperCase());
+}
+
+if (params["startdate"].value) {
+	params["where"] += " and ticket.actualfinish >= " 
+	+ MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]); 
+}
+if(params["enddate"].value) {
+	params["where"] += " and ticket.actualfinish <= " 
+	+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]); 
+}
+
+var sqlText = new String();
+var calcText = new String();
+
+if (maximoDataSet.isOracle())
+{
+	calcText = " avg(ticket.actualcontactdate-ticket.reportdate)*24 as avg_contact, "
+	+ " max(ticket.actualcontactdate-ticket.reportdate)*24 as max_contact, "
+	+ " avg(ticket.actualstart-ticket.reportdate)*24 as avg_response, "
+	+ " max(ticket.actualstart-ticket.reportdate)*24 as max_response, "
+	+ " avg(ticket.actualfinish-ticket.reportdate)*24 as avg_resolution, "
+	+ " max(ticket.actualfinish-ticket.reportdate)*24 as max_resolution ";
+}
+
+else if (maximoDataSet.isSQLServer())
+{
+	calcText = "avg(datediff(second, ticket.reportdate, ticket.actualcontactdate))/3600.0 as avg_contact, "
+	+ " max(datediff(second, ticket.reportdate, ticket.actualcontactdate))/3600.0 as max_contact, "
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualstart))/3600.0 as avg_response, "
+	+ " max(datediff(second, ticket.reportdate, ticket.actualstart))/3600.0 as max_response, "
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualfinish))/3600.0 as avg_resolution, "
+	+ " max(datediff(second, ticket.reportdate, ticket.actualfinish))/3600.0 as max_resolution ";
+}
+else
+{
+	calcText = "avg(TIMESTAMPDIFF(2,CHAR(ticket.actualcontactdate - ticket.reportdate)))/3600.0 as avg_contact, "
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualcontactdate - ticket.reportdate)))/3600.0 as max_contact, "
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualstart - ticket.reportdate)))/3600.0 as avg_response, "
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualstart - ticket.reportdate)))/3600.0 as max_response, "
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualfinish - ticket.reportdate)))/3600.0 as avg_resolution, "
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualfinish - ticket.reportdate)))/3600.0 as max_resolution ";
+}
+
+// Add query to sqlText variable.
+sqlText = "select ticket.class, ticket.internalpriority, ticket.siteid, count(*) as ticket_count, "
++ calcText
++ " from ticket left outer join commodities on "
++ " ticket.commodity = commodities.commodity "
+// Include the Maximo where clause
++ " where ticket.status in (select value from synonymdomain where synonymdomain.maxvalue in ('RESOLVED', 'CLOSED') "
++ " and synonymdomain.domainid in ('INCIDENTSTATUS', 'PROBLEMSTATUS', 'SRSTATUS')) "
++ " and " + params["where"]
++ " group by ticket.class, ticket.internalpriority, ticket.siteid "
++ " order by ticket.class, ticket.internalpriority"
+;
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["class"] = maximoDataSet.getString("class");
+row["internalpriority"] = maximoDataSet.getString("internalpriority");
+row["siteid"] = maximoDataSet.getString("siteid");
+if(row["siteid"]==null)row["siteid"]='';
+row["ticket_count"] = maximoDataSet.getInteger("ticket_count");
+row["avg_contact"] = maximoDataSet.getDuration("avg_contact");
+row["max_contact"] = maximoDataSet.getDuration("max_contact");
+row["avg_response"] = maximoDataSet.getDuration("avg_response");
+row["max_response"] = maximoDataSet.getDuration("max_response");
+row["avg_resolution"] = maximoDataSet.getDuration("avg_resolution");
+row["max_resolution"] = maximoDataSet.getDuration("max_resolution");
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="chartDataSet" id="446">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">graphtext</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">graphvalue</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">durationvalue</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">graphtext</property>
+                </structure>
+                <structure>
+                    <property name="columnName">graphvalue</property>
+                </structure>
+                <structure>
+                    <property name="columnName">durationvalue</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">graphtext</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">graphvalue</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">durationvalue</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[chartDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+chartDataSet.open();
+
+if(params["siteid"].value) {
+	params["where"] += " and " 
+	+ MXReportSqlFormat.createParamWhereClause("ticket.siteid", params["siteid"].toUpperCase());
+}
+
+if (params["startdate"].value) {
+	params["where"] += " and ticket.actualfinish >= " 
+	+ MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]); 
+}
+if(params["enddate"].value) {
+	params["where"] += " and ticket.actualfinish <= " 
+	+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]); 
+}
+
+var sqlText = new String();
+var calcText = new String();
+var fromText = new String();
+
+fromText = " from ticket left outer join commodities on "
++ " ticket.commodity = commodities.commodity "
++ " where ticket.status in (select value from synonymdomain where synonymdomain.maxvalue in ('RESOLVED', 'CLOSED') "
++ " and synonymdomain.domainid in ('INCIDENTSTATUS', 'PROBLEMSTATUS', 'SRSTATUS')) "
++ " and " + params["where"]
++ " group by ticket.siteid "
+
+if (chartDataSet.isOracle())
+{
+	sqlText = " select ticket.siteid, 'avgcontact' as graphtext, "
+	+ " avg(ticket.actualcontactdate-ticket.reportdate)*24 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxcontact' as graphtext, " 
+	+ " max(ticket.actualcontactdate-ticket.reportdate)*24 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'avgresponse' as graphtext, " 
+	+ " avg(ticket.actualstart-ticket.reportdate)*24 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxresponse' as graphtext, " 
+	+ " max(ticket.actualstart-ticket.reportdate)*24 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'avgresolution' as graphtext, " 
+	+ " avg(ticket.actualfinish-ticket.reportdate)*24 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxresolution' as graphtext, " 
+	+ " max(ticket.actualfinish-ticket.reportdate)*24 as graphvalue "
+	+ fromText
+	;
+}
+
+else if (chartDataSet.isSQLServer())
+{
+	sqlText = " select ticket.siteid, 'avgcontact' as graphtext, "
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualcontactdate))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxcontact' as graphtext, " 
+	+ " max(datediff(second, ticket.reportdate, ticket.actualcontactdate))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'avgresponse' as graphtext, " 
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualstart))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxresponse' as graphtext, " 
+	+ " max(datediff(second, ticket.reportdate, ticket.actualstart))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'avgresolution' as graphtext, " 
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualfinish))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxresolution' as graphtext, " 
+	+ " max(datediff(second, ticket.reportdate, ticket.actualfinish))/3600.0 "
+	+ fromText
+	;
+}
+else
+{
+	sqlText = " select ticket.siteid, 'avgcontact' as graphtext, "
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualcontactdate - ticket.reportdate)))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxcontact' as graphtext, " 
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualcontactdate - ticket.reportdate)))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'avgresponse' as graphtext, " 
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualstart - ticket.reportdate)))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxresponse' as graphtext, " 
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualstart - ticket.reportdate)))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'avgresolution' as graphtext, " 
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualfinish - ticket.reportdate)))/3600.0 as graphvalue "
+	+ fromText
+	+ " union all select ticket.siteid, 'maxresolution' as graphtext, " 
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualfinish - ticket.reportdate)))/3600.0 as graphvalue "
+	+ fromText
+	;
+}
+
+// Add query to sqlText variable.
+
+chartDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!chartDataSet.fetch())
+	return (false);
+
+row["siteid"] = chartDataSet.getString("siteid");
+if(row["siteid"]==null)row["siteid"]='';
+var duration = chartDataSet.getDuration("graphvalue");
+if(duration==null)duration=0;
+row["graphtext"] = chartDataSet.getString("graphtext");
+row["durationvalue"] = duration;
+
+
+if (row["graphtext"]=='avgcontact'){
+	row["graphtext"] = reportContext.getMessage("avg_contact_time_chart", reportContext.getLocale());
+}
+else if (row["graphtext"]=='maxcontact'){
+	row["graphtext"] = reportContext.getMessage("max_contact_time_chart", reportContext.getLocale());
+}
+else if (row["graphtext"]=='avgresponse'){
+	row["graphtext"] = reportContext.getMessage("avg_response_time_chart", reportContext.getLocale());
+}
+else if (row["graphtext"]=='maxresponse'){
+	row["graphtext"] = reportContext.getMessage("max_response_time_chart", reportContext.getLocale());
+}
+else if (row["graphtext"]=='avgresolution'){
+	row["graphtext"] = reportContext.getMessage("avg_resolution_time_chart", reportContext.getLocale());
+}
+else if (row["graphtext"]=='maxresolution'){
+	row["graphtext"] = reportContext.getMessage("max_resolution_time_chart", reportContext.getLocale());
+}
+
+
+//var timeFormatter=new java.text.SimpleDateFormat("HH:mm",reportContext.getLocale());
+//row["graphvalue"] = chartDataSet.getDouble("graphvalue");
+
+var x = chartDataSet.getDouble("graphvalue");
+
+row["graphvalue"] = Math.floor(x)+((x-Math.floor(x))*0.6);
+
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="tableDataSet" id="491">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">0</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">avgcontact</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">maxcontact</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">avgresponse</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">maxresponse</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">avgresolution</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">maxresolution</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">avgcontact</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxcontact</property>
+                </structure>
+                <structure>
+                    <property name="columnName">avgresponse</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxresponse</property>
+                </structure>
+                <structure>
+                    <property name="columnName">avgresolution</property>
+                </structure>
+                <structure>
+                    <property name="columnName">maxresolution</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">avgcontact</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">maxcontact</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">avgresponse</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">maxresponse</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">avgresolution</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">maxresolution</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[tableDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+tableDataSet.open();
+
+if(params["siteid"].value) {
+	params["where"] += " and " 
+	+ MXReportSqlFormat.createParamWhereClause("ticket.siteid", params["siteid"].toUpperCase());
+}
+
+if (params["startdate"].value) {
+	params["where"] += " and ticket.actualfinish >= " 
+	+ MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"]); 
+}
+if(params["enddate"].value) {
+	params["where"] += " and ticket.actualfinish <= " 
+	+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"]); 
+}
+
+var sqlText = new String();
+var calcText = new String();
+
+if (tableDataSet.isOracle())
+{
+	calcText = " avg(ticket.actualcontactdate-ticket.reportdate)*24 as avg_contact, "
+	+ " max(ticket.actualcontactdate-ticket.reportdate)*24 as max_contact, "
+	+ " avg(ticket.actualstart-ticket.reportdate)*24 as avg_response, "
+	+ " max(ticket.actualstart-ticket.reportdate)*24 as max_response, "
+	+ " avg(ticket.actualfinish-ticket.reportdate)*24 as avg_resolution, "
+	+ " max(ticket.actualfinish-ticket.reportdate)*24 as max_resolution ";
+}
+
+else if (tableDataSet.isSQLServer())
+{
+	calcText = "avg(datediff(second, ticket.reportdate, ticket.actualcontactdate))/3600.0 as avg_contact, "
+	+ " max(datediff(second, ticket.reportdate, ticket.actualcontactdate))/3600.0 as max_contact, "
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualstart))/3600.0 as avg_response, "
+	+ " max(datediff(second, ticket.reportdate, ticket.actualstart))/3600.0 as max_response, "
+	+ " avg(datediff(second, ticket.reportdate, ticket.actualfinish))/3600.0 as avg_resolution, "
+	+ " max(datediff(second, ticket.reportdate, ticket.actualfinish))/3600.0 as max_resolution ";
+}
+else
+{
+	calcText = "avg(TIMESTAMPDIFF(2,CHAR(ticket.actualcontactdate - ticket.reportdate)))/3600.0 as avg_contact, "
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualcontactdate - ticket.reportdate)))/3600.0 as max_contact, "
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualstart - ticket.reportdate)))/3600.0 as avg_response, "
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualstart - ticket.reportdate)))/3600.0 as max_response, "
+	+ " avg(TIMESTAMPDIFF(2,CHAR(ticket.actualfinish - ticket.reportdate)))/3600.0 as avg_resolution, "
+	+ " max(TIMESTAMPDIFF(2,CHAR(ticket.actualfinish - ticket.reportdate)))/3600.0 as max_resolution ";
+}
+
+// Add query to sqlText variable.
+sqlText = "select ticket.siteid, "
++ calcText
++ " from ticket left outer join commodities on "
++ " ticket.commodity = commodities.commodity "
+// Include the Maximo where clause
++ " where ticket.status in (select value from synonymdomain where synonymdomain.maxvalue in ('RESOLVED', 'CLOSED') "
++ " and synonymdomain.domainid in ('INCIDENTSTATUS', 'PROBLEMSTATUS', 'SRSTATUS')) "
++ " and " + params["where"]
++ " group by ticket.siteid "
++ " order by ticket.siteid"
+;
+
+tableDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!tableDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+
+row["siteid"] = tableDataSet.getString("siteid");
+if(row["siteid"]==null)row["siteid"]='';
+row["avgcontact"] = tableDataSet.getDuration("avg_contact");
+row["maxcontact"] = tableDataSet.getDuration("max_contact");
+row["avgresponse"] = tableDataSet.getDuration("avg_response");
+row["maxresponse"] = tableDataSet.getDuration("max_response");
+row["avgresolution"] = tableDataSet.getDuration("avg_resolution");
+row["maxresolution"] = tableDataSet.getDuration("max_resolution");
+
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="7">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">class</property>
+                    <expression name="expression">dataSetRow["class"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">internalpriority</property>
+                    <expression name="expression">dataSetRow["internalpriority"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">siteid</property>
+                    <expression name="expression">dataSetRow["siteid"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ticket_count</property>
+                    <expression name="expression">dataSetRow["ticket_count"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">avg_contact</property>
+                    <expression name="expression">dataSetRow["avg_contact"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">max_contact</property>
+                    <expression name="expression">dataSetRow["max_contact"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">avg_response</property>
+                    <expression name="expression">dataSetRow["avg_response"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">max_response</property>
+                    <expression name="expression">dataSetRow["max_response"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">avg_resolution</property>
+                    <expression name="expression">dataSetRow["avg_resolution"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">max_resolution</property>
+                    <expression name="expression">dataSetRow["max_resolution"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">dummy_key</property>
+                    <expression name="expression">1</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="83">
+                <property name="width">1.2in</property>
+            </column>
+            <column id="79">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="91">
+                <property name="width">0.7in</property>
+            </column>
+            <column id="87">
+                <property name="width">1.2in</property>
+            </column>
+            <column id="17">
+                <property name="width">1.2in</property>
+            </column>
+            <column id="380">
+                <property name="width">1.2in</property>
+            </column>
+            <column id="370">
+                <property name="width">1.2in</property>
+            </column>
+            <column id="391">
+                <property name="width">1.2in</property>
+            </column>
+            <column id="417">
+                <property name="width">1.4in</property>
+            </column>
+            <header>
+                <row id="209">
+                    <property name="style">title</property>
+                    <cell id="210">
+                        <property name="colSpan">9</property>
+                        <property name="rowSpan">1</property>
+                        <label id="404">
+                            <property name="refTemplateParameter">NewTemplateParameterDefinition</property>
+                            <text-property name="text" key="service_desk_resp_res.reportname">Service Desk Contact, Response and Resolution</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="219">
+                    <property name="height">0.08in</property>
+                    <cell id="220">
+                        <property name="colSpan">9</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                    </cell>
+                </row>
+                <row id="202">
+                    <cell id="203">
+                        <property name="colSpan">9</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <grid id="109">
+                            <property name="width">100%</property>
+                            <column id="110">
+                                <property name="width">1in</property>
+                                <property name="style">reportheaderlabel</property>
+                            </column>
+                            <column id="111">
+                                <property name="width">8.875in</property>
+                                <property name="style">reportheaderdata</property>
+                            </column>
+                            <row id="191">
+                                <property name="height">0.06in</property>
+                                <cell id="192"/>
+                                <cell id="193">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                            <row id="112">
+                                <cell id="113">
+                                    <label id="118">
+                                        <text-property name="text" key="startdate_colon">Start Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="114">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="405">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">startdate</property>
+                                                <expression name="expression">params["startdate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">startdate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="115">
+                                <cell id="116">
+                                    <label id="119">
+                                        <text-property name="text" key="enddate_colon">End Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="117">
+                                    <property name="paddingLeft">2px</property>
+                                    <data id="406">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Short Date</property>
+                                            <property name="pattern">Short Date</property>
+                                        </structure>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">enddate</property>
+                                                <expression name="expression">params["enddate"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">enddate</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="126">
+                                <property name="height">0.06in</property>
+                                <cell id="127"/>
+                                <cell id="128">
+                                    <property name="paddingLeft">2px</property>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </header>
+            <group id="441">
+                <property name="groupName">chartGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["dummy_key"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">""</expression>
+                </structure>
+                <property name="repeatHeader">false</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="442">
+                        <property name="style">chart</property>
+                        <cell id="443">
+                            <property name="colSpan">9</property>
+                            <property name="rowSpan">1</property>
+                            <extended-item extensionName="Chart" name="BarChart" id="445">
+                                <xml-property name="xmlRepresentation"><![CDATA[<model:ChartWithAxes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:attribute="http://www.birt.eclipse.org/ChartModelAttribute" xmlns:data="http://www.birt.eclipse.org/ChartModelData" xmlns:layout="http://www.birt.eclipse.org/ChartModelLayout" xmlns:model="http://www.birt.eclipse.org/ChartModel" xmlns:type="http://www.birt.eclipse.org/ChartModelType">
+  <Type>Bar Chart</Type>
+  <SubType>Side-by-side</SubType>
+  <Description>
+    <Value></Value>
+    <Font>
+      <Alignment/>
+    </Font>
+  </Description>
+  <Block>
+    <Children xsi:type="layout:TitleBlock">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <Label>
+        <Caption>
+          <Value>service_desk_resp_res.charttitle=&lt;Value of key 'service_desk_resp_res.reportname'></Value>
+          <Font>
+            <Name>SansSerif</Name>
+            <Size>16.0</Size>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+    </Children>
+    <Children xsi:type="layout:Plot">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <HorizontalSpacing>5</HorizontalSpacing>
+      <VerticalSpacing>5</VerticalSpacing>
+      <ClientArea>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>0.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>0.0</Right>
+        </Insets>
+      </ClientArea>
+    </Children>
+    <Children xsi:type="layout:Legend">
+      <Bounds>
+        <Left>0.0</Left>
+        <Top>0.0</Top>
+        <Width>0.0</Width>
+        <Height>0.0</Height>
+      </Bounds>
+      <Anchor>North_West</Anchor>
+      <Insets>
+        <Top>3.0</Top>
+        <Left>3.0</Left>
+        <Bottom>3.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Row>-1</Row>
+      <Column>-1</Column>
+      <Rowspan>-1</Rowspan>
+      <Columnspan>-1</Columnspan>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </Outline>
+      <Visible>true</Visible>
+      <ClientArea>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>0</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>2.0</Top>
+          <Left>2.0</Left>
+          <Bottom>2.0</Bottom>
+          <Right>2.0</Right>
+        </Insets>
+      </ClientArea>
+      <Text>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+        </Font>
+      </Text>
+      <Orientation>Vertical</Orientation>
+      <Direction>Top_Bottom</Direction>
+      <Separator>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </Separator>
+      <Position>Right</Position>
+      <ItemType>Series</ItemType>
+      <Title>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Alignment/>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>false</Visible>
+      </Title>
+      <TitlePosition>Above</TitlePosition>
+      <ShowValue>false</ShowValue>
+    </Children>
+    <Bounds>
+      <Left>0.0</Left>
+      <Top>0.0</Top>
+      <Width>554.4</Width>
+      <Height>252.0</Height>
+    </Bounds>
+    <Insets>
+      <Top>3.0</Top>
+      <Left>3.0</Left>
+      <Bottom>3.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Row>-1</Row>
+    <Column>-1</Column>
+    <Rowspan>-1</Rowspan>
+    <Columnspan>-1</Columnspan>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>false</Visible>
+    </Outline>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>255</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Visible>true</Visible>
+  </Block>
+  <Dimension>Two_Dimensional</Dimension>
+  <Units>Points</Units>
+  <SeriesThickness>5.0</SeriesThickness>
+  <SampleData>
+    <BaseSampleData>
+      <DataSetRepresentation>A, B, C</DataSetRepresentation>
+    </BaseSampleData>
+    <OrthogonalSampleData>
+      <DataSetRepresentation>5,4,12</DataSetRepresentation>
+      <SeriesDefinitionIndex>0</SeriesDefinitionIndex>
+    </OrthogonalSampleData>
+  </SampleData>
+  <Interactivity>
+    <LegendBehavior>None</LegendBehavior>
+  </Interactivity>
+  <EmptyMessage>
+    <Caption>
+      <Value></Value>
+      <Font>
+        <Alignment/>
+      </Font>
+    </Caption>
+    <Background xsi:type="attribute:ColorDefinition">
+      <Transparency>0</Transparency>
+      <Red>255</Red>
+      <Green>255</Green>
+      <Blue>255</Blue>
+    </Background>
+    <Outline>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+    </Outline>
+    <Insets>
+      <Top>0.0</Top>
+      <Left>2.0</Left>
+      <Bottom>0.0</Bottom>
+      <Right>3.0</Right>
+    </Insets>
+    <Visible>false</Visible>
+  </EmptyMessage>
+  <Axes>
+    <Type>Text</Type>
+    <Title>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Size>14.0</Size>
+          <Bold>true</Bold>
+          <Alignment>
+            <horizontalAlignment>Center</horizontalAlignment>
+            <verticalAlignment>Center</verticalAlignment>
+          </Alignment>
+        </Font>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>false</Visible>
+    </Title>
+    <TitlePosition>Above</TitlePosition>
+    <AssociatedAxes>
+      <Type>Linear</Type>
+      <Title>
+        <Caption>
+          <Value>hours=Hours</Value>
+          <Font>
+            <Size>14.0</Size>
+            <Bold>true</Bold>
+            <Alignment>
+              <horizontalAlignment>Center</horizontalAlignment>
+              <verticalAlignment>Center</verticalAlignment>
+            </Alignment>
+            <Rotation>90.0</Rotation>
+          </Font>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Title>
+      <TitlePosition>Left</TitlePosition>
+      <SeriesDefinitions>
+        <Query>
+          <Definition>row[&quot;siteid&quot;]</Definition>
+        </Query>
+        <SeriesPalette>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>35</Red>
+            <Green>89</Green>
+            <Blue>115</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>228</Red>
+            <Green>184</Green>
+            <Blue>88</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>144</Red>
+            <Green>213</Green>
+            <Blue>0</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>229</Red>
+            <Green>237</Green>
+            <Blue>129</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>183</Red>
+            <Green>68</Green>
+            <Blue>61</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>182</Red>
+            <Green>146</Green>
+            <Blue>182</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>73</Red>
+            <Green>137</Green>
+            <Blue>120</Blue>
+          </Entries>
+          <Entries xsi:type="attribute:ColorDefinition">
+            <Transparency>255</Transparency>
+            <Red>146</Red>
+            <Green>194</Green>
+            <Blue>198</Blue>
+          </Entries>
+        </SeriesPalette>
+        <FormatSpecifier xsi:type="attribute:NumberFormatSpecifier">
+          <Prefix></Prefix>
+          <Suffix></Suffix>
+          <FractionDigits>2</FractionDigits>
+        </FormatSpecifier>
+        <Series xsi:type="type:BarSeries">
+          <Visible>true</Visible>
+          <Label>
+            <Caption>
+              <Value></Value>
+              <Font>
+                <Name>SansSerif</Name>
+                <Size>10.0</Size>
+                <Alignment/>
+              </Font>
+            </Caption>
+            <Background xsi:type="attribute:ColorDefinition">
+              <Transparency>0</Transparency>
+              <Red>255</Red>
+              <Green>255</Green>
+              <Blue>255</Blue>
+            </Background>
+            <Outline>
+              <Style>Solid</Style>
+              <Thickness>1</Thickness>
+              <Color>
+                <Transparency>255</Transparency>
+                <Red>0</Red>
+                <Green>0</Green>
+                <Blue>0</Blue>
+              </Color>
+              <Visible>false</Visible>
+            </Outline>
+            <Insets>
+              <Top>0.0</Top>
+              <Left>2.0</Left>
+              <Bottom>0.0</Bottom>
+              <Right>3.0</Right>
+            </Insets>
+            <Visible>false</Visible>
+          </Label>
+          <DataDefinition>
+            <Definition>row[&quot;graphvalue&quot;]</Definition>
+          </DataDefinition>
+          <SeriesIdentifier></SeriesIdentifier>
+          <DataPoint>
+            <Components>
+              <Type>Orthogonal_Value</Type>
+            </Components>
+            <Separator>:</Separator>
+          </DataPoint>
+          <LabelPosition>Outside</LabelPosition>
+          <Stacked>false</Stacked>
+          <Translucent>false</Translucent>
+          <Riser>Rectangle</Riser>
+        </Series>
+        <Grouping>
+          <Enabled>false</Enabled>
+          <GroupingInterval>2.0</GroupingInterval>
+          <GroupType>Text</GroupType>
+          <AggregateExpression>Sum</AggregateExpression>
+        </Grouping>
+        <Sorting>Ascending</Sorting>
+      </SeriesDefinitions>
+      <Orientation>Vertical</Orientation>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </LineAttributes>
+      <Label>
+        <Caption>
+          <Value></Value>
+          <Font>
+            <Name>SansSerif</Name>
+            <Size>10.0</Size>
+            <Alignment/>
+            <Rotation>0.0</Rotation>
+          </Font>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Caption>
+        <Background xsi:type="attribute:ColorDefinition">
+          <Transparency>0</Transparency>
+          <Red>255</Red>
+          <Green>255</Green>
+          <Blue>255</Blue>
+        </Background>
+        <Outline>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>0</Red>
+            <Green>0</Green>
+            <Blue>0</Blue>
+          </Color>
+        </Outline>
+        <Insets>
+          <Top>0.0</Top>
+          <Left>2.0</Left>
+          <Bottom>0.0</Bottom>
+          <Right>3.0</Right>
+        </Insets>
+        <Visible>true</Visible>
+      </Label>
+      <FormatSpecifier xsi:type="attribute:NumberFormatSpecifier">
+        <Prefix></Prefix>
+        <Suffix></Suffix>
+        <FractionDigits>2</FractionDigits>
+      </FormatSpecifier>
+      <LabelPosition>Left</LabelPosition>
+      <Interval>1</Interval>
+      <Triggers>
+        <Condition>onmouseover</Condition>
+        <Action>
+          <Type>Show_Tooltip</Type>
+          <Value xsi:type="attribute:TooltipValue">
+            <Text></Text>
+            <Delay>200</Delay>
+          </Value>
+        </Action>
+      </Triggers>
+      <MajorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>196</Red>
+            <Green>196</Green>
+            <Blue>196</Blue>
+          </Color>
+          <Visible>true</Visible>
+        </TickAttributes>
+      </MajorGrid>
+      <MinorGrid>
+        <LineAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </LineAttributes>
+        <TickStyle>Across</TickStyle>
+        <TickAttributes>
+          <Style>Solid</Style>
+          <Thickness>1</Thickness>
+          <Color>
+            <Transparency>255</Transparency>
+            <Red>225</Red>
+            <Green>225</Green>
+            <Blue>225</Blue>
+          </Color>
+          <Visible>false</Visible>
+        </TickAttributes>
+      </MinorGrid>
+      <Scale>
+        <MinorGridsPerUnit>5</MinorGridsPerUnit>
+      </Scale>
+      <Origin>
+        <Type>Min</Type>
+        <Value xsi:type="data:NumberDataElement">
+          <Value>0.0</Value>
+        </Value>
+      </Origin>
+      <PrimaryAxis>true</PrimaryAxis>
+      <Percent>false</Percent>
+    </AssociatedAxes>
+    <SeriesDefinitions>
+      <Query>
+        <Definition></Definition>
+      </Query>
+      <SeriesPalette>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>35</Red>
+          <Green>89</Green>
+          <Blue>115</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>228</Red>
+          <Green>184</Green>
+          <Blue>88</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>144</Red>
+          <Green>213</Green>
+          <Blue>0</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>229</Red>
+          <Green>237</Green>
+          <Blue>129</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>183</Red>
+          <Green>68</Green>
+          <Blue>61</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>182</Red>
+          <Green>146</Green>
+          <Blue>182</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>73</Red>
+          <Green>137</Green>
+          <Blue>120</Blue>
+        </Entries>
+        <Entries xsi:type="attribute:ColorDefinition">
+          <Transparency>255</Transparency>
+          <Red>146</Red>
+          <Green>194</Green>
+          <Blue>198</Blue>
+        </Entries>
+      </SeriesPalette>
+      <Series>
+        <Visible>true</Visible>
+        <Label>
+          <Caption>
+            <Value></Value>
+            <Font>
+              <Alignment/>
+            </Font>
+          </Caption>
+          <Background xsi:type="attribute:ColorDefinition">
+            <Transparency>0</Transparency>
+            <Red>255</Red>
+            <Green>255</Green>
+            <Blue>255</Blue>
+          </Background>
+          <Outline>
+            <Style>Solid</Style>
+            <Thickness>1</Thickness>
+            <Color>
+              <Transparency>255</Transparency>
+              <Red>0</Red>
+              <Green>0</Green>
+              <Blue>0</Blue>
+            </Color>
+            <Visible>false</Visible>
+          </Outline>
+          <Insets>
+            <Top>0.0</Top>
+            <Left>2.0</Left>
+            <Bottom>0.0</Bottom>
+            <Right>3.0</Right>
+          </Insets>
+          <Visible>false</Visible>
+        </Label>
+        <DataDefinition>
+          <Definition>row[&quot;graphtext&quot;]</Definition>
+        </DataDefinition>
+        <SeriesIdentifier></SeriesIdentifier>
+        <DataPoint>
+          <Components>
+            <Type>Orthogonal_Value</Type>
+          </Components>
+          <Separator>, </Separator>
+        </DataPoint>
+        <LabelPosition>Outside</LabelPosition>
+        <Stacked>false</Stacked>
+      </Series>
+      <Grouping>
+        <Enabled>false</Enabled>
+        <GroupingInterval>2.0</GroupingInterval>
+        <GroupType>Text</GroupType>
+        <AggregateExpression>Sum</AggregateExpression>
+      </Grouping>
+    </SeriesDefinitions>
+    <Orientation>Horizontal</Orientation>
+    <LineAttributes>
+      <Style>Solid</Style>
+      <Thickness>1</Thickness>
+      <Color>
+        <Transparency>255</Transparency>
+        <Red>0</Red>
+        <Green>0</Green>
+        <Blue>0</Blue>
+      </Color>
+      <Visible>true</Visible>
+    </LineAttributes>
+    <Label>
+      <Caption>
+        <Value></Value>
+        <Font>
+          <Name>SansSerif</Name>
+          <Size>10.0</Size>
+          <Alignment/>
+          <Rotation>-45.0</Rotation>
+        </Font>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Caption>
+      <Background xsi:type="attribute:ColorDefinition">
+        <Transparency>0</Transparency>
+        <Red>255</Red>
+        <Green>255</Green>
+        <Blue>255</Blue>
+      </Background>
+      <Outline>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>0</Red>
+          <Green>0</Green>
+          <Blue>0</Blue>
+        </Color>
+      </Outline>
+      <Insets>
+        <Top>0.0</Top>
+        <Left>2.0</Left>
+        <Bottom>0.0</Bottom>
+        <Right>3.0</Right>
+      </Insets>
+      <Visible>true</Visible>
+    </Label>
+    <LabelPosition>Below</LabelPosition>
+    <Interval>1</Interval>
+    <MajorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>196</Red>
+          <Green>196</Green>
+          <Blue>196</Blue>
+        </Color>
+        <Visible>true</Visible>
+      </TickAttributes>
+    </MajorGrid>
+    <MinorGrid>
+      <LineAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </LineAttributes>
+      <TickStyle>Across</TickStyle>
+      <TickAttributes>
+        <Style>Solid</Style>
+        <Thickness>1</Thickness>
+        <Color>
+          <Transparency>255</Transparency>
+          <Red>225</Red>
+          <Green>225</Green>
+          <Blue>225</Blue>
+        </Color>
+        <Visible>false</Visible>
+      </TickAttributes>
+    </MinorGrid>
+    <Scale>
+      <MinorGridsPerUnit>5</MinorGridsPerUnit>
+    </Scale>
+    <Origin>
+      <Type>Min</Type>
+      <Value xsi:type="data:NumberDataElement">
+        <Value>0.0</Value>
+      </Value>
+    </Origin>
+    <PrimaryAxis>true</PrimaryAxis>
+    <CategoryAxis>true</CategoryAxis>
+    <Percent>false</Percent>
+  </Axes>
+  <Orientation>Vertical</Orientation>
+  <UnitSpacing>5.0</UnitSpacing>
+  <Rotation/>
+</model:ChartWithAxes>
+]]></xml-property>
+                                <property name="outputFormat">SVG</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <property name="marginTop">15px</property>
+                                <property name="marginLeft">15px</property>
+                                <property name="dataSet">chartDataSet</property>
+                                <property name="height">3.5in</property>
+                                <property name="width">7.7in</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">siteid</property>
+                                        <expression name="expression">dataSetRow["siteid"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">graphtext</property>
+                                        <expression name="expression">dataSetRow["graphtext"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">graphvalue</property>
+                                        <expression name="expression">dataSetRow["graphvalue"]</expression>
+                                        <property name="dataType">decimal</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">durationvalue</property>
+                                        <expression name="expression">dataSetRow["durationvalue"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                            </extended-item>
+                        </cell>
+                    </row>
+                    <row id="447">
+                        <cell id="448">
+                            <property name="colSpan">9</property>
+                            <property name="rowSpan">1</property>
+                            <grid id="458">
+                                <property name="width">100%</property>
+                                <column id="459">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="460">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="461">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="462">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="463">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="490">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="464">
+                                    <property name="width">1.1in</property>
+                                </column>
+                                <column id="465">
+                                    <property name="width">2.3in</property>
+                                </column>
+                                <row id="500">
+                                    <cell id="501">
+                                        <property name="colSpan">8</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <table id="546">
+                                            <property name="width">100%</property>
+                                            <property name="dataSet">tableDataSet</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">siteid</property>
+                                                    <expression name="expression">dataSetRow["siteid"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">avgcontact</property>
+                                                    <expression name="expression">dataSetRow["avgcontact"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">maxcontact</property>
+                                                    <expression name="expression">dataSetRow["maxcontact"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">avgresponse</property>
+                                                    <expression name="expression">dataSetRow["avgresponse"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">maxresponse</property>
+                                                    <expression name="expression">dataSetRow["maxresponse"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">avgresolution</property>
+                                                    <expression name="expression">dataSetRow["avgresolution"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                                <structure>
+                                                    <property name="name">maxresolution</property>
+                                                    <expression name="expression">dataSetRow["maxresolution"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="pageBreakInterval">50</property>
+                                            <column id="574">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="575">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="576">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="577">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="578">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="579">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="580">
+                                                <property name="width">1.1in</property>
+                                            </column>
+                                            <column id="581">
+                                                <property name="width">2.3in</property>
+                                            </column>
+                                            <header>
+                                                <row id="547">
+                                                    <property name="style">tabledetailslabel</property>
+                                                    <cell id="548">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                    </cell>
+                                                    <cell id="549">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <label id="482">
+                                                            <text-property name="text" key="avgcontacthrs">Avg Contact (HH:MM)</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="550">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <label id="483">
+                                                            <text-property name="text" key="maxcontacthrs">Max Contact (HH:MM)</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="551">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <label id="484">
+                                                            <text-property name="text" key="avgresponsehrs">Avg Response (HH:MM)</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="552">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <label id="485">
+                                                            <text-property name="text" key="maxresponsehrs">Max Response (HH:MM)</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="553">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <label id="486">
+                                                            <text-property name="text" key="avgresolutionhrs">Avg Resolution (HH:MM)</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="554">
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <label id="487">
+                                                            <text-property name="text" key="maxresolutionhrs">Max Resolution (HH:MM)</text-property>
+                                                        </label>
+                                                    </cell>
+                                                    <cell id="555">
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                    </cell>
+                                                </row>
+                                            </header>
+                                            <detail>
+                                                <row id="556">
+                                                    <property name="style">tabledetailsdatarow</property>
+                                                    <cell id="557">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="583">
+                                                            <property name="resultSetColumn">siteid</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="558">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="584">
+                                                            <property name="resultSetColumn">avgcontact</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="559">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="585">
+                                                            <property name="resultSetColumn">maxcontact</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="560">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="586">
+                                                            <property name="resultSetColumn">avgresponse</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="561">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="589">
+                                                            <property name="resultSetColumn">maxresponse</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="562">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="587">
+                                                            <property name="resultSetColumn">avgresolution</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="563">
+                                                        <property name="style">tabledetailsdatacell</property>
+                                                        <property name="borderBottomColor">#000000</property>
+                                                        <property name="borderBottomStyle">solid</property>
+                                                        <property name="borderBottomWidth">thin</property>
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                        <property name="borderRightColor">#000000</property>
+                                                        <property name="borderRightStyle">solid</property>
+                                                        <property name="borderRightWidth">thin</property>
+                                                        <property name="borderTopColor">#000000</property>
+                                                        <property name="borderTopStyle">solid</property>
+                                                        <property name="borderTopWidth">thin</property>
+                                                        <data id="588">
+                                                            <property name="pageBreakAfter">auto</property>
+                                                            <property name="resultSetColumn">maxresolution</property>
+                                                        </data>
+                                                    </cell>
+                                                    <cell id="564">
+                                                        <property name="borderLeftColor">#000000</property>
+                                                        <property name="borderLeftStyle">solid</property>
+                                                        <property name="borderLeftWidth">thin</property>
+                                                    </cell>
+                                                </row>
+                                            </detail>
+                                        </table>
+                                    </cell>
+                                </row>
+                                <row id="590">
+                                    <cell id="591">
+                                        <property name="colSpan">8</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tabledetailslabelcell</property>
+                                        <label id="599">
+                                            <property name="pageBreakAfter">always</property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="138">
+                <property name="groupName">siteid</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["siteid"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["siteid"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <list-property name="sort">
+                    <structure>
+                        <expression name="key">row["siteid"]</expression>
+                        <property name="direction">asc</property>
+                    </structure>
+                </list-property>
+                <header>
+                    <row id="287">
+                        <property name="height">0.08in</property>
+                        <cell id="288">
+                            <property name="colSpan">9</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="139">
+                        <property name="style">tableheaderrow</property>
+                        <cell id="140">
+                            <property name="colSpan">9</property>
+                            <property name="rowSpan">1</property>
+                            <property name="style">tableheaderlabel</property>
+                            <grid id="255">
+                                <property name="width">100%</property>
+                                <column id="256">
+                                    <property name="width">0.9166666667in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="257">
+                                    <property name="width">2.0416666667in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <column id="258">
+                                    <property name="width">1.2291666667in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="259">
+                                    <property name="width">2.4895833333in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <column id="268">
+                                    <property name="width">1.1458333333in</property>
+                                    <property name="style">tableheaderlabel</property>
+                                </column>
+                                <column id="266">
+                                    <property name="width">2.09375in</property>
+                                    <property name="style">tableheaderdata</property>
+                                </column>
+                                <row id="260">
+                                    <cell id="261">
+                                        <property name="style">tableheaderlabel</property>
+                                        <property name="textAlign">right</property>
+                                        <label id="180">
+                                            <text-property name="text" key="site_colon">Site:</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="262">
+                                        <property name="colSpan">5</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="style">tableheaderdata</property>
+                                        <data id="403">
+                                            <property name="resultSetColumn">siteid</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                    <row id="280">
+                        <property name="height">0.06in</property>
+                        <cell id="281">
+                            <property name="colSpan">9</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                    <row id="160">
+                        <property name="style">tabledetailslabel</property>
+                        <cell id="161">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="407">
+                                <text-property name="text" key="ticketclass">Ticket Class</text-property>
+                            </label>
+                        </cell>
+                        <cell id="162">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="394">
+                                <text-property name="text" key="priority">Priority</text-property>
+                            </label>
+                        </cell>
+                        <cell id="163">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="395">
+                                <text-property name="text" key="numoftickets"># of Tickets</text-property>
+                            </label>
+                        </cell>
+                        <cell id="164">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="396">
+                                <text-property name="text" key="avgcontacthrs">Avg Contact (HH:MM)</text-property>
+                            </label>
+                        </cell>
+                        <cell id="165">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="397">
+                                <text-property name="text" key="maxcontacthrs">Max Contact (HH:MM)</text-property>
+                            </label>
+                        </cell>
+                        <cell id="377">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="398">
+                                <text-property name="text" key="avgresponsehrs">Avg Response (HH:MM)</text-property>
+                            </label>
+                        </cell>
+                        <cell id="367">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="399">
+                                <text-property name="text" key="maxresponsehrs">Max Response (HH:MM)</text-property>
+                            </label>
+                        </cell>
+                        <cell id="388">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="400">
+                                <text-property name="text" key="avgresolutionhrs">Avg Resolution (HH:MM)</text-property>
+                            </label>
+                        </cell>
+                        <cell id="414">
+                            <property name="style">tabledetailslabelcell</property>
+                            <label id="401">
+                                <text-property name="text" key="maxresolutionhrs">Max Resolution (HH:MM)</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="146">
+                        <property name="height">0.1in</property>
+                        <cell id="147">
+                            <property name="colSpan">9</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="11">
+                    <property name="style">tabledetailsdatarow</property>
+                    <cell id="81">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="345">
+                            <property name="resultSetColumn">class</property>
+                        </data>
+                    </cell>
+                    <cell id="77">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="346">
+                            <property name="paddingBottom">0pt</property>
+                            <property name="resultSetColumn">internalpriority</property>
+                        </data>
+                    </cell>
+                    <cell id="89">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="347">
+                            <property name="resultSetColumn">ticket_count</property>
+                        </data>
+                    </cell>
+                    <cell id="85">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="348">
+                            <property name="resultSetColumn">avg_contact</property>
+                        </data>
+                    </cell>
+                    <cell id="12">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="349">
+                            <property name="resultSetColumn">max_contact</property>
+                        </data>
+                    </cell>
+                    <cell id="378">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="350">
+                            <property name="resultSetColumn">avg_response</property>
+                        </data>
+                    </cell>
+                    <cell id="368">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="381">
+                            <property name="resultSetColumn">max_response</property>
+                        </data>
+                    </cell>
+                    <cell id="389">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="392">
+                            <property name="resultSetColumn">avg_resolution</property>
+                        </data>
+                    </cell>
+                    <cell id="415">
+                        <property name="style">tabledetailsdatacell</property>
+                        <data id="393">
+                            <property name="resultSetColumn">max_resolution</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>
