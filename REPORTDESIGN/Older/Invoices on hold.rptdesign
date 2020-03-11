@@ -1,0 +1,883 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Written by Eclipse BIRT 2.0 -->
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.6" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.1.1.v20060922-1058 Build &lt;20060926-0959></property>
+    <property name="units">in</property>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">Macs BV Maximo Report Template
+With IBM MAximo standard Parameters and Library</html-property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">queryText</property>
+            <property name="id">831</property>
+            <expression name="value">"SELECT invoiceline.itemnum, lpad(invoiceline.itemnum, 30,0) itemvalue,  invoiceline.description, invoice.invoicenum, invoice.invoicedate, invoiceline.ponum, invoice.vendor, INVOICE.CURRENCYCODE, invoiceline.unitcost, invoiceline.linecost, invoice.status, CURRENTEXCHANGE.currencycode, currentexchange.currencycodeto, currentexchange.exchangerate FROM invoice, invoiceline, currentEXCHANGE WHERE invoice.status IN ('WAPPR','ENTERED','HOLD') AND invoice.invoicenum  = invoiceline.invoicenum AND invoice.currencycode= currentexchange.currencycode(+)  AND "</expression>
+        </structure>
+        <structure>
+            <property name="name">queryTimeOut</property>
+            <property name="id">831</property>
+        </structure>
+    </list-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/inventory_transactions_adjustments.log");]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">MACS Report Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+        <structure>
+            <property name="fileName">MACSDataLibrary.rptlibrary</property>
+            <property name="namespace">MACSDataLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="allowNull">true</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="MACSDataSource" id="829"
+ extends="MACSDataLibrary.MACSDataSource"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="UNAPPROVED INVOICES by Itemnumber" id="831">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ITEMNUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ITEMVALUE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">INVOICENUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">INVOICEDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">PONUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">VENDOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">CURRENCYCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">UNITCOST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">LINECOST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">STATUS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">CURRENCYCODE_12</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">CURRENCYCODETO</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">EXCHANGERATE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MACSDataSource</property>
+            <method name="beforeOpen"><![CDATA[this.queryText=this.queryText+params["where"]]]></method>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ITEMNUM</property>
+                    <property name="nativeName">ITEMNUM</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ITEMVALUE</property>
+                    <property name="nativeName">ITEMVALUE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">DESCRIPTION</property>
+                    <property name="nativeName">DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">INVOICENUM</property>
+                    <property name="nativeName">INVOICENUM</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">INVOICEDATE</property>
+                    <property name="nativeName">INVOICEDATE</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">PONUM</property>
+                    <property name="nativeName">PONUM</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">VENDOR</property>
+                    <property name="nativeName">VENDOR</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">CURRENCYCODE</property>
+                    <property name="nativeName">CURRENCYCODE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">UNITCOST</property>
+                    <property name="nativeName">UNITCOST</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">LINECOST</property>
+                    <property name="nativeName">LINECOST</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">STATUS</property>
+                    <property name="nativeName">STATUS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">CURRENCYCODE_12</property>
+                    <property name="nativeName">CURRENCYCODE</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">CURRENCYCODETO</property>
+                    <property name="nativeName">CURRENCYCODETO</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">EXCHANGERATE</property>
+                    <property name="nativeName">EXCHANGERATE</property>
+                    <property name="dataType">decimal</property>
+                    <property name="nativeDataType">2</property>
+                </structure>
+            </list-property>
+            <property name="queryText">SELECT invoiceline.itemnum, lpad(invoiceline.itemnum, 30,0) itemvalue, invoiceline.description, invoice.invoicenum, invoice.invoicedate, invoiceline.ponum, invoice.vendor, INVOICE.CURRENCYCODE, invoiceline.unitcost, invoiceline.linecost, invoice.status, CURRENTEXCHANGE.currencycode, currentexchange.currencycodeto, currentexchange.exchangerate 
+FROM invoice, invoiceline, currentEXCHANGE</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>INVOICENUM</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>19</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>INVOICENUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>19</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>INVOICEDATE</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>INVOICEDATE</design:label>
+            <design:formattingHints>
+              <design:displaySize>7</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>VENDOR</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>48</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>VENDOR</design:label>
+            <design:formattingHints>
+              <design:displaySize>48</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>CURRENCYCODE</design:name>
+            <design:position>4</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>32</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>CURRENCYCODE</design:label>
+            <design:formattingHints>
+              <design:displaySize>32</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>STATUS</design:name>
+            <design:position>5</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>40</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>STATUS</design:label>
+            <design:formattingHints>
+              <design:displaySize>40</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ITEMNUM</design:name>
+            <design:position>6</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>120</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ITEMNUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>120</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>DESCRIPTION</design:name>
+            <design:position>7</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>1000</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>DESCRIPTION</design:label>
+            <design:formattingHints>
+              <design:displaySize>1000</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PONUM</design:name>
+            <design:position>8</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>32</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PONUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>32</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>UNITCOST</design:name>
+            <design:position>9</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>10</design:precision>
+            <design:scale>2</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>UNITCOST</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>LINECOST</design:name>
+            <design:position>10</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>10</design:precision>
+            <design:scale>2</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>LINECOST</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <property name="leftMargin">5mm</property>
+            <property name="rightMargin">5mm</property>
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2"/>
+                <ref-entry baseId="340" name="NewImage1"/>
+                <ref-entry baseId="310" name="NewImage"/>
+                <ref-entry baseId="322" name="NewGrid"/>
+                <ref-entry baseId="328" name="NewText"/>
+                <ref-entry baseId="329" name="NewGrid1"/>
+                <ref-entry baseId="335" name="NewAutoText"/>
+                <ref-entry baseId="337" name="NewText1"/>
+                <ref-entry baseId="339" name="NewAutoText1"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <label id="896">
+            <property name="backgroundColor">#FFFFFF</property>
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#008080</property>
+            <text-property name="text">Unapproved Invoices by Itemnumber</text-property>
+        </label>
+        <text id="1065">
+            <property name="fontSize">14pt</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<BR>]]></text-property>
+        </text>
+        <table id="1641">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">10pt</property>
+            <property name="width">100%</property>
+            <property name="dataSet">UNAPPROVED INVOICES by Itemnumber</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ITEMNUM</property>
+                    <expression name="expression">dataSetRow["ITEMNUM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ITEMVALUE</property>
+                    <expression name="expression">dataSetRow["ITEMVALUE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DESCRIPTION</property>
+                    <expression name="expression">dataSetRow["DESCRIPTION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">INVOICENUM</property>
+                    <expression name="expression">dataSetRow["INVOICENUM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">INVOICEDATE</property>
+                    <expression name="expression">dataSetRow["INVOICEDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">PONUM</property>
+                    <expression name="expression">dataSetRow["PONUM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">VENDOR</property>
+                    <expression name="expression">dataSetRow["VENDOR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CURRENCYCODE</property>
+                    <expression name="expression">dataSetRow["CURRENCYCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">UNITCOST</property>
+                    <expression name="expression">dataSetRow["UNITCOST"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">LINECOST</property>
+                    <expression name="expression">dataSetRow["LINECOST"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUS</property>
+                    <expression name="expression">dataSetRow["STATUS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CURRENCYCODE_12</property>
+                    <expression name="expression">dataSetRow["CURRENCYCODE_12"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CURRENCYCODETO</property>
+                    <expression name="expression">dataSetRow["CURRENCYCODETO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">EXCHANGERATE</property>
+                    <expression name="expression">dataSetRow["EXCHANGERATE"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">UnitCostInEuro</property>
+                    <expression name="expression">if (row["EXCHANGERATE"]==null) 
+{row["UNITCOST"]} 
+else 
+{row["UNITCOST"]*row["EXCHANGERATE"]}</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">LineCostInEuro</property>
+                    <expression name="expression">if (row["EXCHANGERATE"]==null) 
+{row["LINECOST"]} 
+else 
+{row["LINECOST"]*row["EXCHANGERATE"]}</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">TotalCostUnapprovedInvoices</property>
+                    <expression name="expression">Total.sum(row["LineCostInEuro"])</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <column id="1715"/>
+            <column id="1716">
+                <property name="width">20%</property>
+            </column>
+            <column id="1717"/>
+            <column id="1718"/>
+            <column id="1719"/>
+            <column id="1720"/>
+            <column id="1721"/>
+            <column id="1722"/>
+            <column id="1723"/>
+            <header>
+                <row id="1642">
+                    <property name="fontWeight">bold</property>
+                    <cell id="1643">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1729">
+                            <text-property name="text">Item</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1645">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1730">
+                            <text-property name="text">Description</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1647">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1731">
+                            <text-property name="text">Invoice</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1649">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1733">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Invoice Date</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1651">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1734">
+                            <text-property name="text">PO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1653">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1735">
+                            <text-property name="text">Vendor</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1655">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1736">
+                            <text-property name="text">Currency</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1657">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1737">
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Unit Cost (EUR)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1659">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                        <label id="1738">
+                            <property name="textAlign">right</property>
+                            <text-property name="text">Line Cost (EUR)</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="1771">
+                    <property name="fontWeight">bold</property>
+                    <cell id="1772">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1773">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1774">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1775">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1776">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1777">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1778">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1779">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                    <cell id="1780">
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">medium</property>
+                    </cell>
+                </row>
+            </header>
+            <group id="1739">
+                <property name="groupName">ItemSortingGroup</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["ITEMVALUE"]</expression>
+                <expression name="toc">row["ITEMNUM"]</expression>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="1740">
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr">true</expression>
+                            </structure>
+                        </list-property>
+                        <cell id="1741">
+                            <data id="1770">
+                                <property name="resultSetColumn">ITEMVALUE</property>
+                            </data>
+                        </cell>
+                        <cell id="1742"/>
+                        <cell id="1743"/>
+                        <cell id="1744"/>
+                        <cell id="1745"/>
+                        <cell id="1746"/>
+                        <cell id="1747"/>
+                        <cell id="1748"/>
+                        <cell id="1749"/>
+                    </row>
+                </header>
+                <footer>
+                    <row id="1755">
+                        <cell id="1756"/>
+                        <cell id="1757"/>
+                        <cell id="1758"/>
+                        <cell id="1759"/>
+                        <cell id="1760"/>
+                        <cell id="1761"/>
+                        <cell id="1762"/>
+                        <cell id="1763"/>
+                        <cell id="1764"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="1671">
+                    <cell id="1672">
+                        <data id="1673">
+                            <property name="resultSetColumn">ITEMNUM</property>
+                        </data>
+                    </cell>
+                    <cell id="1674">
+                        <data id="1677">
+                            <property name="resultSetColumn">DESCRIPTION</property>
+                        </data>
+                    </cell>
+                    <cell id="1676">
+                        <data id="1679">
+                            <property name="resultSetColumn">INVOICENUM</property>
+                        </data>
+                    </cell>
+                    <cell id="1678">
+                        <data id="1681">
+                            <property name="resultSetColumn">INVOICEDATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1680">
+                        <data id="1683">
+                            <property name="resultSetColumn">PONUM</property>
+                        </data>
+                    </cell>
+                    <cell id="1682">
+                        <data id="1685">
+                            <property name="resultSetColumn">VENDOR</property>
+                        </data>
+                    </cell>
+                    <cell id="1684">
+                        <data id="1687">
+                            <property name="resultSetColumn">CURRENCYCODE</property>
+                        </data>
+                        <data id="1805">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">true</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">EXCHANGERATE</property>
+                        </data>
+                    </cell>
+                    <cell id="1686">
+                        <data id="1689">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">true</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">UNITCOST</property>
+                        </data>
+                        <data id="1806">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">UnitCostInEuro</property>
+                        </data>
+                    </cell>
+                    <cell id="1688">
+                        <data id="1691">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">true</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">LINECOST</property>
+                        </data>
+                        <data id="1807">
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="resultSetColumn">LineCostInEuro</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1700">
+                    <cell id="1701">
+                        <text id="1786">
+                            <property name="fontWeight">bold</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<BR>
+<BR>
+<BR>]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="1702"/>
+                    <cell id="1703"/>
+                    <cell id="1704"/>
+                    <cell id="1705"/>
+                    <cell id="1706"/>
+                    <cell id="1707"/>
+                    <cell id="1708"/>
+                    <cell id="1709"/>
+                </row>
+                <row id="1787">
+                    <cell id="1788"/>
+                    <cell id="1789">
+                        <label id="1803">
+                            <property name="fontWeight">bold</property>
+                            <text-property name="text">Total Cost Unapproved Invoices (EUR):</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1790">
+                        <data id="1804">
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">###0.00</property>
+                            </structure>
+                            <property name="resultSetColumn">TotalCostUnapprovedInvoices</property>
+                        </data>
+                    </cell>
+                    <cell id="1791"/>
+                    <cell id="1792"/>
+                    <cell id="1793"/>
+                    <cell id="1794"/>
+                    <cell id="1795"/>
+                    <cell id="1796"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report> 

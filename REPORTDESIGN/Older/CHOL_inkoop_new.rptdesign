@@ -1,0 +1,2401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="author">M van der Aa</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <property name="comments">IBM Confidential
+
+OCO Source Materials
+
+5724-M19
+
+(C) COPYRIGHT IBM CORP. 2006
+
+The source code for this program is not published or otherwise
+divested of its trade secrets, irrespective of what has been
+deposited with the U.S. Copyright Office.</property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields.</html-property>
+    <property name="theme">MACSDataLibrary.defaultTheme</property>
+    <text-property name="displayName">Tivoli Maximo Subreport Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+        <structure>
+            <property name="fileName">MACSDataLibrary.rptlibrary</property>
+            <property name="namespace">MACSDataLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="MACSDataSource" id="15"
+ extends="MACSDataLibrary.MACSDataSource"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="PO" id="830">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PONUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">DISPLAYNAME</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">FREIGHTTERMS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">PHONENUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">EMAILADDRESS</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MACSDataSource</property>
+            <method name="beforeOpen"><![CDATA[this.queryText =this.queryText + " And " + params["where"];]]></method>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PONUM</property>
+                    <property name="nativeName">PONUM</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">DISPLAYNAME</property>
+                    <property name="nativeName">DISPLAYNAME</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">FREIGHTTERMS</property>
+                    <property name="nativeName">FREIGHTTERMS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">PHONENUM</property>
+                    <property name="nativeName">PHONENUM</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">EMAILADDRESS</property>
+                    <property name="nativeName">EMAILADDRESS</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ponum,person.displayname,po.freightterms,phone.phonenum,email.emailaddress
+from po,person,email,phone
+where po.purchaseagent=person.personid(+)
+and po.purchaseagent=email.personid(+)
+and po.purchaseagent=phone.personid(+)</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PONUM</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>8</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PONUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>8</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="shipvia" id="841">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param1</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select alndomain.description
+from alndomain,po
+where po.ponum= ?
+and po.shipvia=alndomain.value
+and domainid='SHIPVIA'</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="vendor" id="1016">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param1</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText"> SELECT companies.name,
+  companies.address1  ,
+  companies.address2  ,
+  companies.address4  ,
+  countries.name as country ,
+  companies.phone     ,
+  companies.fax       ,
+  po.contact AS res
+   FROM companies,
+  po,countries
+  WHERE po.vendor=companies.company
+  and companies.address5= countries.code
+and po.ponum =?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>NAME</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>50</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>NAME</design:label>
+            <design:formattingHints>
+              <design:displaySize>50</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ADDRESS1</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>50</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ADDRESS1</design:label>
+            <design:formattingHints>
+              <design:displaySize>50</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ADDRESS2</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>50</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ADDRESS2</design:label>
+            <design:formattingHints>
+              <design:displaySize>50</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ADDRESS3</design:name>
+            <design:position>4</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>36</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ADDRESS3</design:label>
+            <design:formattingHints>
+              <design:displaySize>36</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>ADDRESS4</design:name>
+            <design:position>5</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>50</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ADDRESS4</design:label>
+            <design:formattingHints>
+              <design:displaySize>50</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PHONE</design:name>
+            <design:position>6</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PHONE</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>FAX</design:name>
+            <design:position>7</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>20</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>FAX</design:label>
+            <design:formattingHints>
+              <design:displaySize>20</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>CONTACT</design:name>
+            <design:position>8</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>50</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>CONTACT</design:label>
+            <design:formattingHints>
+              <design:displaySize>50</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="afleveradres" id="1096">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param1</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select address.description,address.address1,address.address2,address.address4,address.address5
+from address,po
+where po.shipto=address.addresscode
+and ponum=?</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="poline" id="1155">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param1</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select poline.polinenum,poline.orderqty,poline.orderunit,poline.catalogcode,poline.modelnum,poline.description,poline.unitcost,poline.tax1code,poline.loadedcost,poline.reqdeliverydate,item.in2
+from poline,item
+where poline.itemnum=item.itemnum(+)
+and ponum = ?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>POLINENUM</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>-127</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>POLINENUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>LDTEXT</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>2005</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>LDTEXT</design:label>
+            <design:formattingHints>
+              <design:displaySize>4000</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="LD" id="1268">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">param1</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">param2</property>
+                    <property name="dataType">any</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select ldtext
+from poline,longdescription
+where poline.ponum = ?
+and poline.polinenum= ?
+and poline.polineid=longdescription.ldkey
+and ldownertable='POLINE'
+and ldownercol='DESCRIPTION'</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>LDTEXT</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>2005</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>LDTEXT</design:label>
+            <design:formattingHints>
+              <design:displaySize>4000</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="footer" id="1306">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PONUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ORDERDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TOTALCOST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">CURRENCYCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">ponum</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PONUM</property>
+                    <property name="nativeName">PONUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ORDERDATE</property>
+                    <property name="nativeName">ORDERDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TOTALCOST</property>
+                    <property name="nativeName">TOTALCOST</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">CURRENCYCODE</property>
+                    <property name="nativeName">CURRENCYCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select po.ponum,po.orderdate,sum (poline.loadedcost) totalcost,po.currencycode
+from po, poline
+where po.ponum=poline.ponum
+and po.ponum=?
+group by po.ponum,po.orderdate,po.currencycode</property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="OPMERKING" id="1719">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">ponum</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select decode(count(*),0,' ','There are unit prices with a value of 0') as regel1
+,decode(count(*),0,' ','Therefore the total amount is not correct') as regel2
+from poline, PO where  POLINE.PONUM=po.ponum and unitcost=0 
+and po.ponum =?</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>REGEL1</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>39</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>REGEL1</design:label>
+            <design:formattingHints>
+              <design:displaySize>39</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>REGEL2</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>41</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>REGEL2</design:label>
+            <design:formattingHints>
+              <design:displaySize>41</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="IV1" id="1760">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">DWG</property>
+                    <expression name="expression">if ((row["IV1"] =="A")) {"DWG 700"}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ACC</property>
+                    <expression name="expression">if ((row["IV1"]=="N")){"For acceptance please send a duly signed order by return."}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">APP</property>
+                    <expression name="expression">if ((row["IV1"]=="Y"))  {"Source approval required: YES"}
+if ((row["IV1"]=="N"))  {"Source approval required: NO"}
+if ((row["IV1"]=="A"))  {"Source approval required: YES"}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">COUNTED</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">VENDOR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">PONUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">IV1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">DWG</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">ACC</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">APP</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MACSDataSource</property>
+            <property name="dataSetRowLimit">0</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">ponum</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">'83331'</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">COUNTED</property>
+                    <property name="nativeName">COUNTED</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">VENDOR</property>
+                    <property name="nativeName">VENDOR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">PONUM</property>
+                    <property name="nativeName">PONUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">IV1</property>
+                    <property name="nativeName">IV1</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText"> SELECT COUNT(*) counted, invvendor.vendor,
+                          
+  ponum                          ,
+  iv1
+   FROM invvendor,
+  po
+  WHERE itemnum IN
+  (SELECT itemnum FROM poline WHERE po.ponum=poline.ponum
+  )
+AND po.vendor          = invvendor.vendor
+GROUP BY invvendor.vendor,
+  ponum        ,
+  iv1
+HAVING ponum= ? </property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>COUNTED</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>COUNTED</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>VENDOR</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>12</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>VENDOR</design:label>
+            <design:formattingHints>
+              <design:displaySize>12</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PONUM</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>8</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PONUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>8</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>IV1</design:name>
+            <design:position>4</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>1</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>IV1</design:label>
+            <design:formattingHints>
+              <design:displaySize>1</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="tableheaderchol" id="1564">
+            <property name="backgroundColor">#DFDFDF</property>
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">10pt</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Inkoop" id="1670">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="topMargin">0.2in</property>
+            <property name="leftMargin">0.25in</property>
+            <property name="bottomMargin">0.2in</property>
+            <property name="rightMargin">0.25in</property>
+            <page-footer>
+                <grid id="1671">
+                    <property name="fontFamily">"Arial"</property>
+                    <property name="fontSize">10pt</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="marginLeft">0pt</property>
+                    <property name="marginBottom">0pt</property>
+                    <property name="marginRight">3pt</property>
+                    <property name="verticalAlign">bottom</property>
+                    <property name="width">100%</property>
+                    <column id="1673">
+                        <property name="width">60%</property>
+                    </column>
+                    <column id="1690">
+                        <property name="width">13%</property>
+                    </column>
+                    <column id="1674">
+                        <property name="width">20%</property>
+                    </column>
+                    <row id="1683">
+                        <property name="verticalAlign">middle</property>
+                        <cell id="1701">
+                            <property name="colSpan">1</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderLeftColor">#000000</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderRightColor">#000000</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="1263">
+                                <property name="fontFamily">"Arial"</property>
+                                <property name="fontSize">10pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">center</property>
+                                <text-property name="text">Unless otherwise agreed in writing we herewith order on the basis of our general conditions of purchase.</text-property>
+                            </label>
+                        </cell>
+                        <cell id="1886">
+                            <property name="colSpan">1</property>
+                            <property name="rowSpan">1</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderLeftColor">#000000</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderRightColor">#000000</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <text id="1757">
+                                <property name="fontSize">9pt</property>
+                                <property name="color">#C0C0C0</property>
+                                <property name="textAlign">center</property>
+                                <property name="contentType">auto</property>
+                                <text-property name="content"><![CDATA[DWG 1322 Initial issue]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="1976">
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderRightColor">#000000</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <property name="verticalAlign">bottom</property>
+                            <grid id="1746">
+                                <property name="verticalAlign">middle</property>
+                                <property name="width">100%</property>
+                                <column id="1941">
+                                    <property name="width">20%</property>
+                                </column>
+                                <column id="1747">
+                                    <property name="width">10%</property>
+                                    <property name="textAlign">right</property>
+                                </column>
+                                <column id="1748">
+                                    <property name="width">5%</property>
+                                    <property name="textAlign">center</property>
+                                </column>
+                                <column id="1749">
+                                    <property name="width">10%</property>
+                                    <property name="textAlign">left</property>
+                                </column>
+                                <row id="1750">
+                                    <property name="verticalAlign">bottom</property>
+                                    <cell id="1940">
+                                        <text id="1942">
+                                            <property name="textAlign">center</property>
+                                            <property name="contentType">auto</property>
+                                            <text-property name="content"><![CDATA[Page]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1751">
+                                        <auto-text id="1752">
+                                            <property name="textAlign">right</property>
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="1753">
+                                        <text id="1754">
+                                            <property name="contentType">plain</property>
+                                            <text-property name="content"><![CDATA[/]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="1755">
+                                        <auto-text id="1756">
+                                            <property name="textAlign">center</property>
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="1896">
+            <property name="masterPage">Inkoop</property>
+            <property name="width">100%</property>
+            <column id="1897">
+                <property name="width">100%</property>
+            </column>
+            <row id="1898">
+                <cell id="1899">
+                    <table name="PO" id="831">
+                        <property name="marginRight">2pt</property>
+                        <property name="masterPage">Inkoop</property>
+                        <property name="width">100%</property>
+                        <property name="dataSet">PO</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">PONUM</property>
+                                <expression name="expression">dataSetRow["PONUM"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">fright</property>
+                                <expression name="expression">Row["FREIGHTTERMS"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">data item</property>
+                                <expression name="expression">row["fright"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">DISPLAYNAME</property>
+                                <expression name="expression">dataSetRow["DISPLAYNAME"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">data item_1</property>
+                                <expression name="expression">dataSetRow["FREIGHTTERMS"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">data item_2</property>
+                                <expression name="expression">dataSetRow["EMAILADDRESS"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">data item_3</property>
+                                <expression name="expression">dataSetRow["PHONENUM"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                            <structure>
+                                <property name="name">data column</property>
+                                <expression name="expression">dataSetRow["PONUM"]</expression>
+                                <property name="dataType">any</property>
+                            </structure>
+                        </list-property>
+                        <property name="pageBreakInterval">50</property>
+                        <column id="840">
+                            <property name="width">100%</property>
+                        </column>
+                        <group id="852">
+                            <property name="groupName">ponum</property>
+                            <property name="interval">none</property>
+                            <property name="sortDirection">asc</property>
+                            <expression name="keyExpr">row["PONUM"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue">row["PONUM"]</expression>
+                            </structure>
+                            <property name="repeatHeader">true</property>
+                            <property name="hideDetail">false</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">always-excluding-first</property>
+                            <header>
+                                <row id="853">
+                                    <cell id="854">
+                                        <grid id="885">
+                                            <property name="pageBreakBefore">avoid</property>
+                                            <property name="height">2.7083333333in</property>
+                                            <property name="width">100%</property>
+                                            <column id="886">
+                                                <property name="width">30%</property>
+                                            </column>
+                                            <column id="887">
+                                                <property name="width">30%</property>
+                                            </column>
+                                            <column id="888">
+                                                <property name="width">30%</property>
+                                            </column>
+                                            <column id="889">
+                                                <property name="width">30%</property>
+                                            </column>
+                                            <row id="890">
+                                                <property name="height">0.2916666667in</property>
+                                                <cell id="891">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">2</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">3pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <property name="textAlign">center</property>
+                                                    <property name="verticalAlign">middle</property>
+                                                    <image id="1499">
+                                                        <property name="height">91px</property>
+                                                        <property name="width">247px</property>
+                                                        <property name="source">file</property>
+                                                        <expression name="uri">"CHOL_Logo.jpg"</expression>
+                                                    </image>
+                                                </cell>
+                                                <cell id="1554">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">2</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">3pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <text id="960">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="paddingLeft">1pt</property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[Siriusstraat 55, 5015 BT Tilburg<BR>
+The Netherlands]]></text-property>
+                                                    </text>
+                                                    <grid id="1500">
+                                                        <property name="height">0.3854166667in</property>
+                                                        <property name="width">2.5625in</property>
+                                                        <column id="1501">
+                                                            <property name="width">0.6041666667in</property>
+                                                        </column>
+                                                        <column id="1502">
+                                                            <property name="width">1.9583333333in</property>
+                                                        </column>
+                                                        <row id="1503">
+                                                            <property name="height">0.2in</property>
+                                                            <cell id="1504">
+                                                                <text id="1506">
+                                                                    <property name="fontFamily">"Arial"</property>
+                                                                    <property name="fontSize">8pt</property>
+                                                                    <property name="contentType">html</property>
+                                                                    <text-property name="content"><![CDATA[Telephone:<BR>
+Fax: <BR>
+Banks:]]></text-property>
+                                                                </text>
+                                                            </cell>
+                                                            <cell id="1505">
+                                                                <text id="962">
+                                                                    <property name="fontFamily">"Arial"</property>
+                                                                    <property name="fontSize">8pt</property>
+                                                                    <property name="contentType">html</property>
+                                                                    <text-property name="content"><![CDATA[+ 31(0)13 532 84 00<BR>
++ 31(0)13 543 67 55<BR>
+ING BANK NR. 68.65.65.444 (EUR)<BR>
+ING BANK NR. 02.15.64.108 (USD)]]></text-property>
+                                                                </text>
+                                                            </cell>
+                                                        </row>
+                                                    </grid>
+                                                    <text id="963">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="paddingLeft">1pt</property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[Comm. register Tilburg NR. 18030901 <BR>
+VAT no.: NL009586714B02]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1548">
+                                                    <property name="colSpan">2</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="verticalAlign">middle</property>
+                                                    <text id="1607">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">14pt</property>
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[Purchase Order no: <VALUE-OF>row["PONUM"]</VALUE-OF>]]></text-property>
+                                                    </text>
+                                                    <text name="opmerking" id="1867">
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="color">#FF0000</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="masterPage">Inkoop</property>
+                                                        <property name="dataSet">OPMERKING</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">ponum</property>
+                                                                <expression name="expression">row["PONUM"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">REGEL1</property>
+                                                                <expression name="expression">dataSetRow["REGEL1"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">REGEL2</property>
+                                                                <expression name="expression">dataSetRow["REGEL2"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[<VALUE-OF>row["REGEL1"]</VALUE-OF><br> <VALUE-OF>row["REGEL2"]</VALUE-OF>]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                            <row id="895">
+                                                <property name="height">0.291in</property>
+                                                <cell id="1549">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">3pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <table name="shipvia" id="947">
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">shipvia</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param1</property>
+                                                                <expression name="expression">row["PONUM"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">DESCRIPTION</property>
+                                                                <expression name="expression">dataSetRow["DESCRIPTION"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="pageBreakInterval">50</property>
+                                                        <column id="956"/>
+                                                        <detail>
+                                                            <row id="951">
+                                                                <cell id="952">
+                                                                    <text id="1593">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">8pt</property>
+                                                                        <property name="contentType">html</property>
+                                                                        <text-property name="content"><![CDATA[Ship via: <VALUE-OF>row["DESCRIPTION"]</VALUE-OF>]]></text-property>
+                                                                    </text>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                                <cell id="899">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">3pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <text id="1495">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[ Terms of delivery: <VALUE-OF>row["data item_1"]</VALUE-OF><BR>
+ Initiator: <VALUE-OF>row["DISPLAYNAME"]</VALUE-OF><BR>
+ Email: <VALUE-OF>row["data item_2"]</VALUE-OF><BR>
+ Dir Phone: <VALUE-OF>row["data item_3"]</VALUE-OF><BR>]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                            <row id="1538">
+                                                <property name="height">0.03125in</property>
+                                                <cell id="1539">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">3pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <table name="vendor" id="1017">
+                                                        <property name="canShrink">true</property>
+                                                        <property name="height">1in</property>
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">vendor</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param1</property>
+                                                                <expression name="expression">row["PONUM"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">NAME</property>
+                                                                <expression name="expression">dataSetRow["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS1</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS1"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS2</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS2"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS3</property>
+                                                                <expression name="expression">dataSetRow["COUNTRY"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS4</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS4"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">PHONE</property>
+                                                                <expression name="expression">dataSetRow["PHONE"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">FAX</property>
+                                                                <expression name="expression">dataSetRow["FAX"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CONTACT</property>
+                                                                <expression name="expression">row["NAME"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">data item</property>
+                                                                <expression name="expression">row["CONTACT"]</expression>
+                                                                <property name="dataType">any</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">data item_1</property>
+                                                                <expression name="expression">row["ADDRESS1"]</expression>
+                                                                <property name="dataType">any</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">RES</property>
+                                                                <expression name="expression">dataSetRow["RES"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="pageBreakInterval">50</property>
+                                                        <column id="1068"/>
+                                                        <header>
+                                                            <row id="1069">
+                                                                <cell id="1070">
+                                                                    <label id="1071">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">10pt</property>
+                                                                        <property name="fontWeight">bold</property>
+                                                                        <text-property name="text">Order to:</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <detail>
+                                                            <row id="1035">
+                                                                <cell id="1050">
+                                                                    <text id="1578">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">8pt</property>
+                                                                        <property name="contentType">html</property>
+                                                                        <text-property name="content"><![CDATA[<VALUE-OF>row["NAME"]</VALUE-OF><br>
+Attn:  <VALUE-OF>row["RES"]</VALUE-OF><BR>
+<VALUE-OF>row["ADDRESS1"]</VALUE-OF><BR>
+<VALUE-OF>row["ADDRESS4"]</VALUE-OF><TT>
+ 
+</TT><VALUE-OF>row["ADDRESS2"]</VALUE-OF><BR>
+<VALUE-OF>row["ADDRESS3"]</VALUE-OF><BR>
+Phone: <VALUE-OF>if ((row["PHONE"] == null)){" Unknown "} else {row["PHONE"]}</VALUE-OF> Fax: <VALUE-OF>row["FAX"]</VALUE-OF>]]></text-property>
+                                                                    </text>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                                <cell id="1840">
+                                                    <property name="colSpan">1</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <table name="afleveradres" id="1097">
+                                                        <property name="height">1in</property>
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">afleveradres</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param1</property>
+                                                                <expression name="expression">row["PONUM"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">DESCRIPTION</property>
+                                                                <expression name="expression">dataSetRow["DESCRIPTION"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS1</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS1"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS2</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS2"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS4</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS4"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ADDRESS5</property>
+                                                                <expression name="expression">dataSetRow["ADDRESS5"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="pageBreakInterval">50</property>
+                                                        <column id="1130"/>
+                                                        <header>
+                                                            <row id="1098">
+                                                                <cell id="1107">
+                                                                    <label id="1108">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">10pt</property>
+                                                                        <property name="fontWeight">bold</property>
+                                                                        <text-property name="text">Deliver to:</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                            </row>
+                                                        </header>
+                                                        <detail>
+                                                            <row id="1131">
+                                                                <cell id="1132">
+                                                                    <text id="1579">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">8pt</property>
+                                                                        <property name="contentType">html</property>
+                                                                        <text-property name="content"><![CDATA[<VALUE-OF>row["DESCRIPTION"]</VALUE-OF><BR>
+<BR>
+<VALUE-OF>row["ADDRESS1"]</VALUE-OF><BR>
+<VALUE-OF>row["ADDRESS4"]</VALUE-OF><TT>
+ 
+</TT><VALUE-OF>row["ADDRESS2"]</VALUE-OF><BR>
+<VALUE-OF>row["ADDRESS5"]</VALUE-OF>]]></text-property>
+                                                                    </text>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                                <cell id="1541">
+                                                    <property name="colSpan">2</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <property name="paddingTop">1pt</property>
+                                                    <property name="paddingLeft">3pt</property>
+                                                    <property name="paddingBottom">1pt</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <table name="IV1 ACC" id="1807">
+                                                        <property name="verticalAlign">middle</property>
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">IV1</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">ponum</property>
+                                                                <expression name="expression">row["PONUM"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">COUNTED</property>
+                                                                <expression name="expression">dataSetRow["COUNTED"]</expression>
+                                                                <property name="dataType">decimal</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">VENDOR</property>
+                                                                <expression name="expression">dataSetRow["VENDOR"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">PONUM</property>
+                                                                <expression name="expression">dataSetRow["PONUM"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">IV1</property>
+                                                                <expression name="expression">dataSetRow["IV1"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">DWG</property>
+                                                                <expression name="expression">dataSetRow["DWG"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ACC</property>
+                                                                <expression name="expression">dataSetRow["ACC"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">APP</property>
+                                                                <expression name="expression">dataSetRow["APP"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="pageBreakInterval">50</property>
+                                                        <column id="1814"/>
+                                                        <detail>
+                                                            <row id="1810">
+                                                                <list-property name="visibility">
+                                                                    <structure>
+                                                                        <property name="format">all</property>
+                                                                        <expression name="valueExpr">if((row["ACC"]== null)){true}</expression>
+                                                                    </structure>
+                                                                </list-property>
+                                                                <cell id="1811">
+                                                                    <data id="1789">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">10pt</property>
+                                                                        <property name="fontWeight">bold</property>
+                                                                        <property name="textAlign">left</property>
+                                                                        <property name="resultSetColumn">ACC</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                    <text id="1265">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[ Vendor Ref. no:
+ 
+ Date:                         Name/signature]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                            <row id="1737">
+                                                <property name="height">0.34375in</property>
+                                                <property name="verticalAlign">middle</property>
+                                                <cell id="1738">
+                                                    <property name="colSpan">4</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <label id="1691">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">9pt</property>
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="textAlign">center</property>
+                                                        <text-property name="text"> Purchase order number and item to be quoted on all documents and packages pertaining to this order.</text-property>
+                                                    </label>
+                                                </cell>
+                                            </row>
+                                            <row id="1900">
+                                                <property name="height">0.34375in</property>
+                                                <property name="verticalAlign">middle</property>
+                                                <cell id="1901">
+                                                    <property name="colSpan">4</property>
+                                                    <property name="rowSpan">1</property>
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <table name="PO footer" id="1888">
+                                                        <property name="width">100%</property>
+                                                        <property name="dataSet">footer</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">ponum</property>
+                                                                <expression name="expression">row["PONUM"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">PONUM</property>
+                                                                <expression name="expression">dataSetRow["PONUM"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">ORDERDATE</property>
+                                                                <expression name="expression">dataSetRow["ORDERDATE"]</expression>
+                                                                <property name="dataType">date-time</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">TOTALCOST</property>
+                                                                <expression name="expression">dataSetRow["TOTALCOST"]</expression>
+                                                                <property name="dataType">decimal</property>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="name">CURRENCYCODE</property>
+                                                                <expression name="expression">dataSetRow["CURRENCYCODE"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="pageBreakInterval">50</property>
+                                                        <column id="1895">
+                                                            <property name="width">20%</property>
+                                                        </column>
+                                                        <column id="1933">
+                                                            <property name="width">23%</property>
+                                                        </column>
+                                                        <column id="1978">
+                                                            <property name="width">13%</property>
+                                                        </column>
+                                                        <column id="1975">
+                                                            <property name="width">10%</property>
+                                                        </column>
+                                                        <column id="1939">
+                                                            <property name="width">13%</property>
+                                                        </column>
+                                                        <column id="1937">
+                                                            <property name="width">10%</property>
+                                                        </column>
+                                                        <column id="1935">
+                                                            <property name="width">7%</property>
+                                                        </column>
+                                                        <column id="1931">
+                                                            <property name="width">12%</property>
+                                                        </column>
+                                                        <detail>
+                                                            <row id="1891">
+                                                                <property name="height">0in</property>
+                                                                <property name="fontFamily">"Arial"</property>
+                                                                <property name="fontSize">12pt</property>
+                                                                <property name="fontWeight">bold</property>
+                                                                <property name="verticalAlign">middle</property>
+                                                                <cell id="1892">
+                                                                    <property name="verticalAlign">middle</property>
+                                                                    <label id="1704">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">12pt</property>
+                                                                        <property name="fontWeight">bold</property>
+                                                                        <text-property name="text"> Authorised by :</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="1932">
+                                                                    <property name="textAlign">center</property>
+                                                                    <property name="verticalAlign">middle</property>
+                                                                    <table name="IV1 APP" id="1822">
+                                                                        <property name="verticalAlign">middle</property>
+                                                                        <property name="width">100%</property>
+                                                                        <property name="dataSet">IV1</property>
+                                                                        <list-property name="paramBindings">
+                                                                            <structure>
+                                                                                <property name="paramName">ponum</property>
+                                                                                <expression name="expression">row["PONUM"]</expression>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <list-property name="boundDataColumns">
+                                                                            <structure>
+                                                                                <property name="name">COUNTED</property>
+                                                                                <expression name="expression">dataSetRow["COUNTED"]</expression>
+                                                                                <property name="dataType">decimal</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">VENDOR</property>
+                                                                                <expression name="expression">dataSetRow["VENDOR"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">PONUM</property>
+                                                                                <expression name="expression">dataSetRow["PONUM"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">IV1</property>
+                                                                                <expression name="expression">dataSetRow["IV1"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">DWG</property>
+                                                                                <expression name="expression">dataSetRow["DWG"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">ACC</property>
+                                                                                <expression name="expression">dataSetRow["ACC"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">APP</property>
+                                                                                <expression name="expression">dataSetRow["APP"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <property name="pageBreakInterval">50</property>
+                                                                        <column id="1829"/>
+                                                                        <detail>
+                                                                            <row id="1825">
+                                                                                <list-property name="visibility">
+                                                                                    <structure>
+                                                                                        <property name="format">all</property>
+                                                                                        <expression name="valueExpr">row["APP"]==null</expression>
+                                                                                    </structure>
+                                                                                </list-property>
+                                                                                <cell id="1826">
+                                                                                    <data id="1839">
+                                                                                        <property name="fontFamily">"Arial"</property>
+                                                                                        <property name="fontSize">10pt</property>
+                                                                                        <property name="fontWeight">bold</property>
+                                                                                        <property name="textAlign">center</property>
+                                                                                        <property name="resultSetColumn">APP</property>
+                                                                                    </data>
+                                                                                </cell>
+                                                                            </row>
+                                                                        </detail>
+                                                                    </table>
+                                                                </cell>
+                                                                <cell id="1977">
+                                                                    <property name="textAlign">center</property>
+                                                                    <property name="verticalAlign">middle</property>
+                                                                    <table name="IV1 DWG" id="1830">
+                                                                        <property name="verticalAlign">middle</property>
+                                                                        <property name="width">100%</property>
+                                                                        <property name="dataSet">IV1</property>
+                                                                        <list-property name="paramBindings">
+                                                                            <structure>
+                                                                                <property name="paramName">ponum</property>
+                                                                                <expression name="expression">row["PONUM"]</expression>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <list-property name="boundDataColumns">
+                                                                            <structure>
+                                                                                <property name="name">COUNTED</property>
+                                                                                <expression name="expression">dataSetRow["COUNTED"]</expression>
+                                                                                <property name="dataType">decimal</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">VENDOR</property>
+                                                                                <expression name="expression">dataSetRow["VENDOR"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">PONUM</property>
+                                                                                <expression name="expression">dataSetRow["PONUM"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">IV1</property>
+                                                                                <expression name="expression">dataSetRow["IV1"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">DWG</property>
+                                                                                <expression name="expression">dataSetRow["DWG"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">ACC</property>
+                                                                                <expression name="expression">dataSetRow["ACC"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                            <structure>
+                                                                                <property name="name">APP</property>
+                                                                                <expression name="expression">dataSetRow["APP"]</expression>
+                                                                                <property name="dataType">string</property>
+                                                                            </structure>
+                                                                        </list-property>
+                                                                        <property name="pageBreakInterval">50</property>
+                                                                        <column id="1837"/>
+                                                                        <detail>
+                                                                            <row id="1833">
+                                                                                <list-property name="visibility">
+                                                                                    <structure>
+                                                                                        <property name="format">all</property>
+                                                                                        <expression name="valueExpr">row["DWG"]==null</expression>
+                                                                                    </structure>
+                                                                                </list-property>
+                                                                                <cell id="1834">
+                                                                                    <data id="1838">
+                                                                                        <property name="fontFamily">"Arial"</property>
+                                                                                        <property name="fontSize">10pt</property>
+                                                                                        <property name="fontWeight">bold</property>
+                                                                                        <property name="textAlign">center</property>
+                                                                                        <property name="resultSetColumn">DWG</property>
+                                                                                    </data>
+                                                                                </cell>
+                                                                            </row>
+                                                                        </detail>
+                                                                    </table>
+                                                                </cell>
+                                                                <cell id="1974">
+                                                                    <label id="1915">
+                                                                        <text-property name="text">Orderdate:</text-property>
+                                                                    </label>
+                                                                </cell>
+                                                                <cell id="1938">
+                                                                    <data id="1916">
+                                                                        <structure name="dateTimeFormat">
+                                                                            <property name="category">Medium Date</property>
+                                                                            <property name="pattern">Medium Date</property>
+                                                                        </structure>
+                                                                        <property name="resultSetColumn">ORDERDATE</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="1936">
+                                                                    <text id="1857">
+                                                                        <property name="fontFamily">"Arial"</property>
+                                                                        <property name="fontSize">12pt</property>
+                                                                        <property name="textAlign">right</property>
+                                                                        <property name="contentType">html</property>
+                                                                        <text-property name="content"><![CDATA[Total PO:]]></text-property>
+                                                                    </text>
+                                                                </cell>
+                                                                <cell id="1934">
+                                                                    <data id="1859">
+                                                                        <property name="textAlign">right</property>
+                                                                        <property name="resultSetColumn">CURRENCYCODE</property>
+                                                                    </data>
+                                                                </cell>
+                                                                <cell id="1930">
+                                                                    <data id="1861">
+                                                                        <structure name="numberFormat">
+                                                                            <property name="category">Fixed</property>
+                                                                            <property name="pattern">#,##0.00</property>
+                                                                        </structure>
+                                                                        <property name="textAlign">right</property>
+                                                                        <property name="resultSetColumn">TOTALCOST</property>
+                                                                    </data>
+                                                                </cell>
+                                                            </row>
+                                                        </detail>
+                                                    </table>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </header>
+                            <footer>
+                                <row id="1943">
+                                    <cell id="1944"/>
+                                </row>
+                            </footer>
+                        </group>
+                        <detail>
+                            <row id="868">
+                                <property name="height">1%</property>
+                                <cell id="869">
+                                    <property name="paddingRight">0pt</property>
+                                    <table name="poline" id="1190">
+                                        <property name="marginRight">0pt</property>
+                                        <property name="masterPage">Inkoop</property>
+                                        <property name="pageBreakAfter">avoid</property>
+                                        <property name="height">0.84375in</property>
+                                        <property name="width">100%</property>
+                                        <property name="dataSet">poline</property>
+                                        <list-property name="paramBindings">
+                                            <structure>
+                                                <property name="paramName">param1</property>
+                                                <expression name="expression">row["PONUM"]</expression>
+                                            </structure>
+                                        </list-property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">IT</property>
+                                                <expression name="expression">dataSetRow["POLINENUM"]</expression>
+                                                <property name="dataType">decimal</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">ORDERQTY</property>
+                                                <expression name="expression">dataSetRow["ORDERQTY"]</expression>
+                                                <property name="dataType">decimal</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">ORDERUNIT</property>
+                                                <expression name="expression">dataSetRow["ORDERUNIT"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">CATALOGCODE</property>
+                                                <expression name="expression">dataSetRow["CATALOGCODE"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">MODELNUM</property>
+                                                <expression name="expression">dataSetRow["MODELNUM"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">DESCRIPTION</property>
+                                                <expression name="expression">dataSetRow["DESCRIPTION"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">UNITCOST</property>
+                                                <expression name="expression">dataSetRow["UNITCOST"]</expression>
+                                                <property name="dataType">decimal</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">TAX1CODE</property>
+                                                <expression name="expression">dataSetRow["TAX1CODE"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">LOADEDCOST</property>
+                                                <expression name="expression">dataSetRow["LOADEDCOST"]</expression>
+                                                <property name="dataType">decimal</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">REQDELIVERYDATE</property>
+                                                <expression name="expression">dataSetRow["REQDELIVERYDATE"]</expression>
+                                                <property name="dataType">date-time</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">IN2</property>
+                                                <expression name="expression">dataSetRow["IN2"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">descr</property>
+                                                <expression name="expression">row["DESCRIPTION"]</expression>
+                                                <property name="dataType">any</property>
+                                            </structure>
+                                            <structure>
+                                                <property name="name">intwee</property>
+                                                <expression name="expression">row["IN2"]</expression>
+                                                <property name="dataType">any</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="pageBreakInterval">50</property>
+                                        <list-property name="sort">
+                                            <structure>
+                                                <expression name="key">row["IT"]</expression>
+                                                <property name="direction">asc</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="1249">
+                                            <property name="width">4%</property>
+                                        </column>
+                                        <column id="1250">
+                                            <property name="width">7%</property>
+                                        </column>
+                                        <column id="1251">
+                                            <property name="width">4%</property>
+                                        </column>
+                                        <column id="1252">
+                                            <property name="width">10%</property>
+                                        </column>
+                                        <column id="1253">
+                                            <property name="width">11%</property>
+                                        </column>
+                                        <column id="1254">
+                                            <property name="width">35%</property>
+                                        </column>
+                                        <column id="1255">
+                                            <property name="width">7%</property>
+                                        </column>
+                                        <column id="1256">
+                                            <property name="width">5%</property>
+                                        </column>
+                                        <column id="1257">
+                                            <property name="width">8%</property>
+                                        </column>
+                                        <column id="1258">
+                                            <property name="width">9%</property>
+                                        </column>
+                                        <header>
+                                            <row id="1565">
+                                                <property name="height">0.014in</property>
+                                                <property name="style">tableheaderchol</property>
+                                                <property name="fontWeight">bold</property>
+                                                <property name="verticalAlign">middle</property>
+                                                <cell id="1566">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <label id="1193">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <text-property name="text"> Item</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="1567">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <label id="1195">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">right</property>
+                                                        <text-property name="text">Quantity </text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="1568">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <label id="1197">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <text-property name="text">Unit</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="1569">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <text id="1559">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[Supplier
+number]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1570">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <text id="1560">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[Manufact.
+Number]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1571">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <label id="1203">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <text-property name="text"> Description</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="1572">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <text id="1561">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[Unit
+Price]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1573">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <text id="1562">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[Dis-
+count]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="1574">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <label id="1209">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <text-property name="text">Amount</text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="1575">
+                                                    <property name="borderBottomColor">#000000</property>
+                                                    <property name="borderBottomStyle">solid</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="borderLeftColor">#000000</property>
+                                                    <property name="borderLeftStyle">solid</property>
+                                                    <property name="borderLeftWidth">thin</property>
+                                                    <property name="borderRightColor">#000000</property>
+                                                    <property name="borderRightStyle">solid</property>
+                                                    <property name="borderRightWidth">thin</property>
+                                                    <property name="borderTopColor">#000000</property>
+                                                    <property name="borderTopStyle">solid</property>
+                                                    <property name="borderTopWidth">thin</property>
+                                                    <text id="1563">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[Delivery
+Date]]></text-property>
+                                                    </text>
+                                                </cell>
+                                            </row>
+                                        </header>
+                                        <detail>
+                                            <row id="1214">
+                                                <property name="verticalAlign">top</property>
+                                                <cell id="1215">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1216">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">9pt</property>
+                                                        <property name="fontWeight">bold</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="resultSetColumn">IT</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1217">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1218">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">9pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="resultSetColumn">ORDERQTY</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1219">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1220">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">9pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="resultSetColumn">ORDERUNIT</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1221">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1222">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">9pt</property>
+                                                        <property name="resultSetColumn">CATALOGCODE</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1223">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1224">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">9pt</property>
+                                                        <property name="paddingLeft">2pt</property>
+                                                        <property name="textAlign">left</property>
+                                                        <property name="resultSetColumn">MODELNUM</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1225">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1981">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="color">#000000</property>
+                                                        <property name="resultSetColumn">descr</property>
+                                                    </data>
+                                                    <text name="(binding to LD)" id="1507">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="color">#000000</property>
+                                                        <property name="dataSet">LD</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param1</property>
+                                                                <expression name="expression">row._outer["PONUM"]</expression>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="paramName">param2</property>
+                                                                <expression name="expression">row["IT"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">LDTEXT</property>
+                                                                <expression name="expression">dataSetRow["LDTEXT"]</expression>
+                                                                <property name="dataType">string</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="contentType">html</property>
+                                                        <text-property name="content"><![CDATA[<VALUE-OF>row._outer["IN2"]</VALUE-OF>]]></text-property>
+                                                    </text>
+                                                    <data id="1979">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="color">#000000</property>
+                                                        <property name="dataSet">LD</property>
+                                                        <list-property name="paramBindings">
+                                                            <structure>
+                                                                <property name="paramName">param1</property>
+                                                                <expression name="expression">row._outer["PONUM"]</expression>
+                                                            </structure>
+                                                            <structure>
+                                                                <property name="paramName">param2</property>
+                                                                <expression name="expression">row["IT"]</expression>
+                                                            </structure>
+                                                        </list-property>
+                                                        <list-property name="boundDataColumns">
+                                                            <structure>
+                                                                <property name="name">LDTEXT</property>
+                                                                <expression name="expression">dataSetRow["LDTEXT"]</expression>
+                                                                <property name="dataType">any</property>
+                                                            </structure>
+                                                        </list-property>
+                                                        <property name="resultSetColumn">LDTEXT</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1227">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <data id="1228">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <structure name="numberFormat">
+                                                            <property name="category">Fixed</property>
+                                                            <property name="pattern">#,##0.00</property>
+                                                        </structure>
+                                                        <property name="textAlign">right</property>
+                                                        <property name="resultSetColumn">UNITCOST</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1229">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <data id="1230">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="resultSetColumn">TAX1CODE</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1231">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <data id="1232">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="paddingRight">2pt</property>
+                                                        <structure name="numberFormat">
+                                                            <property name="category">Fixed</property>
+                                                            <property name="pattern">#,##0.00</property>
+                                                        </structure>
+                                                        <property name="textAlign">right</property>
+                                                        <property name="resultSetColumn">LOADEDCOST</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="1233">
+                                                    <property name="borderBottomColor">#C0C0C0</property>
+                                                    <property name="borderBottomStyle">dotted</property>
+                                                    <property name="borderBottomWidth">thin</property>
+                                                    <property name="paddingRight">3pt</property>
+                                                    <data id="1234">
+                                                        <property name="fontFamily">"Arial"</property>
+                                                        <property name="fontSize">10pt</property>
+                                                        <property name="paddingRight">2pt</property>
+                                                        <structure name="dateTimeFormat">
+                                                            <property name="category">Medium Date</property>
+                                                            <property name="pattern">Medium Date</property>
+                                                        </structure>
+                                                        <property name="textAlign">right</property>
+                                                        <property name="resultSetColumn">REQDELIVERYDATE</property>
+                                                    </data>
+                                                </cell>
+                                            </row>
+                                        </detail>
+                                    </table>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

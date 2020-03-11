@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="author">pieter</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>sr</value>
+    </simple-property-list>
+    <text-property name="title">room reservation</text-property>
+    <property name="comments">COMMENT: Report generated through code by Sales Simple Report Java program</property>
+    <html-property name="description">DESCRIPTION: MM-Karton MAXIMO Report</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);]]></method>
+    <method name="beforeFactory"><![CDATA[// Remove page break intervals from PDF output
+if ( (reportContext.getParameterValue("usepagebreaks") == "false")|| reportContext.getOutputFormat() == "pdf" ) {
+	// Give each table in the report a name, and add the names to the list below, e.g. ["mainTable", "childTable1"]
+	var tableListing = ["mainTable"];
+	for each(var tableName in tableListing) {
+		var table = reportContext.getReportRunnable().designHandle.getDesignHandle().findElement(tableName)
+		if (table != null)
+		{
+			table.setProperty("pageBreakInterval", 0);
+		}
+	}
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo List Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="200">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="202">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="201">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="usepagebreaks" id="342">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">true</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="sqltext" id="548">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="startdate" id="552">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="enddate" id="553">
+            <property name="valueType">static</property>
+            <property name="dataType">dateTime</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="location" id="582">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="dataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">AFFECTEDEMAIL</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">AFFECTEDPERSON</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">AFFECTEDPHONE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">DESCRIPTION</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">LDTEXT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">REPORTEDBY</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">TARGETFINISH</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">TARGETSTART</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">TICKETID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">CATERING</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">FORMAT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">LCD</property>
+                    <property name="dataType">boolean</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">VIDEO</property>
+                    <property name="dataType">boolean</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">LOCATIONRR</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">SITEID</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">AFFECTEDEMAIL</property>
+                </structure>
+                <structure>
+                    <property name="columnName">AFFECTEDPERSON</property>
+                </structure>
+                <structure>
+                    <property name="columnName">AFFECTEDPHONE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DESCRIPTION</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LDTEXT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">REPORTEDBY</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TARGETFINISH</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TARGETSTART</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TICKETID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">CATERING</property>
+                </structure>
+                <structure>
+                    <property name="columnName">FORMAT</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LCD</property>
+                </structure>
+                <structure>
+                    <property name="columnName">VIDEO</property>
+                </structure>
+                <structure>
+                    <property name="columnName">LOCATIONRR</property>
+                </structure>
+                <structure>
+                    <property name="columnName">SITEID</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">AFFECTEDEMAIL</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">AFFECTEDPERSON</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">AFFECTEDPHONE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">DESCRIPTION</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">LDTEXT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">REPORTEDBY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">TARGETFINISH</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">TARGETSTART</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">TICKETID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">CATERING</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">FORMAT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">LCD</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">VIDEO</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">LOCATIONRR</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">SITEID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+	maximoDataSet.open();
+	
+//var startdate = params["startdate"];
+//var enddate = params["enddate"];
+
+var sqlText = new String();
+
+sqlText = " select sr.ticketid "
+ + " , sr.siteid "
+ + " , sr.description "
+ + " , longdescription.ldtext "
+ + " , sr.locationrr "
+ + " , persona.displayname affectedperson "
+ + " , sr.affectedemail "
+ + " , sr.affectedphone "
+ + " , personb.displayname reportedby "
+ + " , sr.targetstart "
+ + " , sr.targetfinish "
+ + " , sr.catering "
+ + ", sr.format "
+ + ", sr.lcd "
+ + " ,sr.video "
+ + " from sr "
+ + " left outer join person persona on sr.affectedperson = persona.personid  "
+ + " left outer join person personb on sr.reportedby = personb.personid "
+ + " left outer join longdescription on sr.ticketuid = longdescription.ldkey  and longdescription.ldownertable='TICKET' and longdescription.ldownercol = 'DESCRIPTION'  "
+ + " where sr.type = 'RESERVATION' "
+ + " and sr.targetstart between " + MXReportSqlFormat.getStartDayTimestampFunction(params["startdate"])
+ + " and "+ MXReportSqlFormat.getEndDayTimestampFunction(params["enddate"])
+ + " and " + MXReportSqlFormat.createParamWhereClause("sr.locationrr", params["location"].toUpperCase())
+ + " order by targetstart"
+//	 + " and " + params["where"];
+	maximoDataSet.setQuery(sqlText);
+	
+			params["sqltext"] = sqlText;
+]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	   return (false);
+	// Add a line for each output column
+	row["AFFECTEDEMAIL"] = maximoDataSet.getString("AFFECTEDEMAIL");
+	row["AFFECTEDPERSON"] = maximoDataSet.getString("AFFECTEDPERSON");
+	row["AFFECTEDPHONE"] = maximoDataSet.getString("AFFECTEDPHONE");
+	row["DESCRIPTION"] = maximoDataSet.getString("DESCRIPTION");
+	row["LDTEXT"] = maximoDataSet.getString("LDTEXT");
+	row["REPORTEDBY"] = maximoDataSet.getString("REPORTEDBY");
+	row["TARGETFINISH"] = maximoDataSet.getTimestamp("TARGETFINISH");
+	row["TARGETSTART"] = maximoDataSet.getTimestamp("TARGETSTART");
+	row["TICKETID"] = maximoDataSet.getString("TICKETID");
+	row["CATERING"] = maximoDataSet.getString("CATERING");
+	row["FORMAT"] = maximoDataSet.getString("FORMAT");
+	row["LCD"] = maximoDataSet.getString("LCD");
+	row["VIDEO"] = maximoDataSet.getString("VIDEO");
+	row["LOCATIONRR"] = maximoDataSet.getString("LOCATIONRR");
+	row["SITEID"] = maximoDataSet.getString("SITEID");
+	return (true);
+]]></method>
+        </script-data-set>
+        <script-data-set name="specifications" id="583">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ASSETATTRID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">MEASUREUNITID</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">NUMVALUE</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">TICKETID</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ASSETATTRID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">MEASUREUNITID</property>
+                </structure>
+                <structure>
+                    <property name="columnName">NUMVALUE</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TICKETID</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ASSETATTRID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">MEASUREUNITID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">NUMVALUE</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">TICKETID</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+	maximoDataSet.open();
+	var sqlText = new String();
+	// Add MM-Maximo query to sqlText variable.
+sqlText = " select ticketid,assetattrid, numvalue,measureunitid "
+ + " from ticketspec "
+ + " where class = 'SR' "
+ + " and numvalue >=0"
+ + "  and ticketid = '" + rows[0]["TICKETID"] + "' ";
+ + "       and siteid = '" + rows[0]["SITEID"] + "'";
+//	 + " and " + params["where"];
+	maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	   return (false);
+	// Add a line for each output column
+	row["ASSETATTRID"] = maximoDataSet.getString("ASSETATTRID");
+	row["MEASUREUNITID"] = maximoDataSet.getString("MEASUREUNITID");
+	row["NUMVALUE"] = maximoDataSet.getDouble("NUMVALUE");
+	row["TICKETID"] = maximoDataSet.getString("TICKETID");
+	return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="NewSimpleMasterPage" id="343">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="topMargin">1cm</property>
+            <property name="leftMargin">1.25cm</property>
+            <property name="bottomMargin">1cm</property>
+            <property name="rightMargin">1.25cm</property>
+            <property name="headerHeight">12mm</property>
+            <page-header>
+                <grid id="540">
+                    <property name="width">100%</property>
+                    <column id="541">
+                        <property name="width">50%</property>
+                    </column>
+                    <column id="542">
+                        <property name="width">50%</property>
+                    </column>
+                    <row id="543">
+                        <cell id="544">
+                            <data id="551">
+                                <property name="fontSize">18pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">left</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">period</property>
+                                        <expression name="expression">'Room Reservations'</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">period</property>
+                            </data>
+                        </cell>
+                        <cell id="545">
+                            <property name="verticalAlign">bottom</property>
+                            <text id="556">
+                                <property name="fontSize">9pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">right</property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[Reservations from  <VALUE-OF>params["startdate"].value</VALUE-OF>
+ upto (not including) <VALUE-OF>params["enddate"].value</VALUE-OF>]]></text-property>
+                            </text>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+            <page-footer>
+                <grid name="NewGrid3" id="344">
+                    <property name="marginTop">0pt</property>
+                    <property name="width">100%</property>
+                    <column id="345">
+                        <property name="width">50%</property>
+                    </column>
+                    <column id="346">
+                        <property name="width">50%</property>
+                        <property name="textAlign">right</property>
+                    </column>
+                    <row id="347">
+                        <cell id="348">
+                            <text name="NewText2" id="349">
+                                <property name="fontWeight">bold</property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<value-of format="General Date">new Date()</value-of>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="350">
+                            <grid id="568">
+                                <property name="textAlign">right</property>
+                                <property name="width">100%</property>
+                                <column id="580"/>
+                                <column id="569">
+                                    <property name="width">5mm</property>
+                                </column>
+                                <column id="570">
+                                    <property name="width">5mm</property>
+                                </column>
+                                <column id="571">
+                                    <property name="width">5mm</property>
+                                </column>
+                                <row id="572">
+                                    <cell id="579">
+                                        <label id="581">
+                                            <text-property name="text">Page</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="573">
+                                        <auto-text id="577">
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="574">
+                                        <label id="578">
+                                            <text-property name="text">of</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="575">
+                                        <auto-text id="576">
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="398">
+            <property name="width">100%</property>
+            <property name="dataSet">dataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">AFFECTEDEMAIL</property>
+                    <property name="displayName">AFFECTEDEMAIL</property>
+                    <expression name="expression">dataSetRow["AFFECTEDEMAIL"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">AFFECTEDPERSON</property>
+                    <property name="displayName">AFFECTEDPERSON</property>
+                    <expression name="expression">dataSetRow["AFFECTEDPERSON"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">AFFECTEDPHONE</property>
+                    <property name="displayName">AFFECTEDPHONE</property>
+                    <expression name="expression">dataSetRow["AFFECTEDPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DESCRIPTION</property>
+                    <property name="displayName">DESCRIPTION</property>
+                    <expression name="expression">if (dataSetRow["DESCRIPTION"]==null )
+'No location specified'
+else
+dataSetRow["DESCRIPTION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LDTEXT</property>
+                    <property name="displayName">LDTEXT</property>
+                    <expression name="expression">dataSetRow["LDTEXT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">REPORTEDBY</property>
+                    <property name="displayName">REPORTEDBY</property>
+                    <expression name="expression">dataSetRow["REPORTEDBY"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">TARGETFINISH</property>
+                    <property name="displayName">TARGETFINISH</property>
+                    <expression name="expression">dataSetRow["TARGETFINISH"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">TARGETSTART</property>
+                    <property name="displayName">TARGETSTART</property>
+                    <expression name="expression">dataSetRow["TARGETSTART"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">TICKETID</property>
+                    <property name="displayName">TICKETID</property>
+                    <expression name="expression">dataSetRow["TICKETID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">CATERING</property>
+                    <property name="displayName">CATERING</property>
+                    <expression name="expression">dataSetRow["CATERING"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FORMAT</property>
+                    <property name="displayName">FORMAT</property>
+                    <expression name="expression">dataSetRow["FORMAT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LCD</property>
+                    <property name="displayName">LCD</property>
+                    <expression name="expression">if (dataSetRow["LCD"]==0 )
+'N'
+else
+if (dataSetRow["LCD"]==1 )
+'Y'</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">VIDEO</property>
+                    <property name="displayName">VIDEO</property>
+                    <expression name="expression">if (dataSetRow["VIDEO"]==0 )
+'N'
+else
+if (dataSetRow["VIDEO"]==1 )
+'Y'</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LOCATIONRR</property>
+                    <property name="displayName">LOCATIONRR</property>
+                    <expression name="expression">if (dataSetRow["LOCATIONRR"]==null )
+'No location specified'
+else
+dataSetRow["LOCATIONRR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key">row["LOCATIONRR"]</expression>
+                    <property name="direction">asc</property>
+                </structure>
+                <structure>
+                    <expression name="key">row["TARGETSTART"]</expression>
+                    <property name="direction">asc</property>
+                </structure>
+            </list-property>
+            <column id="489">
+                <property name="width">20mm</property>
+            </column>
+            <column id="473">
+                <property name="width">40mm</property>
+            </column>
+            <column id="474">
+                <property name="width">40mm</property>
+            </column>
+            <column id="476">
+                <property name="width">50mm</property>
+            </column>
+            <column id="477">
+                <property name="width">30mm</property>
+            </column>
+            <column id="478">
+                <property name="width">10mm</property>
+            </column>
+            <column id="479">
+                <property name="width">10mm</property>
+            </column>
+            <column id="480">
+                <property name="width">20mm</property>
+            </column>
+            <column id="481">
+                <property name="width">20mm</property>
+            </column>
+            <group id="490">
+                <property name="groupName">Location</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["LOCATIONRR"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["LOCATIONRR"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="524">
+                        <property name="backgroundColor">#7E90BF</property>
+                        <cell id="525">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <data id="436">
+                                <property name="fontSize">12pt</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="resultSetColumn">DESCRIPTION</property>
+                            </data>
+                        </cell>
+                        <cell id="530"/>
+                        <cell id="531"/>
+                        <cell id="532"/>
+                        <cell id="533"/>
+                        <cell id="534"/>
+                        <cell id="535"/>
+                    </row>
+                    <row id="491">
+                        <property name="fontSize">6pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="textUnderline">underline</property>
+                        <property name="textAlign">left</property>
+                        <cell id="492">
+                            <label id="417">
+                                <text-property name="text">Reservation #</text-property>
+                            </label>
+                        </cell>
+                        <cell id="494">
+                            <label id="409">
+                                <text-property name="text">Additional information</text-property>
+                            </label>
+                        </cell>
+                        <cell id="495">
+                            <label id="403">
+                                <text-property name="text">Affected person</text-property>
+                            </label>
+                        </cell>
+                        <cell id="497">
+                            <label id="419">
+                                <text-property name="text">Req. catering</text-property>
+                            </label>
+                        </cell>
+                        <cell id="498">
+                            <label id="421">
+                                <text-property name="text">Req. room format</text-property>
+                            </label>
+                        </cell>
+                        <cell id="499">
+                            <label id="423">
+                                <text-property name="text">Projector req.</text-property>
+                            </label>
+                        </cell>
+                        <cell id="500">
+                            <label id="425">
+                                <text-property name="text">Videoconf req.</text-property>
+                            </label>
+                        </cell>
+                        <cell id="501">
+                            <label id="415">
+                                <text-property name="text">Start date/time</text-property>
+                            </label>
+                        </cell>
+                        <cell id="502">
+                            <label id="413">
+                                <text-property name="text">Finish date/time</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </header>
+                <footer>
+                    <row id="507">
+                        <cell id="508"/>
+                        <cell id="510"/>
+                        <cell id="511"/>
+                        <cell id="513"/>
+                        <cell id="514">
+                            <property name="colSpan">5</property>
+                            <property name="rowSpan">1</property>
+                        </cell>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="428">
+                    <property name="fontSize">6pt</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="textAlign">left</property>
+                    <cell id="487">
+                        <data id="446">
+                            <property name="resultSetColumn">TICKETID</property>
+                        </data>
+                    </cell>
+                    <cell id="431">
+                        <data id="438">
+                            <property name="resultSetColumn">LDTEXT</property>
+                        </data>
+                    </cell>
+                    <cell id="433">
+                        <data id="432">
+                            <property name="fontWeight">bold</property>
+                            <property name="resultSetColumn">AFFECTEDPERSON</property>
+                        </data>
+                        <data id="434">
+                            <property name="resultSetColumn">AFFECTEDPHONE</property>
+                        </data>
+                        <data id="430">
+                            <property name="resultSetColumn">AFFECTEDEMAIL</property>
+                        </data>
+                    </cell>
+                    <cell id="437">
+                        <table id="584">
+                            <property name="width">100%</property>
+                            <property name="dataSet">specifications</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">(Total.count(row["TICKETID"] != null) == 0)</expression>
+                                </structure>
+                            </list-property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">ASSETATTRID</property>
+                                    <property name="displayName">ASSETATTRID</property>
+                                    <expression name="expression">dataSetRow["ASSETATTRID"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">MEASUREUNITID</property>
+                                    <property name="displayName">MEASUREUNITID</property>
+                                    <expression name="expression">dataSetRow["MEASUREUNITID"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">NUMVALUE</property>
+                                    <property name="displayName">NUMVALUE</property>
+                                    <expression name="expression">dataSetRow["NUMVALUE"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">TICKETID</property>
+                                    <property name="displayName">TICKETID</property>
+                                    <expression name="expression">dataSetRow["TICKETID"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                            </list-property>
+                            <column id="608">
+                                <property name="width">25mm</property>
+                            </column>
+                            <column id="609">
+                                <property name="width">10mm</property>
+                            </column>
+                            <column id="610">
+                                <property name="width">15mm</property>
+                            </column>
+                            <detail>
+                                <row id="594">
+                                    <cell id="595">
+                                        <data id="596">
+                                            <property name="resultSetColumn">ASSETATTRID</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="597">
+                                        <data id="600">
+                                            <property name="textAlign">center</property>
+                                            <property name="resultSetColumn">NUMVALUE</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="599">
+                                        <data id="598">
+                                            <property name="resultSetColumn">MEASUREUNITID</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                    <cell id="439">
+                        <data id="450">
+                            <structure name="numberFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="resultSetColumn">FORMAT</property>
+                        </data>
+                    </cell>
+                    <cell id="441">
+                        <data id="452">
+                            <structure name="numberFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="resultSetColumn">LCD</property>
+                        </data>
+                    </cell>
+                    <cell id="443">
+                        <data id="454">
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                            </structure>
+                            <structure name="stringFormat">
+                                <property name="category">Unformatted</property>
+                            </structure>
+                            <property name="resultSetColumn">VIDEO</property>
+                        </data>
+                    </cell>
+                    <cell id="445">
+                        <data id="444">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM - hh:mm</property>
+                            </structure>
+                            <property name="resultSetColumn">TARGETSTART</property>
+                        </data>
+                    </cell>
+                    <cell id="447">
+                        <data id="442">
+                            <structure name="dateTimeFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">dd-MM - hh:mm</property>
+                            </structure>
+                            <property name="resultSetColumn">TARGETFINISH</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="457">
+                    <cell id="488"/>
+                    <cell id="459"/>
+                    <cell id="460"/>
+                    <cell id="462"/>
+                    <cell id="463"/>
+                    <cell id="464"/>
+                    <cell id="465"/>
+                    <cell id="466"/>
+                    <cell id="467"/>
+                </row>
+            </footer>
+        </table>
+        <data id="549">
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">pdf</property>
+                    <expression name="valueExpr">true</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">sqltext</property>
+                    <expression name="expression">params["sqltext"].value</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">sqltext</property>
+        </data>
+    </body>
+</report>

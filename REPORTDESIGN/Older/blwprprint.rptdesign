@@ -1,0 +1,2402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">Macs BV Maximo Report Template
+With IBM MAximo standard Parameters and Library</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("C:/temp/inventory_transactions_adjustments.log");]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">MACS Report Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+        <structure>
+            <property name="fileName">MACSDataLibrary.rptlibrary</property>
+            <property name="namespace">MACSDataLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="MACSDataSource" id="829"
+ extends="MACSDataLibrary.MACSDataSource"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="PRDATA" id="1808">
+            <structure name="cachedMetaData"/>
+            <property name="dataSource">MACSDataSource</property>
+            <method name="beforeOpen"><![CDATA[this.queryText =this.queryText + " And " + params["where"];]]></method>
+            <property name="queryText"> SELECT pr.prnum prnum                        ,
+  sysdate printdate , 
+  pr.vendor vendor                            ,
+  pr.billto billto                            ,
+  pr.shipto shipto                            ,
+  pr.description prdescription                ,
+  pr.status status                            ,
+  pr.statusdate statusdate                    ,
+  pr.pr3 prtype                               ,
+  pr.priority priority                        ,
+  pr.currencycode currencycode                ,
+  pr.freightterms freightterms                ,
+  pr.shipvia shipvia                          ,
+  pr.paymentterms paymentterms                ,
+  pr.siteid siteid,
+  pr.billtoattn billtoattn,
+  pr.shiptoattn shiptoattn,
+  longdesc.ldtext                             ,
+  site.description sitedescription            ,
+  billtoaddress.description billtoaddressdesc,
+  billtoaddress.address1 billtoaddress1,
+  billtoaddress.address2 billtoaddress2,
+  billtoaddress.address3 billtoaddress3,
+  billtoaddress.address4 billtoaddress4,
+  billtoaddress.address5 billtoaddress5,
+  billtoaddress.generalphone billtophone,
+  billtoaddress.generalfax billtofax,
+  shiptoaddress.description shiptoaddressdesc,
+  shiptoaddress.address1 shiptoaddress1,
+  shiptoaddress.address2 shiptoaddress2,
+  shiptoaddress.address3 shiptoaddress3,
+  shiptoaddress.address4 shiptoaddress4,
+  shiptoaddress.address5 shiptoaddress5,
+  shiptoaddress.generalphone shiptophone,
+  shiptoaddress.generalfax shiptofax,
+  companies.name companiesname,
+  companies.address1 companiesaddress1,
+  companies.address2 companiesaddress2,
+  companies.address3 companiesaddress3,
+  companies.address4 companiesaddress4,
+  companies.address5 companiesaddress5,
+  companies.phone companiesphone,
+  companies.fax companiesfax,
+  companies.remitcontact companiesremit,
+  requestedby.displayname requestedbyname,
+  pr.contact compcontactname ,
+  compcontact.voicephone compcontphone,
+  compcontact.faxphone compcontfax ,
+  compcontact.email compcontemail,
+  billtoattnperson.displayname billtoattndisplayname,
+  billtoattnprimary.phonenum billtoattnphone,
+  billtoattnfax.phonenum billtoattnfax,
+  billtoattnemail.emailaddress billtoattnemail ,
+  shiptoattnperson.displayname shiptoattndisplayname,
+  shiptoattnprimary.phonenum shiptoattnphone,
+  shiptoattnfax.phonenum shiptoattnfax,
+  shiptoattnemail.emailaddress shiptoattnemail
+   FROM pr ,
+  site     ,
+  companies,
+  (SELECT *
+     FROM longdescription
+    WHERE longdescription.ldownercol = 'DESCRIPTION'
+    AND longdescription.ldownertable   = 'PR'
+  ) longdesc ,
+  address billtoaddress,
+  address shiptoaddress,
+  person requestedby,
+  compcontact,
+  person billtoattnperson , 
+  (select * from phone where phone.isprimary = 1) billtoattnprimary,
+  (select * from phone where phone.type = 'FAX') billtoattnfax ,
+  (select * from email where email.isprimary = 1) billtoattnemail ,
+  person shiptoattnperson , 
+  (select * from phone where phone.isprimary = 1) shiptoattnprimary,
+  (select * from phone where phone.type = 'FAX') shiptoattnfax ,
+  (select * from email where email.isprimary = 1) shiptoattnemail
+  WHERE pr.siteid = site.siteid (+)
+and pr.requestedby = requestedby.personid (+)
+AND pr.vendor     = companies.company (+)
+AND pr.prid       = longdesc.ldkey (+)
+and pr.billto = billtoaddress.addresscode (+)
+and pr.shipto = shiptoaddress.addresscode (+)
+and pr.contact = compcontact.contact (+)
+and pr.billtoattn = billtoattnperson.personid (+)
+and billtoattnperson.personid = billtoattnprimary.personid (+)
+and billtoattnperson.personid = billtoattnfax.personid (+)
+and billtoattnperson.personid = billtoattnemail.personid (+)
+and pr.shiptoattn = shiptoattnperson.personid (+)
+and shiptoattnperson.personid = shiptoattnprimary.personid (+)
+and shiptoattnperson.personid = shiptoattnfax.personid (+)
+and shiptoattnperson.personid = shiptoattnemail.personid (+)</property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PRNUM</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>32</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PRNUM</design:label>
+            <design:formattingHints>
+              <design:displaySize>32</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>VENDOR</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>48</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>VENDOR</design:label>
+            <design:formattingHints>
+              <design:displaySize>48</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>BILLTO</design:name>
+            <design:position>3</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>120</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>BILLTO</design:label>
+            <design:formattingHints>
+              <design:displaySize>120</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SHIPTO</design:name>
+            <design:position>4</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>120</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SHIPTO</design:label>
+            <design:formattingHints>
+              <design:displaySize>120</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PRDESCRIPTION</design:name>
+            <design:position>5</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>400</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PRDESCRIPTION</design:label>
+            <design:formattingHints>
+              <design:displaySize>400</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>STATUS</design:name>
+            <design:position>6</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>48</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>STATUS</design:label>
+            <design:formattingHints>
+              <design:displaySize>48</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>STATUSDATE</design:name>
+            <design:position>7</design:position>
+            <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>STATUSDATE</design:label>
+            <design:formattingHints>
+              <design:displaySize>7</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PRTYPE</design:name>
+            <design:position>8</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>72</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PRTYPE</design:label>
+            <design:formattingHints>
+              <design:displaySize>72</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PRIORITY</design:name>
+            <design:position>9</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>-127</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PRIORITY</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>CURRENCYCODE</design:name>
+            <design:position>10</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>32</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>NotNullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>CURRENCYCODE</design:label>
+            <design:formattingHints>
+              <design:displaySize>32</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>FREIGHTTERMS</design:name>
+            <design:position>11</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>200</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>FREIGHTTERMS</design:label>
+            <design:formattingHints>
+              <design:displaySize>200</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SHIPVIA</design:name>
+            <design:position>12</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>80</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SHIPVIA</design:label>
+            <design:formattingHints>
+              <design:displaySize>80</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>PAYMENTTERMS</design:name>
+            <design:position>13</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>80</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PAYMENTTERMS</design:label>
+            <design:formattingHints>
+              <design:displaySize>80</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>LDTEXT</design:name>
+            <design:position>14</design:position>
+            <design:nativeDataTypeCode>2005</design:nativeDataTypeCode>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SITEBILLTOADDRESSCODE</design:name>
+            <design:position>15</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>120</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SITEBILLTOADDRESSCODE</design:label>
+            <design:formattingHints>
+              <design:displaySize>120</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>SITESHIPTOADDRESSCODE</design:name>
+            <design:position>16</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>120</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>SITESHIPTOADDRESSCODE</design:label>
+            <design:formattingHints>
+              <design:displaySize>120</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="PRLINE" id="1928">
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">PRNUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">PRLINENUM</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ITEMNUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ORDERQTY</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">ORDERUNIT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">PRLINEDESC</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">MODELNUM</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">CATALOGCODE</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">GLDEBITACCT</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">REQDELIVERYDATE</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">UNITCOST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">LINECOST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">LOADEDCOST</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">LONGDESC</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MACSDataSource</property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">paramPrnum</property>
+                    <property name="dataType">any</property>
+                    <property name="position">1</property>
+                    <expression name="defaultValue">"GD2008-50012"</expression>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">PRNUM</property>
+                    <property name="nativeName">PRNUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">PRLINENUM</property>
+                    <property name="nativeName">PRLINENUM</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ITEMNUM</property>
+                    <property name="nativeName">ITEMNUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ORDERQTY</property>
+                    <property name="nativeName">ORDERQTY</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">ORDERUNIT</property>
+                    <property name="nativeName">ORDERUNIT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">PRLINEDESC</property>
+                    <property name="nativeName">PRLINEDESC</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">MODELNUM</property>
+                    <property name="nativeName">MODELNUM</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">CATALOGCODE</property>
+                    <property name="nativeName">CATALOGCODE</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">GLDEBITACCT</property>
+                    <property name="nativeName">GLDEBITACCT</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">REQDELIVERYDATE</property>
+                    <property name="nativeName">REQDELIVERYDATE</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">UNITCOST</property>
+                    <property name="nativeName">UNITCOST</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">LINECOST</property>
+                    <property name="nativeName">LINECOST</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">LOADEDCOST</property>
+                    <property name="nativeName">LOADEDCOST</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">LONGDESC</property>
+                    <property name="nativeName">LONGDESC</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="queryText">select prline.prnum prnum,
+  prline.prlinenum prlinenum,
+  prline.itemnum itemnum,
+  prline.orderqty orderqty,
+  prline.orderunit orderunit,
+  prline.description prlinedesc,
+  prline.modelnum modelnum,
+  prline.catalogcode catalogcode,
+  prline.gldebitacct gldebitacct,
+  prline.reqdeliverydate reqdeliverydate,
+  prline.unitcost unitcost,
+  prline.linecost linecost,
+  prline.loadedcost loadedcost,
+  prllongdesc.ldtext longdesc
+from PRLINE,
+  ( SELECT *
+    FROM longdescription
+    WHERE longdescription.ldownercol = 'DESCRIPTION'
+    AND longdescription.ldownertable   = 'PRLINE'
+   ) prllongdesc
+where prline.prnum = ?
+and prline.prlineid = prllongdesc.ldkey (+)</property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="NewSimpleMasterPage" id="2665">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="topMargin">10mm</property>
+            <property name="leftMargin">5mm</property>
+            <property name="bottomMargin">10mm</property>
+            <property name="rightMargin">5mm</property>
+            <property name="headerHeight">0mm</property>
+            <page-footer>
+                <grid id="2666">
+                    <property name="width">100%</property>
+                    <column id="2667"/>
+                    <column id="2668">
+                        <property name="width">12%</property>
+                    </column>
+                    <column id="2669"/>
+                    <row id="2670">
+                        <property name="verticalAlign">bottom</property>
+                        <cell id="2671">
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <text id="2674">
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="2672">
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <grid id="2675">
+                                <property name="width">100%</property>
+                                <column id="2689">
+                                    <property name="width">0.3229166667in</property>
+                                </column>
+                                <column id="2676">
+                                    <property name="width">0.3229166667in</property>
+                                </column>
+                                <column id="2677"/>
+                                <column id="2678"/>
+                                <row id="2679">
+                                    <property name="verticalAlign">bottom</property>
+                                    <cell id="2688">
+                                        <property name="textAlign">right</property>
+                                        <label id="2690">
+                                            <text-property name="text">Page</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2680">
+                                        <property name="textAlign">center</property>
+                                        <auto-text id="2681">
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="2682">
+                                        <property name="textAlign">center</property>
+                                        <text id="2683">
+                                            <property name="contentType">plain</property>
+                                            <text-property name="content"><![CDATA[of]]></text-property>
+                                        </text>
+                                    </cell>
+                                    <cell id="2684">
+                                        <property name="textAlign">center</property>
+                                        <auto-text id="2685">
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                        <cell id="2673">
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <label id="2687">
+                                <property name="textAlign">right</property>
+                                <text-property name="text">BLWPRPRINT    Rev. C   Rev.Date: 8-Jan-10</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <table id="1931">
+            <property name="pageBreakAfter">avoid</property>
+            <property name="width">100%</property>
+            <property name="dataSet">PRDATA</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">PRNUM</property>
+                    <expression name="expression">dataSetRow["PRNUM"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">PRINTDATE</property>
+                    <expression name="expression">dataSetRow["PRINTDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">VENDOR</property>
+                    <expression name="expression">dataSetRow["VENDOR"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTO</property>
+                    <expression name="expression">dataSetRow["BILLTO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTO</property>
+                    <expression name="expression">dataSetRow["SHIPTO"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">PRDESCRIPTION</property>
+                    <expression name="expression">dataSetRow["PRDESCRIPTION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUS</property>
+                    <expression name="expression">dataSetRow["STATUS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">STATUSDATE</property>
+                    <expression name="expression">dataSetRow["STATUSDATE"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">PRTYPE</property>
+                    <expression name="expression">dataSetRow["PRTYPE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">PRIORITY</property>
+                    <expression name="expression">dataSetRow["PRIORITY"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="name">CURRENCYCODE</property>
+                    <expression name="expression">dataSetRow["CURRENCYCODE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FREIGHTTERMS</property>
+                    <expression name="expression">dataSetRow["FREIGHTTERMS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPVIA</property>
+                    <expression name="expression">dataSetRow["SHIPVIA"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">PAYMENTTERMS</property>
+                    <expression name="expression">dataSetRow["PAYMENTTERMS"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SITEID</property>
+                    <expression name="expression">dataSetRow["SITEID"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOATTN</property>
+                    <expression name="expression">dataSetRow["BILLTOATTN"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOATTN</property>
+                    <expression name="expression">dataSetRow["SHIPTOATTN"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">LDTEXT</property>
+                    <expression name="expression">dataSetRow["LDTEXT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SITEDESCRIPTION</property>
+                    <expression name="expression">dataSetRow["SITEDESCRIPTION"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOADDRESSDESC</property>
+                    <expression name="expression">dataSetRow["BILLTOADDRESSDESC"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOADDRESS1</property>
+                    <expression name="expression">dataSetRow["BILLTOADDRESS1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOADDRESS2</property>
+                    <expression name="expression">dataSetRow["BILLTOADDRESS2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOADDRESS3</property>
+                    <expression name="expression">dataSetRow["BILLTOADDRESS3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOADDRESS4</property>
+                    <expression name="expression">dataSetRow["BILLTOADDRESS4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOADDRESS5</property>
+                    <expression name="expression">dataSetRow["BILLTOADDRESS5"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOPHONE</property>
+                    <expression name="expression">dataSetRow["BILLTOPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOFAX</property>
+                    <expression name="expression">dataSetRow["BILLTOFAX"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOADDRESSDESC</property>
+                    <expression name="expression">dataSetRow["SHIPTOADDRESSDESC"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOADDRESS1</property>
+                    <expression name="expression">dataSetRow["SHIPTOADDRESS1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOADDRESS2</property>
+                    <expression name="expression">dataSetRow["SHIPTOADDRESS2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOADDRESS3</property>
+                    <expression name="expression">dataSetRow["SHIPTOADDRESS3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOADDRESS4</property>
+                    <expression name="expression">dataSetRow["SHIPTOADDRESS4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOADDRESS5</property>
+                    <expression name="expression">dataSetRow["SHIPTOADDRESS5"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOPHONE</property>
+                    <expression name="expression">dataSetRow["SHIPTOPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOFAX</property>
+                    <expression name="expression">dataSetRow["SHIPTOFAX"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESNAME</property>
+                    <expression name="expression">dataSetRow["COMPANIESNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESADDRESS1</property>
+                    <expression name="expression">dataSetRow["COMPANIESADDRESS1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESADDRESS2</property>
+                    <expression name="expression">dataSetRow["COMPANIESADDRESS2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESADDRESS3</property>
+                    <expression name="expression">dataSetRow["COMPANIESADDRESS3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESADDRESS4</property>
+                    <expression name="expression">dataSetRow["COMPANIESADDRESS4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESADDRESS5</property>
+                    <expression name="expression">dataSetRow["COMPANIESADDRESS5"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESPHONE</property>
+                    <expression name="expression">dataSetRow["COMPANIESPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESFAX</property>
+                    <expression name="expression">dataSetRow["COMPANIESFAX"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPANIESREMIT</property>
+                    <expression name="expression">dataSetRow["COMPANIESREMIT"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">REQUESTEDBYNAME</property>
+                    <expression name="expression">dataSetRow["REQUESTEDBYNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPCONTACTNAME</property>
+                    <expression name="expression">dataSetRow["COMPCONTACTNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPCONTPHONE</property>
+                    <expression name="expression">dataSetRow["COMPCONTPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPCONTFAX</property>
+                    <expression name="expression">dataSetRow["COMPCONTFAX"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">COMPCONTEMAIL</property>
+                    <expression name="expression">dataSetRow["COMPCONTEMAIL"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOATTNDISPLAYNAME</property>
+                    <expression name="expression">dataSetRow["BILLTOATTNDISPLAYNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOATTNPHONE</property>
+                    <expression name="expression">dataSetRow["BILLTOATTNPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOATTNFAX</property>
+                    <expression name="expression">dataSetRow["BILLTOATTNFAX"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">BILLTOATTNEMAIL</property>
+                    <expression name="expression">dataSetRow["BILLTOATTNEMAIL"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOATTNDISPLAYNAME</property>
+                    <expression name="expression">dataSetRow["SHIPTOATTNDISPLAYNAME"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOATTNPHONE</property>
+                    <expression name="expression">dataSetRow["SHIPTOATTNPHONE"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOATTNFAX</property>
+                    <expression name="expression">dataSetRow["SHIPTOATTNFAX"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">SHIPTOATTNEMAIL</property>
+                    <expression name="expression">dataSetRow["SHIPTOATTNEMAIL"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="pageBreakInterval">50</property>
+            <column id="1988"/>
+            <column id="1989"/>
+            <column id="1990"/>
+            <group id="2000">
+                <property name="groupName">PR</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr">row["PRNUM"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue">row["PRNUM"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">always-excluding-last</property>
+                <property name="pageBreakBefore">auto</property>
+                <header>
+                    <row id="2001">
+                        <cell id="2002">
+                            <image id="2692">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">row["SITEID"] == 'BM'</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="source">file</property>
+                                <expression name="uri">"Bluewater.gif"</expression>
+                            </image>
+                            <image id="2693">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">row["SITEID"] != 'BM'</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="source">file</property>
+                                <expression name="uri">"Stachi.GIF"</expression>
+                            </image>
+                        </cell>
+                        <cell id="2003">
+                            <property name="colSpan">2</property>
+                            <property name="rowSpan">1</property>
+                            <property name="textAlign">right</property>
+                            <text id="2697">
+                                <property name="fontSize">larger</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<VALUE-OF>row["PRTYPE"]</VALUE-OF> PURCHASE REQUISITION NUMBER: <VALUE-OF>row["PRNUM"]</VALUE-OF>]]></text-property>
+                            </text>
+                        </cell>
+                    </row>
+                    <row id="2010">
+                        <cell id="2011">
+                            <data id="2039">
+                                <property name="fontSize">small</property>
+                                <property name="resultSetColumn">BILLTOADDRESSDESC</property>
+                            </data>
+                        </cell>
+                        <cell id="2012"/>
+                        <cell id="2013">
+                            <label id="2035">
+                                <property name="fontSize">x-small</property>
+                                <property name="fontWeight">bold</property>
+                                <property name="textAlign">right</property>
+                                <text-property name="text">(Please refer to this number on all correspondence)</text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="2030">
+                        <cell id="2031">
+                            <text id="2694">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">(row["SHIPTOADDRESS1"] == null) &amp;&amp; (row["SHIPTOADDRESS2"] == null)</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<VALUE-OF>row["BILLTOADDRESS1"]</VALUE-OF> , <VALUE-OF>row["BILLTOADDRESS2"]</VALUE-OF>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="2032"/>
+                        <cell id="2033"/>
+                    </row>
+                    <row id="2026">
+                        <cell id="2027">
+                            <text id="2695">
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr">(row["SHIPTOADDRESS3"] == null) &amp;&amp; (row["SHIPTOADDRESS4"] == null)</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<VALUE-OF>row["BILLTOADDRESS3"]</VALUE-OF><VALUE-OF>if((row["BILLTOADDRESS3"]==null)||(row["BILLTOADDRESS4"]==null)){", "} else {""}</VALUE-OF>
+</VALUE-OF><VALUE-OF>row["BILLTOADDRESS4"]</VALUE-OF>
+
+]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="2028"/>
+                        <cell id="2029"/>
+                    </row>
+                    <row id="2022">
+                        <cell id="2023">
+                            <data id="2067">
+                                <property name="fontSize">small</property>
+                                <property name="resultSetColumn">BILLTOADDRESS5</property>
+                            </data>
+                        </cell>
+                        <cell id="2024"/>
+                        <cell id="2025"/>
+                    </row>
+                    <row id="2018">
+                        <cell id="2019">
+                            <text id="2696">
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[Tel: <VALUE-OF>row["BILLTOPHONE"]</VALUE-OF>  Fax: <VALUE-OF>row["BILLTOFAX"]</VALUE-OF>]]></text-property>
+                            </text>
+                            <text id="2070">
+                                <property name="fontSize">small</property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<BR>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="2020"/>
+                        <cell id="2021"/>
+                    </row>
+                    <row id="2014">
+                        <cell id="2015">
+                            <text-data id="2069">
+                                <property name="fontSize">small</property>
+                                <property name="fontWeight">bold</property>
+                                <expression name="valueExpr">"Ships spare in Transit: " + row["SITEDESCRIPTION"]</expression>
+                                <property name="contentType">html</property>
+                            </text-data>
+                            <text id="2071">
+                                <property name="fontSize">small</property>
+                                <property name="contentType">html</property>
+                                <text-property name="content"><![CDATA[<BR>]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="2016"/>
+                        <cell id="2017"/>
+                    </row>
+                </header>
+                <footer>
+                    <row id="2005">
+                        <cell id="2006"/>
+                        <cell id="2007"/>
+                        <cell id="2008"/>
+                    </row>
+                </footer>
+            </group>
+            <detail>
+                <row id="1936">
+                    <cell id="1937">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="2712">
+                            <property name="width">100%</property>
+                            <column id="2713">
+                                <property name="width">1.0729166667in</property>
+                            </column>
+                            <column id="2714">
+                                <property name="width">6.3854166667in</property>
+                            </column>
+                            <row id="2715">
+                                <cell id="2716">
+                                    <label id="2140">
+                                        <property name="fontSize">small</property>
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Description:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2717">
+                                    <data id="2141">
+                                        <property name="resultSetColumn">PRDESCRIPTION</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2718">
+                                <cell id="2719"/>
+                                <cell id="2720">
+                                    <data id="2142">
+                                        <property name="resultSetColumn">LDTEXT</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2721">
+                                <cell id="2722"/>
+                                <cell id="2723">
+                                    <text id="2210">
+                                        <property name="fontSize">small</property>
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<BR>]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                    <cell id="1939"/>
+                </row>
+                <row id="2724">
+                    <cell id="2725">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <grid id="2728">
+                            <property name="width">100%</property>
+                            <column id="2729"/>
+                            <column id="2730"/>
+                            <column id="2731"/>
+                            <column id="2732"/>
+                            <column id="2733"/>
+                            <column id="2734"/>
+                            <column id="2735"/>
+                            <column id="2736"/>
+                            <column id="2737"/>
+                            <column id="2738"/>
+                            <column id="2739"/>
+                            <column id="2740"/>
+                            <row id="2741">
+                                <cell id="2742">
+                                    <label id="2289">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Printed On:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2743">
+                                    <data id="2298">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">dd-MMM-yy</property>
+                                        </structure>
+                                        <property name="resultSetColumn">PRINTDATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="2744">
+                                    <label id="2292">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">PR Status:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2745">
+                                    <data id="2301">
+                                        <property name="resultSetColumn">STATUS</property>
+                                    </data>
+                                </cell>
+                                <cell id="2746">
+                                    <label id="2293">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Status Date:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2747">
+                                    <data id="2302">
+                                        <structure name="dateTimeFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">dd-MMM-yy</property>
+                                        </structure>
+                                        <property name="resultSetColumn">STATUSDATE</property>
+                                    </data>
+                                </cell>
+                                <cell id="2748">
+                                    <label id="2294">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Requested by:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2749">
+                                    <data id="2303">
+                                        <property name="resultSetColumn">REQUESTEDBYNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="2750">
+                                    <label id="2296">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Priority:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2751">
+                                    <data id="2305">
+                                        <property name="resultSetColumn">PRIORITY</property>
+                                    </data>
+                                </cell>
+                                <cell id="2752">
+                                    <label id="2297">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Currency:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2753">
+                                    <data id="2306">
+                                        <property name="resultSetColumn">CURRENCYCODE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2754">
+                                <cell id="2755">
+                                    <label id="2291">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Freight Terms</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2756">
+                                    <data id="2299">
+                                        <property name="resultSetColumn">FREIGHTTERMS</property>
+                                    </data>
+                                </cell>
+                                <cell id="2757"/>
+                                <cell id="2758"/>
+                                <cell id="2759"/>
+                                <cell id="2760"/>
+                                <cell id="2761">
+                                    <label id="2295">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Ship via:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2762">
+                                    <data id="2304">
+                                        <property name="resultSetColumn">SHIPVIA</property>
+                                    </data>
+                                </cell>
+                                <cell id="2763"/>
+                                <cell id="2764"/>
+                                <cell id="2765"/>
+                                <cell id="2766"/>
+                            </row>
+                            <row id="2767">
+                                <cell id="2768">
+                                    <label id="2290">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Payment Terms:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2769">
+                                    <data id="2300">
+                                        <property name="resultSetColumn">PAYMENTTERMS</property>
+                                    </data>
+                                </cell>
+                                <cell id="2770"/>
+                                <cell id="2771"/>
+                                <cell id="2772"/>
+                                <cell id="2773"/>
+                                <cell id="2774"/>
+                                <cell id="2775"/>
+                                <cell id="2776"/>
+                                <cell id="2777"/>
+                                <cell id="2778"/>
+                                <cell id="2779"/>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="1944">
+                    <cell id="1945">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">4</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <grid id="2780">
+                            <property name="width">100%</property>
+                            <column id="2781">
+                                <property name="fontWeight">bold</property>
+                            </column>
+                            <column id="2782"/>
+                            <column id="2783"/>
+                            <column id="2787"/>
+                            <column id="2788"/>
+                            <column id="2791"/>
+                            <row id="2793">
+                                <cell id="2794">
+                                    <label id="2386">
+                                        <text-property name="text">Vendor:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2795">
+                                    <data id="2388">
+                                        <property name="resultSetColumn">COMPANIESNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="2796">
+                                    <label id="2411">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Ship To:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2800">
+                                    <data id="2413">
+                                        <property name="resultSetColumn">SHIPTOADDRESSDESC</property>
+                                    </data>
+                                </cell>
+                                <cell id="2801">
+                                    <label id="2412">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Bill To:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2804">
+                                    <data id="2421">
+                                        <property name="resultSetColumn">BILLTOADDRESSDESC</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2806">
+                                <cell id="2807">
+                                    <label id="2387">
+                                        <text-property name="text">Address:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2808">
+                                    <data id="2389">
+                                        <property name="resultSetColumn">COMPANIESADDRESS1</property>
+                                    </data>
+                                </cell>
+                                <cell id="2809">
+                                    <label id="2400">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Address:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2813">
+                                    <data id="2414">
+                                        <property name="resultSetColumn">SHIPTOADDRESS1</property>
+                                    </data>
+                                </cell>
+                                <cell id="2814">
+                                    <label id="2401">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Address:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2817">
+                                    <data id="2422">
+                                        <property name="resultSetColumn">BILLTOADDRESS1</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2819">
+                                <cell id="2820"/>
+                                <cell id="2821">
+                                    <data id="2390">
+                                        <property name="resultSetColumn">COMPANIESADDRESS2</property>
+                                    </data>
+                                </cell>
+                                <cell id="2822"/>
+                                <cell id="2826">
+                                    <data id="2415">
+                                        <property name="resultSetColumn">SHIPTOADDRESS2</property>
+                                    </data>
+                                </cell>
+                                <cell id="2827"/>
+                                <cell id="2830">
+                                    <data id="2423">
+                                        <property name="resultSetColumn">BILLTOADDRESS2</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2832">
+                                <cell id="2833"/>
+                                <cell id="2834">
+                                    <data id="2391">
+                                        <property name="resultSetColumn">COMPANIESADDRESS3</property>
+                                    </data>
+                                </cell>
+                                <cell id="2835"/>
+                                <cell id="2839">
+                                    <data id="2416">
+                                        <property name="resultSetColumn">SHIPTOADDRESS3</property>
+                                    </data>
+                                </cell>
+                                <cell id="2840"/>
+                                <cell id="2843">
+                                    <data id="2424">
+                                        <property name="resultSetColumn">BILLTOADDRESS3</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2845">
+                                <cell id="2846"/>
+                                <cell id="2847">
+                                    <data id="2392">
+                                        <property name="resultSetColumn">COMPANIESADDRESS4</property>
+                                    </data>
+                                </cell>
+                                <cell id="2848"/>
+                                <cell id="2852">
+                                    <data id="2417">
+                                        <property name="resultSetColumn">SHIPTOADDRESS4</property>
+                                    </data>
+                                </cell>
+                                <cell id="2853"/>
+                                <cell id="2856">
+                                    <data id="2425">
+                                        <property name="resultSetColumn">BILLTOADDRESS4</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2858">
+                                <cell id="2859"/>
+                                <cell id="2860">
+                                    <data id="2393">
+                                        <property name="resultSetColumn">COMPANIESADDRESS5</property>
+                                    </data>
+                                </cell>
+                                <cell id="2861"/>
+                                <cell id="2865">
+                                    <data id="2418">
+                                        <property name="resultSetColumn">SHIPTOADDRESS5</property>
+                                    </data>
+                                </cell>
+                                <cell id="2866"/>
+                                <cell id="2869">
+                                    <data id="2426">
+                                        <property name="resultSetColumn">BILLTOADDRESS5</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2871">
+                                <cell id="2872">
+                                    <label id="2394">
+                                        <text-property name="text">Phone:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2873">
+                                    <data id="2402">
+                                        <property name="resultSetColumn">COMPANIESPHONE</property>
+                                    </data>
+                                </cell>
+                                <cell id="2874">
+                                    <label id="2396">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Phone:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2878">
+                                    <data id="2419">
+                                        <property name="resultSetColumn">SHIPTOPHONE</property>
+                                    </data>
+                                </cell>
+                                <cell id="2879">
+                                    <label id="2397">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Phone:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2882">
+                                    <data id="2427">
+                                        <property name="resultSetColumn">BILLTOPHONE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2891">
+                                <cell id="2892">
+                                    <label id="2395">
+                                        <text-property name="text">Fax:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2893">
+                                    <data id="2403">
+                                        <property name="resultSetColumn">COMPANIESFAX</property>
+                                    </data>
+                                </cell>
+                                <cell id="2894">
+                                    <label id="2398">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Fax:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2895">
+                                    <data id="2420">
+                                        <property name="resultSetColumn">SHIPTOFAX</property>
+                                    </data>
+                                </cell>
+                                <cell id="2896">
+                                    <label id="2399">
+                                        <property name="fontWeight">bold</property>
+                                        <text-property name="text">Fax:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2897">
+                                    <data id="2428">
+                                        <property name="resultSetColumn">BILLTOFAX</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2884">
+                                <cell id="2885">
+                                    <label id="2483">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTACTNAME"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">F.A.O.:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2886">
+                                    <data id="2496">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTACTNAME"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">COMPCONTACTNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="2887">
+                                    <label id="2488">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNDISPLAYNAME"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">F.A.O.:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2888">
+                                    <data id="2500">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNDISPLAYNAME"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">SHIPTOATTNDISPLAYNAME</property>
+                                    </data>
+                                </cell>
+                                <cell id="2889">
+                                    <label id="2489">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNDISPLAYNAME"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">F.A.O.:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2890">
+                                    <data id="2504">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNDISPLAYNAME"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">BILLTOATTNDISPLAYNAME</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2898">
+                                <cell id="2899">
+                                    <label id="2484">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTPHONE"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Phone:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2900">
+                                    <data id="2497">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTPHONE"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">COMPCONTPHONE</property>
+                                    </data>
+                                </cell>
+                                <cell id="2901">
+                                    <label id="2490">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNPHONE"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Phone:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2902">
+                                    <data id="2501">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNPHONE"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">SHIPTOATTNPHONE</property>
+                                    </data>
+                                </cell>
+                                <cell id="2903">
+                                    <label id="2491">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNPHONE"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Phone:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2904">
+                                    <data id="2506">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNPHONE"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">BILLTOATTNPHONE</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2905">
+                                <cell id="2906">
+                                    <label id="2485">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTFAX"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Fax:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2907">
+                                    <data id="2498">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTFAX"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">COMPCONTFAX</property>
+                                    </data>
+                                </cell>
+                                <cell id="2908">
+                                    <label id="2492">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNFAX"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Fax:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2909">
+                                    <data id="2502">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNFAX"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">SHIPTOATTNFAX</property>
+                                    </data>
+                                </cell>
+                                <cell id="2910">
+                                    <label id="2493">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNFAX"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Fax:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2911">
+                                    <data id="2507">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNFAX"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">BILLTOATTNFAX</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="2912">
+                                <cell id="2913">
+                                    <label id="2486">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTEMAIL"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Email:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2914">
+                                    <data id="2499">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["COMPCONTEMAIL"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">COMPCONTEMAIL</property>
+                                    </data>
+                                </cell>
+                                <cell id="2915">
+                                    <label id="2494">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNEMAIL"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Email:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2916">
+                                    <data id="2503">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["SHIPTOATTNEMAIL"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">SHIPTOATTNEMAIL</property>
+                                    </data>
+                                </cell>
+                                <cell id="2917">
+                                    <label id="2495">
+                                        <property name="fontWeight">bold</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNEMAIL"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <text-property name="text">Email:</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="2918">
+                                    <data id="2508">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">row["BILLTOATTNEMAIL"] == null</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">BILLTOATTNEMAIL</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+                <row id="1948"/>
+                <row id="1952"/>
+                <row id="1956"/>
+                <row id="2651">
+                    <cell id="2652">
+                        <text id="2655">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<BR>]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="2653"/>
+                    <cell id="2654"/>
+                </row>
+                <row id="1976">
+                    <cell id="1977">
+                        <property name="colSpan">3</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <table id="2509">
+                            <property name="width">100%</property>
+                            <property name="dataSet">PRLINE</property>
+                            <list-property name="paramBindings">
+                                <structure>
+                                    <property name="paramName">paramPrnum</property>
+                                    <expression name="expression">row["PRNUM"]</expression>
+                                </structure>
+                            </list-property>
+                            <list-property name="boundDataColumns">
+                                <structure>
+                                    <property name="name">PRNUM</property>
+                                    <expression name="expression">dataSetRow["PRNUM"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">PRLINENUM</property>
+                                    <expression name="expression">dataSetRow["PRLINENUM"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ITEMNUM</property>
+                                    <expression name="expression">dataSetRow["ITEMNUM"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ORDERQTY</property>
+                                    <expression name="expression">dataSetRow["ORDERQTY"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">ORDERUNIT</property>
+                                    <expression name="expression">dataSetRow["ORDERUNIT"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">PRLINEDESC</property>
+                                    <expression name="expression">dataSetRow["PRLINEDESC"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">MODELNUM</property>
+                                    <expression name="expression">dataSetRow["MODELNUM"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">CATALOGCODE</property>
+                                    <expression name="expression">dataSetRow["CATALOGCODE"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">GLDEBITACCT</property>
+                                    <expression name="expression">dataSetRow["GLDEBITACCT"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">REQDELIVERYDATE</property>
+                                    <expression name="expression">dataSetRow["REQDELIVERYDATE"]</expression>
+                                    <property name="dataType">date-time</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">UNITCOST</property>
+                                    <expression name="expression">dataSetRow["UNITCOST"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">LINECOST</property>
+                                    <expression name="expression">dataSetRow["LINECOST"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">LOADEDCOST</property>
+                                    <expression name="expression">dataSetRow["LOADEDCOST"]</expression>
+                                    <property name="dataType">decimal</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">LONGDESC</property>
+                                    <expression name="expression">dataSetRow["LONGDESC"]</expression>
+                                    <property name="dataType">string</property>
+                                </structure>
+                                <structure>
+                                    <property name="name">totalcost</property>
+                                    <expression name="expression">Total.sum(row["LINECOST"])</expression>
+                                    <property name="dataType">any</property>
+                                    <simple-property-list name="aggregateOn">
+                                        <value>Parent</value>
+                                    </simple-property-list>
+                                </structure>
+                            </list-property>
+                            <property name="pageBreakInterval">50</property>
+                            <column id="2584">
+                                <property name="width">5%</property>
+                            </column>
+                            <column id="2585">
+                                <property name="width">7%</property>
+                            </column>
+                            <column id="2586">
+                                <property name="width">5%</property>
+                            </column>
+                            <column id="2587">
+                                <property name="width">8%</property>
+                            </column>
+                            <column id="2588">
+                                <property name="width">45%</property>
+                            </column>
+                            <column id="2589">
+                                <property name="width">1%</property>
+                            </column>
+                            <column id="2590">
+                                <property name="width">1%</property>
+                            </column>
+                            <column id="2591">
+                                <property name="width">15%</property>
+                            </column>
+                            <column id="2592">
+                                <property name="width">12%</property>
+                            </column>
+                            <column id="2593">
+                                <property name="width">10%</property>
+                            </column>
+                            <column id="2594">
+                                <property name="width">10%</property>
+                            </column>
+                            <header>
+                                <row id="2510">
+                                    <property name="fontWeight">bold</property>
+                                    <cell id="2513">
+                                        <label id="2514">
+                                            <text-property name="text">Line No.</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2515">
+                                        <label id="2516">
+                                            <text-property name="text">Item No.</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2517">
+                                        <label id="2518">
+                                            <text-property name="text">Qty</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2519">
+                                        <label id="2520">
+                                            <text-property name="text">Unit</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2521">
+                                        <label id="2522">
+                                            <text-property name="text">Description</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2523"/>
+                                    <cell id="2525"/>
+                                    <cell id="2527">
+                                        <label id="2528">
+                                            <text-property name="text">General Ledger</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2529">
+                                        <label id="2530">
+                                            <text-property name="text">Agreed Delivery Date</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2531">
+                                        <label id="2532">
+                                            <property name="textAlign">right</property>
+                                            <text-property name="text">Unit Cost</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="2533">
+                                        <label id="2534">
+                                            <property name="textAlign">right</property>
+                                            <text-property name="text">Line Cost</text-property>
+                                        </label>
+                                    </cell>
+                                </row>
+                            </header>
+                            <group id="2622">
+                                <property name="groupName">Parent</property>
+                                <property name="interval">none</property>
+                                <property name="sortDirection">asc</property>
+                                <expression name="keyExpr">row["PRNUM"]</expression>
+                                <structure name="toc">
+                                    <expression name="expressionValue">row["PRNUM"]</expression>
+                                </structure>
+                                <property name="repeatHeader">true</property>
+                                <property name="hideDetail">false</property>
+                                <property name="pageBreakAfter">auto</property>
+                                <property name="pageBreakBefore">auto</property>
+                                <list-property name="sort">
+                                    <structure>
+                                        <expression name="key">row["PRLINENUM"]</expression>
+                                        <property name="direction">asc</property>
+                                    </structure>
+                                </list-property>
+                                <header>
+                                    <row id="2623">
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr">true</expression>
+                                            </structure>
+                                        </list-property>
+                                        <cell id="2624">
+                                            <data id="2647">
+                                                <property name="resultSetColumn">PRNUM</property>
+                                            </data>
+                                        </cell>
+                                        <cell id="2625"/>
+                                        <cell id="2626"/>
+                                        <cell id="2627"/>
+                                        <cell id="2628"/>
+                                        <cell id="2629"/>
+                                        <cell id="2630"/>
+                                        <cell id="2631"/>
+                                        <cell id="2632"/>
+                                        <cell id="2633"/>
+                                        <cell id="2634"/>
+                                    </row>
+                                </header>
+                                <footer>
+                                    <row id="2635">
+                                        <cell id="2636"/>
+                                        <cell id="2637"/>
+                                        <cell id="2638"/>
+                                        <cell id="2639"/>
+                                        <cell id="2640"/>
+                                        <cell id="2641"/>
+                                        <cell id="2642"/>
+                                        <cell id="2643"/>
+                                        <cell id="2644">
+                                            <label id="2649">
+                                                <property name="fontWeight">bold</property>
+                                                <text-property name="text">PR Total Value:</text-property>
+                                            </label>
+                                        </cell>
+                                        <cell id="2645"/>
+                                        <cell id="2646">
+                                            <data id="2650">
+                                                <property name="fontWeight">bold</property>
+                                                <structure name="numberFormat">
+                                                    <property name="category">Currency</property>
+                                                    <property name="pattern">###0.00</property>
+                                                </structure>
+                                                <property name="textAlign">right</property>
+                                                <property name="resultSetColumn">totalcost</property>
+                                            </data>
+                                        </cell>
+                                    </row>
+                                </footer>
+                            </group>
+                            <detail>
+                                <row id="2539">
+                                    <cell id="2542">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2543">
+                                            <property name="resultSetColumn">PRLINENUM</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2544">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2545">
+                                            <property name="resultSetColumn">ITEMNUM</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2546">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2547">
+                                            <property name="resultSetColumn">ORDERQTY</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2548">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2549">
+                                            <property name="resultSetColumn">ORDERUNIT</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2550">
+                                        <property name="colSpan">1</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2551">
+                                            <property name="resultSetColumn">PRLINEDESC</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2711">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2554">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2556">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2557">
+                                            <property name="resultSetColumn">GLDEBITACCT</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2558">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2559">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Custom</property>
+                                                <property name="pattern">dd-MMM-yy</property>
+                                            </structure>
+                                            <property name="resultSetColumn">REQDELIVERYDATE</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2560">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2561">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="textAlign">right</property>
+                                            <property name="resultSetColumn">UNITCOST</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2562">
+                                        <property name="pageBreakInside">avoid</property>
+                                        <data id="2563">
+                                            <structure name="numberFormat">
+                                                <property name="category">Currency</property>
+                                                <property name="pattern">###0.00</property>
+                                            </structure>
+                                            <property name="textAlign">right</property>
+                                            <property name="resultSetColumn">LINECOST</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="2698">
+                                    <cell id="2699">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2700">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2701">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2702">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2703">
+                                        <property name="colSpan">4</property>
+                                        <property name="rowSpan">1</property>
+                                        <property name="pageBreakInside">avoid</property>
+                                        <text id="2710">
+                                            <property name="fontFamily">"Courier New"</property>
+                                            <property name="fontSize">small</property>
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr">((row["CATALOGCODE"]==null )&amp;&amp;(row["MODELNUM"]==null ))</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="contentType">html</property>
+                                            <text-property name="content"><![CDATA[<VALUE-OF>if(row["MODELNUM"]!= null){"Manufacturer Part No.: "+row["MODELNUM"]+", "}
+</VALUE-OF>
+<VALUE-OF>
+if(row["CATALOGCODE"]!= null){"Vendor Part No.: "+row["CATALOGCODE"]}</VALUE-OF>
+
+]]></text-property>
+                                        </text>
+                                        <data id="2919">
+                                            <list-property name="visibility">
+                                                <structure>
+                                                    <property name="format">all</property>
+                                                    <expression name="valueExpr">row["LONGDESC"] == null</expression>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">LONGDESC</property>
+                                        </data>
+                                    </cell>
+                                    <cell id="2707">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2708">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                    <cell id="2709">
+                                        <property name="pageBreakInside">avoid</property>
+                                    </cell>
+                                </row>
+                            </detail>
+                        </table>
+                    </cell>
+                </row>
+                <row id="1980">
+                    <cell id="1981">
+                        <property name="fontWeight">bold</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="2660">
+                            <text-property name="text">Approved Dept. Supt.:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1982">
+                        <property name="fontWeight">bold</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="2661">
+                            <text-property name="text">Proc/Log Sup. Reviewed:</text-property>
+                        </label>
+                    </cell>
+                    <cell id="1983">
+                        <property name="fontWeight">bold</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <label id="2662">
+                            <text-property name="text">Date reviewed:</text-property>
+                        </label>
+                    </cell>
+                </row>
+                <row id="2656">
+                    <cell id="2657">
+                        <property name="fontWeight">bold</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <text id="2663">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<BR>]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="2658">
+                        <property name="fontWeight">bold</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                    </cell>
+                    <cell id="2659">
+                        <property name="fontWeight">bold</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="1984">
+                    <cell id="1985"/>
+                    <cell id="1986"/>
+                    <cell id="1987"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

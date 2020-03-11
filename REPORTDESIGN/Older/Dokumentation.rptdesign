@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.17" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_20090202 Build &lt;2.3.2.v20090218-0730></property>
+    <property name="units">in</property>
+    <simple-property-list name="includeResource">
+        <value>wotrack</value>
+    </simple-property-list>
+    <property name="comments">Copyright (c) 2006 &lt;&lt;Your Company Name here>></property>
+    <html-property name="description">This template will create a report with one or more subreports, each having different data fields.</html-property>
+    <method name="initialize"><![CDATA[importPackage(Packages.com.ibm.tivoli.maximo.report.script);
+
+mxReportScriptContext = MXReportScriptContext.initialize(reportContext);
+
+//mxReportScriptContext.setDefaultLogLevel("DEBUG");
+mxReportScriptContext.setDefaultLogFile("./temp/woprint.log");
+
+var boolCommTest = false;
+
+function thereAreTickets(wonum, ds){
+
+ticketsDataSet = MXReportDataSetProvider.create("maximoDataSource", "ticketsDataSet");
+ticketsDataSet.open();
+
+sql = "select 1 as result "
++ "from relatedrecord, workorder, ticket "
++ "where workorder.wonum = relatedrecord.recordkey "
++ "and relatedrecord.relatedreckey = ticket.ticketid "
++ "and relatedrecord.relatedrecclass = ticket.class "
++ "and workorder.siteid = relatedrecord.siteid "
++ "and relatedrecord.relatedrecclass in "
++ "(select value from synonymdomain where domainid ='TKCLASS' and maxvalue in ('SR','PROBLEM','INCIDENT','CHANGE')) "
++ "and ((workorder.parent = '" + wonum.replace(/'/g,"''") + "' and workorder.taskid is not null) "
++ "or (workorder.wonum = '" + wonum.replace(/'/g,"''") + "' and workorder.taskid is null))"
+;
+
+ticketsDataSet.setQuery(sql);
+if (ticketsDataSet.fetch())
+	if(ticketsDataSet.getInteger("result") == 1)
+		return true;
+
+return false;
+}]]></method>
+    <method name="afterFactory"><![CDATA[MXReportScriptContext.close();]]></method>
+    <property name="theme">MaximoSystemLibrary.maximoTheme</property>
+    <text-property name="displayName">Tivoli Maximo Subreport Template</text-property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">MaximoSystemLibrary.rptlibrary</property>
+            <property name="namespace">MaximoSystemLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="where" id="25">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">1=1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="appname" id="731">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramdelimiter" id="733">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="paramstring" id="732">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="maximoDataSource" id="64" extends="MaximoSystemLibrary.maximoDataSource"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="mainDataSet" id="5">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">workorderid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">woclass</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">wonum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">wodesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">siteid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">schedstart</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">schedfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">status</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">targstartdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">targcompdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">parent</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">actstart</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">actfinish</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">worktype</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">reportdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">16</property>
+                    <property name="name">reportedby</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">wopriority</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">glaccount</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">vendor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">20</property>
+                    <property name="name">contract</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">21</property>
+                    <property name="name">classstructureid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
+                    <property name="name">failurecode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">23</property>
+                    <property name="name">problemcode</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">lead</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">supervisor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">26</property>
+                    <property name="name">persongroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">27</property>
+                    <property name="name">owner</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">28</property>
+                    <property name="name">ownergroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">29</property>
+                    <property name="name">commodity</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">30</property>
+                    <property name="name">commoditygroup</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">onbehalfof</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">jpnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">33</property>
+                    <property name="name">jpdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">34</property>
+                    <property name="name">assetnum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">35</property>
+                    <property name="name">assetdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">36</property>
+                    <property name="name">location</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">37</property>
+                    <property name="name">locdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">38</property>
+                    <property name="name">istask</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">39</property>
+                    <property name="name">orgid</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">40</property>
+                    <property name="name">cinum</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">41</property>
+                    <property name="name">cidesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">42</property>
+                    <property name="name">longdesc</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">workorderid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">woclass</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wonum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wodesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">siteid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">schedstart</property>
+                </structure>
+                <structure>
+                    <property name="columnName">schedfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">status</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targstartdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">targcompdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">parent</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actstart</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actfinish</property>
+                </structure>
+                <structure>
+                    <property name="columnName">worktype</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">reportedby</property>
+                </structure>
+                <structure>
+                    <property name="columnName">wopriority</property>
+                </structure>
+                <structure>
+                    <property name="columnName">glaccount</property>
+                </structure>
+                <structure>
+                    <property name="columnName">vendor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">contract</property>
+                </structure>
+                <structure>
+                    <property name="columnName">classstructureid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">failurecode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">problemcode</property>
+                </structure>
+                <structure>
+                    <property name="columnName">lead</property>
+                </structure>
+                <structure>
+                    <property name="columnName">supervisor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">persongroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">owner</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ownergroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commodity</property>
+                </structure>
+                <structure>
+                    <property name="columnName">commoditygroup</property>
+                </structure>
+                <structure>
+                    <property name="columnName">onbehalfof</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jpnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">jpdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetnum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">assetdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">location</property>
+                </structure>
+                <structure>
+                    <property name="columnName">locdesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">istask</property>
+                </structure>
+                <structure>
+                    <property name="columnName">orgid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cinum</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cidesc</property>
+                </structure>
+                <structure>
+                    <property name="columnName">longdesc</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">workorderid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">woclass</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">wonum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">wodesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">siteid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">schedstart</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">schedfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">status</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">targstartdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">targcompdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">parent</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">actstart</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">actfinish</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">worktype</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">reportdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">reportedby</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">wopriority</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">glaccount</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">vendor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">20</property>
+                        <property name="name">contract</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">classstructureid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">22</property>
+                        <property name="name">failurecode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">23</property>
+                        <property name="name">problemcode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">lead</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">supervisor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">26</property>
+                        <property name="name">persongroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">27</property>
+                        <property name="name">owner</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">28</property>
+                        <property name="name">ownergroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">29</property>
+                        <property name="name">commodity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">30</property>
+                        <property name="name">commoditygroup</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">onbehalfof</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">jpnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">33</property>
+                        <property name="name">jpdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">34</property>
+                        <property name="name">assetnum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">35</property>
+                        <property name="name">assetdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">36</property>
+                        <property name="name">location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">37</property>
+                        <property name="name">locdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">38</property>
+                        <property name="name">istask</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">39</property>
+                        <property name="name">orgid</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">40</property>
+                        <property name="name">cinum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">41</property>
+                        <property name="name">cidesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">42</property>
+                        <property name="name">longdesc</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[maximoDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+maximoDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "SELECT workorder.wonum, woactivity.taskid, woactivity.wonum, woactivity.description as wodesc, woactivity.wogroup, woactivity.wopriority, woactivity.status,  woactivity.assetnum, woactivity.location,  locations.description, longdescription.ldtext as longdesc "
++ " FROM WORKORDER "
++ " LEFT OUTER JOIN WOACTIVITY "
++ " ON WORKORDER.WONUM   = WOACTIVITY.WOGROUP "
++ " AND WORKORDER.ORGID  = WOACTIVITY.ORGID "
++ " AND WORKORDER.SITEID = WOACTIVITY.SITEID "
++ " INNER JOIN LOCATIONS "
++ " ON WOACTIVITY.LOCATION = LOCATIONS.LOCATION "
++ " AND WOACTIVITY.ORGID   = LOCATIONS.ORGID "
++ " AND WOACTIVITY.SITEID  = LOCATIONS.SITEID "
++ " INNER JOIN LONGDESCRIPTION "
++ " On Woactivity.Workorderid = Longdescription.Ldkey "
++ " And Longdescription.Ldownertable = 'WOACTIVITY' "
++ " and longdescription.ldownercol ='DESCRIPTION' "
++ " where " + params["where"]
+;
+
+
+maximoDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[if (!maximoDataSet.fetch())
+	return (false);
+
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+row["workorderid"] = maximoDataSet.getString("workorderid");	
+row["woclass"] = maximoDataSet.getString("woclass");	
+row["wonum"] = maximoDataSet.getString("wonum");	
+row["wodesc"] = maximoDataSet.getString("wodesc");
+row["siteid"] = maximoDataSet.getString("siteid");	
+row["status"] = maximoDataSet.getString("status");	
+row["parent"] = maximoDataSet.getString("parent");
+row["worktype"] = maximoDataSet.getString("worktype");	
+row["reportedby"] = maximoDataSet.getString("reportedby");	
+row["wopriority"] = maximoDataSet.getString("wopriority");
+row["glaccount"] = maximoDataSet.getString("glaccount");	
+row["vendor"] = maximoDataSet.getString("vendor");	
+row["contract"] = maximoDataSet.getString("contract");
+row["classstructureid"] = maximoDataSet.getString("classstructureid");	
+row["failurecode"] = maximoDataSet.getString("failurecode");	
+row["problemcode"] = maximoDataSet.getString("problemcode");
+row["lead"] = maximoDataSet.getString("lead");	
+row["supervisor"] = maximoDataSet.getString("supervisor");	
+row["persongroup"] = maximoDataSet.getString("persongroup");
+row["owner"] = maximoDataSet.getString("owner");	
+row["ownergroup"] = maximoDataSet.getString("ownergroup");	
+row["commodity"] = maximoDataSet.getString("commodity");
+row["commoditygroup"] = maximoDataSet.getString("commoditygroup");	
+row["onbehalfof"] = maximoDataSet.getString("onbehalfof");	
+row["jpnum"] = maximoDataSet.getString("jpnum");
+row["jpdesc"] = maximoDataSet.getString("jpdesc");	
+row["assetnum"] = maximoDataSet.getString("assetnum");	
+row["assetdesc"] = maximoDataSet.getString("assetdesc");
+row["location"] = maximoDataSet.getString("location");	
+row["locdesc"] = maximoDataSet.getString("locdesc");	
+row["cinum"] = maximoDataSet.getString("cinum");
+row["cidesc"] = maximoDataSet.getString("cidesc");
+row["istask"] = maximoDataSet.getString("istask");	
+row["orgid"] = maximoDataSet.getString("orgid");
+
+row["schedstart"] = maximoDataSet.getTimestamp("schedstart");	
+row["schedfinish"] = maximoDataSet.getTimestamp("schedfinish");
+row["targstartdate"] = maximoDataSet.getTimestamp("targstartdate");
+row["targcompdate"] = maximoDataSet.getTimestamp("targcompdate");
+row["actstart"] = maximoDataSet.getTimestamp("actstart");
+row["actfinish"] = maximoDataSet.getTimestamp("actfinish");
+row["reportdate"] = maximoDataSet.getTimestamp("reportdate");
+
+
+// Long Description
+	longDescDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "longDescDataSet");
+	longDescDataSet.open();
+	
+	longDescSQL = "select longdescription.ldtext  "
+	+ "from longdescription "
+    + "where longdescription.ldownertable='WORKORDER' and longdescription.ldownercol='DESCRIPTION' "
+    + "and longdescription.ldkey=" + row["workorderid"];
+	
+	
+	longDescDataSet.setQuery(longDescSQL);
+
+	if(longDescDataSet.fetch()) {
+		row["longdesc"] = longDescDataSet.getString("ldtext");
+	}
+	
+	longDescDataSet.close();
+
+// End Long Description
+
+return (true);]]></method>
+        </script-data-set>
+        <script-data-set name="workLogDataSet" id="1990">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">createdate</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">class</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">createby</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">description</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">subject</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">rowid</property>
+                    <property name="dataType">decimal</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">ldtext</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">recordkey</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">createdate</property>
+                </structure>
+                <structure>
+                    <property name="columnName">class</property>
+                </structure>
+                <structure>
+                    <property name="columnName">createby</property>
+                </structure>
+                <structure>
+                    <property name="columnName">description</property>
+                </structure>
+                <structure>
+                    <property name="columnName">subject</property>
+                </structure>
+                <structure>
+                    <property name="columnName">rowid</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ldtext</property>
+                </structure>
+                <structure>
+                    <property name="columnName">recordkey</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">createdate</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">class</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">createby</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">description</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">subject</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">rowid</property>
+                        <property name="dataType">decimal</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">ldtext</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">recordkey</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">maximoDataSource</property>
+            <method name="open"><![CDATA[workLogDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), this.getName());
+workLogDataSet.open();
+
+var sqlText = new String();
+
+// Add query to sqlText variable.
+sqlText = "select worklog.recordkey, worklog.worklogid, worklog.createdate, worklog.class, worklog.createby, worklog.description "
++ "from worklog "
++ "where worklog.siteid = '" + rows[0]["siteid"] + "' "
++ "and worklog.class in (select value from synonymdomain where domainid = 'WOCLASS' "
++ "and maxvalue in ('WORKORDER', 'CHANGE', 'RELEASE','ACTIVITY')) "
++ "and worklog.recordkey = '" + rows[0]["wonum"].replace(/'/g,"''") + "'"
+;
+workLogDataSet.setQuery(sqlText);]]></method>
+            <method name="fetch"><![CDATA[var tbname = new String();
+tbname = "";
+if (!workLogDataSet.fetch()) {
+	// Comm Log
+	if (!boolCommTest) {
+		commLogDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "commLogDataSet");
+		commLogDataSet.open();
+	
+		commLogSQL = "select commlog.ownerid, commlog.commlogid, commlog.createdate, commlog.createby, commlog.subject, commlog.message "
+		+ "from commlog "
+		+ "where commlog.ownertable in ('WORKORDER', 'CHANGE', 'RELEASE','ACTIVITY') "
+		+ "and commlog.ownerid = " + rows[0]["workorderid"]
+		;
+		commLogDataSet.setQuery(commLogSQL);
+		boolCommTest = true;
+	}
+
+	if(commLogDataSet.fetch()) {
+		row["recordkey"] = commLogDataSet.getString("ownerid");
+		row["subject"] = commLogDataSet.getString("subject");	
+		row["createby"] = commLogDataSet.getString("createby");	
+		row["description"] = commLogDataSet.getString("message");	
+		row["rowid"] = commLogDataSet.getDouble("commlogid");
+		row["createdate"] = commLogDataSet.getTimestamp("createdate");
+		tbname = "COMMLOG";
+	} else {
+		return (false);
+	}
+// End Comm Log
+} else {
+// Add a line for each output column
+// The specific get method should match the data type of the output column.
+	row["recordkey"] = workLogDataSet.getString("recordkey");
+	row["class"] = workLogDataSet.getString("class");	
+	row["createby"] = workLogDataSet.getString("createby");	
+	row["description"] = workLogDataSet.getString("description");	
+	row["rowid"] = workLogDataSet.getDouble("worklogid");
+	row["createdate"] = workLogDataSet.getTimestamp("createdate");
+	tbname = "WORKLOG";
+}
+
+	longDescDataSet = MXReportDataSetProvider.create(this.getDataSource().getName(), "labcostDataSet");
+	longDescDataSet.open();
+	
+	longDescSQL = "select longdescription.ldtext  "
+	+ "from longdescription "
+    + "where longdescription.ldownertable='" + tbname + "' and longdescription.ldownercol='DESCRIPTION' "
+    + "and longdescription.ldkey=" + row["rowid"]
+    ;
+    
+	longDescDataSet.setQuery(longDescSQL);
+
+	if(longDescDataSet.fetch()) {
+		row["ldtext"] = longDescDataSet.getString("ldtext");
+	}
+return (true);]]></method>
+        </script-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="maximoLandscape" id="47" extends="MaximoSystemLibrary.maximoLandscape">
+            <overridden-values>
+                <ref-entry baseId="304" name="NewGrid2" id="304"/>
+                <ref-entry baseId="305" id="305"/>
+                <ref-entry baseId="306" id="306"/>
+                <ref-entry baseId="307" id="307"/>
+                <ref-entry baseId="308" id="308"/>
+                <ref-entry baseId="340" name="NewImage1" id="340"/>
+                <ref-entry baseId="309" id="309"/>
+                <ref-entry baseId="310" name="NewImage" id="310"/>
+                <ref-entry baseId="322" name="NewGrid" id="322"/>
+                <ref-entry baseId="323" id="323"/>
+                <ref-entry baseId="324" id="324"/>
+                <ref-entry baseId="325" id="325"/>
+                <ref-entry baseId="326" id="326"/>
+                <ref-entry baseId="328" name="NewText" id="328"/>
+                <ref-entry baseId="327" id="327"/>
+                <ref-entry baseId="329" name="NewGrid1" id="329"/>
+                <ref-entry baseId="330" id="330"/>
+                <ref-entry baseId="331" id="331"/>
+                <ref-entry baseId="332" id="332"/>
+                <ref-entry baseId="333" id="333"/>
+                <ref-entry baseId="334" id="334"/>
+                <ref-entry baseId="335" name="NewAutoText" id="335"/>
+                <ref-entry baseId="336" id="336"/>
+                <ref-entry baseId="337" name="NewText1" id="337"/>
+                <ref-entry baseId="338" id="338"/>
+                <ref-entry baseId="339" name="NewAutoText1" id="339"/>
+            </overridden-values>
+        </simple-master-page>
+    </page-setup>
+</report>
