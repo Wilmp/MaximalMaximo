@@ -9,7 +9,6 @@ These are all the reportdesign files found in Maximo and can be used as referenc
 These are all the contents of the maxpresentation table. 
 ## Automation script
 These are all the contents of the source in the autoscript table. They are written in either python or jython.
-
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc5MzgwNTEzXX0=
+eyJoaXN0b3J5IjpbMTc5NDcxNjU5NV19
 -->
